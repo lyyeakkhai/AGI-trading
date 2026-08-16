@@ -269,7 +269,7 @@ Each slice builds on the previous one. Each produces a testable, runnable subsys
 **Gate:** Market data reliable ✓
 
 **Design spec:** [2026-08-13-market-data-storage-design.md](../superpowers/specs/2026-08-13-market-data-storage-design.md)  
-**Implementation plan:** [2026-08-13-market-data-storage.md](../superpowers/plans/2026-08-13-market-data-storage.md)
+**Implementation plan:** to be written when Foundation 2 starts. The earlier plan was removed because it assumed a `src/trading/` layout that predates the approved PRD section 82 layout. Reconcile the design spec to that layout before replanning.
 
 ---
 

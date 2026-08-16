@@ -1,9 +1,9 @@
 # Market Data + Storage — Design Spec (Slice 1)
 
-**Status:** Approved  
+**Status:** Reviewed  
 **Date:** August 13, 2026  
 **Slice:** 1 of ~10 (Market Data + Storage)  
-**PRD Reference:** [prd.md](../../product/prd.md) — Sections 25–27, 45–52, 58, 70, 77  
+**PRD Reference:** [prd.md](../../product/prd.md) v1.2 — Sections 31–33 (Market Data Service, Real-Time Market Architecture, Historical Market Data Storage), 52–58 (Core System Architecture, Backend Technology Stack, API Framework, Database Layer, Event / Cache Layer, Quantitative Stack, Exchange Stack), 60 (Backtest Architecture), 67 (Infrastructure), 82 (Recommended Repository Structure), 90 (Development Priorities)  
 **Approach:** CCXT Pro WebSocket Worker + Redis Streams + TimescaleDB  
 
 ---
@@ -189,7 +189,7 @@ class OrderBook(BaseModel):
 | `exchange_trade_id` | `VARCHAR(64)` | Binance trade ID |
 
 - **Hypertable chunk interval:** 1 day
-- **Deduplication:** `ON CONFLICT (symbol, exchange_trade_id) DO NOTHING`
+- **Deduplication:** `UNIQUE (symbol, exchange_trade_id)` for `ON CONFLICT (symbol, exchange_trade_id) DO NOTHING`
 - **Index:** `(symbol, timestamp)`
 - **Compression:** enabled on chunks older than 7 days
 
@@ -246,7 +246,7 @@ class StreamNames:
 
 ### Stream Configuration
 
-- **Max length:** `MAXLEN ~ 10000` per stream (approximate trimming)
+- **Max length:** `MAXLEN ~ 1000000` per stream (~1 hour buffer, approximate trimming)
 - **Message format:** JSON-serialized Pydantic model
 
 ---
@@ -266,11 +266,11 @@ Single async Python process running concurrent asyncio tasks:
 
 ### Candle `is_closed` Logic
 
-CCXT Pro's `watchOHLCV` returns candles including the currently forming one. The worker determines closure:
+CCXT Pro's `watchOHLCV` returns candles including the currently forming one. To avoid race conditions and clock drift, the worker determines closure strictly via exchange timestamps:
 
-- Compare the candle's open timestamp against the current time
-- If `candle_open_time + timeframe_duration <= now`, mark `is_closed=True`
-- Otherwise `is_closed=False`
+- Keep the current candle `is_closed=False` while it forms
+- When a new tick/trade/candle update arrives with a timestamp `>= candle_open_time + timeframe_duration`, mark the previous candle `is_closed=True`
+- Never close a candle based on local system time alone
 
 ### Backfill Manager
 
@@ -320,7 +320,7 @@ Single async Python process consuming from Redis Streams.
 
 ### Batching Strategy
 
-- Accumulate events for up to **1 second** or **100 events**, whichever comes first
+- Accumulate events for up to **1 second** or **5000 events**, whichever comes first (to handle high volatility)
 - Execute a single batched `INSERT ... ON CONFLICT` per table per batch
 - Use `executemany` via asyncpg for performance
 
@@ -350,7 +350,7 @@ class MarketDataSettings(BaseSettings):
     symbols: list[str] = ["BTC/USDT", "ETH/USDT"]
     timeframes: list[str] = ["15m", "1h", "4h"]
     orderbook_depth: int = 20
-    stream_maxlen: int = 10000
+    stream_maxlen: int = 1000000
 
 class StaleThresholds(BaseSettings):
     ticker_seconds: int = 60
@@ -361,7 +361,7 @@ class StaleThresholds(BaseSettings):
     candle_4h_seconds: int = 3600
 
 class PersistenceSettings(BaseSettings):
-    batch_max_size: int = 100
+    batch_max_size: int = 5000
     batch_max_wait_seconds: float = 1.0
 
 class DatabaseSettings(BaseSettings):
@@ -538,6 +538,8 @@ The slice is complete when all of the following are true:
 | `test_redis_streams.py` | Integration | Publish → consume round-trip, consumer groups, XACK |
 | `test_timescaledb_persistence.py` | Integration | Batch insert, deduplication, hypertable queries, compression |
 | `test_market_pipeline_e2e.py` | Integration | Full pipeline: event → Redis → persistence → DB row |
+| `test_ws_reconnects.py` | Integration | CCXT WebSocket drops, automatic reconnects, and data resumption |
+| `test_rest_backfill.py` | Integration | Startup gap detection, exact REST fetching without duplication |
 
 ---
 

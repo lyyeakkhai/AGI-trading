@@ -60,7 +60,7 @@ Wire Binance WebSocket through CCXT Pro into Redis Streams and persist to Timesc
 - [ ] Build it: `/develop market data and storage`
 - [ ] Verify it: `/check verify market data and storage`
 - [ ] Test it: `/test market data and storage`
-spec docs/superpowers/plans/2026-08-13-market-data-storage.md
+spec docs/superpowers/specs/2026-08-13-market-data-storage-design.md
 
 ## Slice 2: Portfolio & Analytics
 
