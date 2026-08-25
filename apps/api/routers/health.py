@@ -7,6 +7,7 @@ from sqlalchemy import text
 from packages.config import get_settings
 from packages.database import get_engine
 from packages.logging import get_logger
+from services.market_data.health import get_global_health_monitor
 
 router = APIRouter(prefix="/health", tags=["health"])
 logger = get_logger("health")
@@ -89,26 +90,40 @@ async def health_ready(response: Response) -> dict[str, Any]:
 
 @router.get("/trading")
 async def health_trading() -> dict[str, Any]:
-    """Always reports not_ready in Foundation 0 because preconditions are unbuilt."""
+    """Reports trading system readiness based on subsystem health."""
+    reasons: list[dict[str, Any]] = []
+
+    monitor = get_global_health_monitor()
+    if monitor is not None and not monitor.is_ready:
+        for r in monitor.stale_reasons:
+            reasons.append({
+                "code": "MARKET_DATA_NOT_READY",
+                "detail": r,
+                "message": f"Market data feed not ready: {r}",
+            })
+    elif monitor is None:
+        reasons.append({
+            "code": "MARKET_DATA_NOT_VERIFIED",
+            "message": "Market data pipeline not built (Foundation 2)",
+        })
+
+    reasons.extend([
+        {
+            "code": "PORTFOLIO_NOT_VERIFIED",
+            "message": "Portfolio accounting not built (Foundation 3)",
+        },
+        {
+            "code": "RISK_ENGINE_NOT_VERIFIED",
+            "message": "Risk engine not built (Foundation 4)",
+        },
+        {
+            "code": "EXECUTION_NOT_VERIFIED",
+            "message": "Execution service not built (Foundation 12)",
+        },
+    ])
+
     return {
-        "status": "not_ready",
-        "ready_for_trading": False,
-        "reasons": [
-            {
-                "code": "MARKET_DATA_NOT_VERIFIED",
-                "message": "Market data pipeline not built (Foundation 2)",
-            },
-            {
-                "code": "PORTFOLIO_NOT_VERIFIED",
-                "message": "Portfolio accounting not built (Foundation 3)",
-            },
-            {
-                "code": "RISK_ENGINE_NOT_VERIFIED",
-                "message": "Risk engine not built (Foundation 4)",
-            },
-            {
-                "code": "EXECUTION_NOT_VERIFIED",
-                "message": "Execution service not built (Foundation 12)",
-            },
-        ],
+        "status": "not_ready" if reasons else "ready",
+        "ready_for_trading": len(reasons) == 0,
+        "reasons": reasons,
     }
