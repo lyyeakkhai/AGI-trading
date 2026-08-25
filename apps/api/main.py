@@ -1,8 +1,9 @@
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 from fastapi import FastAPI
 
 from apps.api.routers.health import router as health_router
+from apps.api.routers.markets import router as markets_router
 from packages.config import get_settings
 from packages.database import get_engine
 from packages.logging import configure_logging, get_logger
@@ -35,6 +36,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     app.include_router(health_router)
+    app.include_router(markets_router)
     return app
 
 
