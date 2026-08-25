@@ -9,18 +9,26 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from packages.config.settings import Settings, get_settings
+from packages.config.settings import DatabaseSettings, Settings, get_settings
 
 
-def get_engine(settings: Optional[Settings] = None) -> AsyncEngine:
+def get_engine(settings: Optional[Union[Settings, DatabaseSettings]] = None) -> AsyncEngine:
     """Creates and returns an async SQLAlchemy engine using asyncpg."""
-    active_settings = settings or get_settings()
+    if settings is None:
+        db_settings = get_settings().database
+    elif isinstance(settings, Settings):
+        db_settings = settings.database
+    elif isinstance(settings, DatabaseSettings):
+        db_settings = settings
+    else:
+        raise TypeError(f"Expected Settings or DatabaseSettings, got {type(settings)}")
+
     engine = create_async_engine(
-        active_settings.database.url,
-        pool_size=active_settings.database.pool_size,
+        db_settings.url,
+        pool_size=db_settings.pool_size,
         connect_args={
             "server_settings": {
-                "statement_timeout": str(active_settings.database.statement_timeout_ms)
+                "statement_timeout": str(db_settings.statement_timeout_ms)
             }
         },
         future=True,
