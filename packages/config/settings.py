@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class AppSettings(BaseSettings):
     """Application level settings (APP_ENV, service_name, log_level, timezone)."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     env: str = Field(default="development", validation_alias="APP_ENV")
     service_name: str = "agi-trading"
@@ -19,7 +19,7 @@ class AppSettings(BaseSettings):
 class DatabaseSettings(BaseSettings):
     """Database configuration (DATABASE_URL, pool_size, statement_timeout_ms, paper vs live db names)."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     url: str = Field(
         default="postgresql+asyncpg://trading:trading_dev@localhost:5432/trading_paper",
@@ -34,7 +34,7 @@ class DatabaseSettings(BaseSettings):
 class RedisSettings(BaseSettings):
     """Redis configuration (REDIS_URL, key_prefix, stream names, consumer groups)."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     url: str = Field(default="redis://localhost:6379", validation_alias="REDIS_URL")
     key_prefix: str = "trading:paper:"
@@ -50,7 +50,7 @@ class RedisSettings(BaseSettings):
 class ExchangeSettings(BaseSettings):
     """Exchange configuration (exchange_id, sandbox_flag, credentials)."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     exchange_id: str = "binance"
     sandbox_flag: bool = True
@@ -62,7 +62,7 @@ class ExchangeSettings(BaseSettings):
 class TradingSettings(BaseSettings):
     """Trading mode, symbol allowlist, and timeframe settings."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     mode: str = Field(default="paper", validation_alias="TRADING_MODE")
     symbols: list[str] = Field(default_factory=lambda: ["BTC/USDT", "ETH/USDT"])
@@ -73,7 +73,7 @@ class TradingSettings(BaseSettings):
 class RiskSettings(BaseSettings):
     """Risk rules, staleness limits, leverage and spot flags."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     spot_only: bool = True
     leverage_enabled: bool = False
@@ -85,7 +85,7 @@ class RiskSettings(BaseSettings):
 class ExecutionSettings(BaseSettings):
     """Live trading authorization, owner approval requirements and TTLs."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     live_trading_enabled: bool = Field(default=False, validation_alias="LIVE_TRADING_ENABLED")
     slippage_bps: int = 10
@@ -97,7 +97,7 @@ class ExecutionSettings(BaseSettings):
 class ReconciliationSettings(BaseSettings):
     """Startup and periodic reconciliation configuration."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     required_on_startup: bool = True
     block_live_on_divergence: bool = True
@@ -106,7 +106,7 @@ class ReconciliationSettings(BaseSettings):
 class HermesSettings(BaseSettings):
     """Hermes service client configuration."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     base_url: str = "http://localhost:8001"
     service_token: Optional[str] = Field(default=None, validation_alias="HERMES_SERVICE_TOKEN")
@@ -116,7 +116,7 @@ class HermesSettings(BaseSettings):
 class TradingAgentsSettings(BaseSettings):
     """TradingAgents service client configuration."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     base_url: str = "http://localhost:8002"
     service_token: Optional[str] = Field(
@@ -129,7 +129,7 @@ class TradingAgentsSettings(BaseSettings):
 class LLMSettings(BaseSettings):
     """LLM gateway configuration."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     base_url: Optional[str] = Field(default=None, validation_alias="LLM_GATEWAY_URL")
     api_key: Optional[str] = Field(default=None, validation_alias="LLM_GATEWAY_KEY")
@@ -142,7 +142,7 @@ class LLMSettings(BaseSettings):
 class IntelligenceSettings(BaseSettings):
     """Intelligence and news ingestion configuration."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     x_api_token: Optional[str] = Field(default=None, validation_alias="X_API_TOKEN")
     news_sources: list[str] = Field(
@@ -154,7 +154,7 @@ class IntelligenceSettings(BaseSettings):
 class MonitoringSettings(BaseSettings):
     """Metrics and observability configuration."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     metrics_port: int = 9090
     tracing_sample_rate: float = 0.1
@@ -164,7 +164,7 @@ class MonitoringSettings(BaseSettings):
 class AuthSettings(BaseSettings):
     """Authentication secrets configuration."""
 
-    model_config = SettingsConfigDict(extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
     dashboard_auth_secret: Optional[str] = Field(
         default=None, validation_alias="DASHBOARD_AUTH_SECRET"
@@ -183,6 +183,7 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
         frozen=True,
+        nested_model_default_partial_update=True,
     )
 
     app: AppSettings = Field(default_factory=AppSettings)
