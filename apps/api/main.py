@@ -1,0 +1,41 @@
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+from fastapi import FastAPI
+
+from apps.api.routers.health import router as health_router
+from packages.config import get_settings
+from packages.database import get_engine
+from packages.logging import configure_logging, get_logger
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    # Startup
+    settings = get_settings()
+    configure_logging(settings)
+    logger = get_logger("main")
+    logger.info("api_startup", service=settings.app.service_name, env=settings.app.env)
+
+    # Initialize database engine
+    engine = get_engine(settings)
+    app.state.engine = engine
+
+    yield
+
+    # Shutdown
+    logger.info("api_shutdown")
+    await engine.dispose()
+
+
+def create_app() -> FastAPI:
+    settings = get_settings()
+    app = FastAPI(
+        title="AI Trading Intelligence Platform API",
+        version="0.1.0",
+        lifespan=lifespan,
+    )
+    app.include_router(health_router)
+    return app
+
+
+app = create_app()

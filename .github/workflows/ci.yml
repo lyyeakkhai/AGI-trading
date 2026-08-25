@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main]
+
+env:
+  APP_ENV: development
+  TRADING_MODE: paper
+  LIVE_TRADING_ENABLED: false
+  DATABASE_URL: postgresql+asyncpg://trading:trading_dev@localhost:5432/trading_paper
+  REDIS_URL: redis://localhost:6379
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync --group dev
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - uses: pnpm/action-setup@v4
+        with: {version: 9}
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - run: pnpm install
+      - run: pnpm --filter web lint
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync --group dev
+      - run: uv run mypy packages/config packages/logging packages/database apps/api --strict
+      - uses: pnpm/action-setup@v4
+        with: {version: 9}
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - run: pnpm install
+      - run: pnpm --filter web tsc --noEmit
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: timescale/timescaledb-ha:pg16-latest
+        env:
+          POSTGRES_DB: trading_paper
+          POSTGRES_USER: trading
+          POSTGRES_PASSWORD: trading_dev
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7.4-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync --group dev
+      - run: uv run alembic upgrade head
+      - run: uv run alembic upgrade head  # idempotency check — second run must be no-op
+      - run: uv run pytest tests/ -v --cov=packages --cov=apps
+
+  safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync --group dev
+      - run: uv run pytest tests/safety/ -v
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: {version: 9}
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - run: pnpm install
+      - run: pnpm --filter web build
