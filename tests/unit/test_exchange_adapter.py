@@ -1,7 +1,9 @@
 from datetime import datetime, timezone
 from decimal import Decimal
+import ccxt
 import pytest
 
+from packages.exchange.binance import BinanceCCXTAdapter, normalize_ccxt_error
 from packages.exchange.errors import (
     AuthFailedError,
     ExchangeError,
@@ -82,3 +84,31 @@ def test_ticker_rejects_float():
             volume=Decimal("1234.56"),
             timestamp=datetime.now(timezone.utc),
         )
+
+
+def test_rate_limit_error_normalized():
+    raw = ccxt.RateLimitExceeded("too many requests")
+    err = normalize_ccxt_error(raw)
+    assert isinstance(err, RateLimitedError)
+
+
+def test_network_error_normalized_to_retryable():
+    raw = ccxt.NetworkError("connection reset")
+    err = normalize_ccxt_error(raw)
+    assert isinstance(err, RetryableError)
+
+
+def test_unknown_error_preserves_unknown_state():
+    # Any timeout or ambiguous error must not be PermanentError
+    raw = ccxt.RequestTimeout("timeout")
+    err = normalize_ccxt_error(raw)
+    # RequestTimeout is retryable (could have reached exchange or not)
+    assert isinstance(err, (RetryableError, UnknownStateError))
+    assert not isinstance(err, PermanentError)
+
+
+def test_symbol_normalization():
+    adapter = BinanceCCXTAdapter.__new__(BinanceCCXTAdapter)
+    adapter._rest = ccxt.binance()
+    assert adapter._normalize_symbol("BTCUSDT") == "BTC/USDT"
+    assert adapter._normalize_symbol("BTC/USDT") == "BTC/USDT"

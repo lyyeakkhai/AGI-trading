@@ -1,4 +1,5 @@
 from packages.exchange.base import ExchangeAdapter
+from packages.exchange.binance import BinanceCCXTAdapter, normalize_ccxt_error
 from packages.exchange.errors import (
     AuthFailedError,
     ExchangeError,
@@ -19,6 +20,8 @@ from packages.exchange.models import (
 
 __all__ = [
     "ExchangeAdapter",
+    "BinanceCCXTAdapter",
+    "normalize_ccxt_error",
     "ExchangeError",
     "RetryableError",
     "RateLimitedError",
