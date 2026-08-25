@@ -1,5 +1,5 @@
 import json
-from typing import Any
+from typing import Any, cast
 
 from packages.events.client import RedisClient
 
@@ -25,20 +25,20 @@ class RedisStreamPublisher:
     ) -> str:
         """XADD with MAXLEN ~ trimming. Returns message ID."""
         key = self._client._key(stream)
-        serialized_fields: dict[str, str] = {}
+        serialized_fields: dict[Any, Any] = {}
         for k, v in message.items():
             if isinstance(v, (dict, list)):
                 serialized_fields[k] = json.dumps(v)
             else:
                 serialized_fields[k] = str(v)
 
-        msg_id: str = await self._client.redis.xadd(
+        result = await self._client.redis.xadd(
             name=key,
             fields=serialized_fields,
             maxlen=maxlen,
             approximate=True,
         )
-        return msg_id
+        return str(result)
 
 
 class RedisStreamConsumer:
@@ -70,7 +70,7 @@ class RedisStreamConsumer:
         block_ms: int = 2000,
     ) -> list[dict[str, Any]]:
         """XREADGROUP with backpressure."""
-        prefixed_streams = {self._client._key(s): ">" for s in streams}
+        prefixed_streams: dict[Any, Any] = {self._client._key(s): ">" for s in streams}
         raw_results = await self._client.redis.xreadgroup(
             groupname=self._group,
             consumername=self._consumer,
@@ -79,10 +79,11 @@ class RedisStreamConsumer:
             block=block_ms,
         )
         messages: list[dict[str, Any]] = []
-        if not raw_results:
+        if not raw_results or not isinstance(raw_results, list):
             return messages
 
-        for stream_key, stream_messages in raw_results:
+        typed_results = cast(list[tuple[str, list[tuple[str, dict[str, Any]]]]], raw_results)
+        for stream_key, stream_messages in typed_results:
             for msg_id, fields in stream_messages:
                 messages.append(
                     {
@@ -116,8 +117,8 @@ class RedisStreamConsumer:
             count=count,
         )
         claimed_messages: list[dict[str, Any]] = []
-        if result and len(result) >= 2:
-            raw_msgs = result[1]
+        if result and isinstance(result, (list, tuple)) and len(result) >= 2:
+            raw_msgs = cast(list[tuple[str, dict[str, Any]]], result[1])
             for msg_id, fields in raw_msgs:
                 claimed_messages.append(
                     {

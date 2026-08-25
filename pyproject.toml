@@ -44,3 +44,8 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
+
+[tool.pytest.ini_options]
+markers = ["integration: requires running Docker services"]
+asyncio_mode = "auto"
+
