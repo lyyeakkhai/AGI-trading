@@ -1,7 +1,35 @@
 # AI Trading Intelligence Platform
 
-A private, single-user AI trading platform combining real-time cryptocurrency market data, quantitative analytics, technical analysis, news intelligence, and a persistent AI-agent runtime to identify and trade crypto opportunities.
+A private, single-user AI trading intelligence and execution platform.
 
-## Project Structure
+## Prerequisites
 
-- `docs/product/prd.md`: Product Requirements Document (PRD) for MVP 1.
+- Python 3.12+
+- uv
+- Node.js LTS + pnpm
+- Docker + Docker Compose
+
+## Bootstrap
+
+```bash
+cp .env.example .env
+uv sync
+pnpm install
+docker compose up -d
+uv run alembic upgrade head
+```
+
+## Development Commands
+
+```bash
+make lint        # ruff lint + format check + frontend lint
+make typecheck   # mypy strict + tsc
+make test        # pytest
+make check       # all of the above
+make up          # start Docker services
+make migrate     # run Alembic migrations
+```
+
+## Architecture
+
+See [Foundation 0 Specification](docs/specs/0001-foundation-0-repository-tooling-configuration/index.md) and [Product Requirements Document](docs/product/prd.md).
