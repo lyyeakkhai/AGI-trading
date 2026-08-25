@@ -10,6 +10,15 @@ from packages.domain.enums import (
     Timeframe,
     TradingMode,
 )
+from packages.domain.market import (
+    Asset,
+    Candle,
+    IndicatorSnapshot,
+    KnowledgeEmbedding,
+    MarketEvent,
+    Opportunity,
+    TradingSkill,
+)
 from packages.domain.value_objects import (
     Balance,
     Fee,
@@ -22,12 +31,18 @@ from packages.domain.value_objects import (
 __all__ = [
     "AppEnv",
     "ApprovalStatus",
+    "Asset",
     "Balance",
+    "Candle",
     "DivergenceType",
     "ExecutionStatus",
     "Fee",
+    "IndicatorSnapshot",
+    "KnowledgeEmbedding",
+    "MarketEvent",
     "MarketRegime",
     "Notional",
+    "Opportunity",
     "OrderSide",
     "OrderType",
     "PnL",
@@ -36,4 +51,5 @@ __all__ = [
     "RiskDecisionType",
     "Timeframe",
     "TradingMode",
+    "TradingSkill",
 ]
