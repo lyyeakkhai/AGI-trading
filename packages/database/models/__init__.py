@@ -33,6 +33,7 @@ from packages.database.models.relational import (
     TradeModel,
     TradeProposalModel,
 )
+from packages.database.models.vectors import TradingKnowledgeEmbedding
 
 __all__ = [
     "AgentDecisionModel",
@@ -66,4 +67,5 @@ __all__ = [
     "SystemConfigModel",
     "TradeModel",
     "TradeProposalModel",
+    "TradingKnowledgeEmbedding",
 ]
