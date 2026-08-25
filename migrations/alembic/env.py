@@ -3,24 +3,9 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy.engine import Connection
-from sqlalchemy.orm import DeclarativeBase
-
 from packages.config import get_settings
-from packages.database import get_engine
-
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
-config = context.config
-
-# Interpret the config file for Python logging.
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
-
-
-# target metadata for autogenerate support (drift check)
-class Base(DeclarativeBase):
-    pass
-
+from packages.database import Base, get_engine
+import packages.database.models  # noqa: F401
 
 target_metadata = Base.metadata
 
