@@ -172,7 +172,11 @@ class AuthSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
-    """Root configuration composing all domain settings categories with strict cross-field validation."""
+    """Root configuration composing all domain settings categories.
+
+    Enforces cross-field startup validation rules (PRD section 66.4) to fail fast
+    and prevent unsafe combinations from booting.
+    """
 
     model_config = SettingsConfigDict(
         env_file=".env",
