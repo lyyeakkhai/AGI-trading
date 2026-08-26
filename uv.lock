@@ -52,6 +52,8 @@ dev = [
     { name = "ruff" },
 ]
 quant = [
+    { name = "pgvector" },
+    { name = "sentence-transformers" },
     { name = "vadersentiment" },
 ]
 
@@ -87,7 +89,11 @@ dev = [
     { name = "pytest-mock", specifier = ">=3.15.1" },
     { name = "ruff", specifier = ">=0.5.0" },
 ]
-quant = [{ name = "vadersentiment", specifier = ">=3.3.2" }]
+quant = [
+    { name = "pgvector", specifier = ">=0.5.0" },
+    { name = "sentence-transformers", specifier = ">=6.0.0" },
+    { name = "vadersentiment", specifier = ">=3.3.2" },
+]
 
 [[package]]
 name = "aiohappyeyeballs"
