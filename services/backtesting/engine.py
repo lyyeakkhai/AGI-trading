@@ -48,13 +48,13 @@ class EventDrivenBacktester:
 
             # 1. Execute pending orders at the open price of t
             if self.pending_orders:
-                execution_price = current_candle.open
+                execution_price = current_candle.open.value
                 for order in self.pending_orders:
                     self._execute_order(order, execution_price, current_candle)
                 self.pending_orders.clear()
 
             # 2. Update equity curve for current state
-            current_equity = self.capital + (self.position * current_candle.close)
+            current_equity = self.capital + (self.position * current_candle.close.value)
             self.equity_curve[t] = current_equity
 
             # 3. Generate signals using data up to t (inclusive)
