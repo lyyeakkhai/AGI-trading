@@ -43,6 +43,9 @@ class MarketRegime(str, Enum):
     TRENDING_DOWN = "trending_down"
     RANGING = "ranging"
     VOLATILE = "volatile"
+    HIGH_VOLATILITY = "high_volatility"
+    LOW_VOLATILITY = "low_volatility"
+    UNCERTAIN = "uncertain"
 
 
 class ApprovalStatus(str, Enum):

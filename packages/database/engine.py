@@ -1,6 +1,6 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import Optional
+from typing import Union
 
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import (
 from packages.config.settings import DatabaseSettings, Settings, get_settings
 
 
-def get_engine(settings: Optional[Union[Settings, DatabaseSettings]] = None) -> AsyncEngine:
+def get_engine(settings: Union[Settings, DatabaseSettings, None] = None) -> AsyncEngine:
     """Creates and returns an async SQLAlchemy engine using asyncpg."""
     if settings is None:
         db_settings = get_settings().database
@@ -63,3 +63,27 @@ async def AsyncSessionContext(
         raise
     finally:
         await session.close()
+
+
+_engine: AsyncEngine | None = None
+_session_factory: async_sessionmaker[AsyncSession] | None = None
+
+
+def get_global_engine() -> AsyncEngine:
+    global _engine
+    if _engine is None:
+        _engine = get_engine()
+    return _engine
+
+
+def get_global_session_factory() -> async_sessionmaker[AsyncSession]:
+    global _session_factory
+    if _session_factory is None:
+        _session_factory = get_session_factory(get_global_engine())
+    return _session_factory
+
+
+async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
+    factory = get_global_session_factory()
+    async with AsyncSessionContext(factory) as session:
+        yield session

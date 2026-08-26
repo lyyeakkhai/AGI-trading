@@ -5,13 +5,12 @@ from packages.database.models.hypertables import (
     MarketTradeModel,
     PortfolioSnapshotModel,
     SignalEventModel,
-    SocialMetricModel,
+
 )
 from packages.database.models.relational import (
     AgentDecisionModel,
     AgentObservationModel,
     AuditLogModel,
-    BacktestModel,
     ExecutionModel,
     ExecutionRequestModel,
     FillModel,
@@ -27,23 +26,24 @@ from packages.database.models.relational import (
     RiskDecisionModel,
     RiskRuleModel,
     SkillModel,
-    StrategyModel,
-    StrategyVersionModel,
     SystemConfigModel,
     TradeModel,
     TradeProposalModel,
 )
+from packages.database.models.audit import AuditRecord
+from packages.database.models.idempotency import IdempotencyRecord
 from packages.database.models.vectors import TradingKnowledgeEmbedding
 
 __all__ = [
     "AgentDecisionModel",
     "AgentObservationModel",
     "AuditLogModel",
-    "BacktestModel",
+    "AuditRecord",
     "ExecutionModel",
     "ExecutionRequestModel",
     "FillModel",
     "IdempotencyKeyModel",
+    "IdempotencyRecord",
     "IndicatorSnapshotModel",
     "MarketCandleModel",
     "MarketEventModel",
@@ -62,10 +62,11 @@ __all__ = [
     "SignalEventModel",
     "SkillModel",
     "SocialMetricModel",
-    "StrategyModel",
-    "StrategyVersionModel",
     "SystemConfigModel",
     "TradeModel",
     "TradeProposalModel",
     "TradingKnowledgeEmbedding",
 ]
+from packages.database.models.intelligence import SocialMetricModel, NewsEventModel, EventCorrelationModel
+from packages.database.models.strategy import StrategyModel, StrategyVersionModel
+from packages.database.models.backtest import BacktestJobModel, BacktestResultModel
