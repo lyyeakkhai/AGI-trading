@@ -2,6 +2,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
+from apps.api.routers.analytics import router as analytics_router
 from apps.api.routers.health import router as health_router
 from apps.api.routers.markets import router as markets_router
 from apps.api.routers.risk import router as risk_router
@@ -44,6 +45,7 @@ def create_app() -> FastAPI:
 
     app.include_router(portfolio_router)
     app.include_router(reconciliation_router)
+    app.include_router(analytics_router)
     return app
 
 
