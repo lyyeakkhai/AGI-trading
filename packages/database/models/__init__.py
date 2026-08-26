@@ -33,17 +33,21 @@ from packages.database.models.relational import (
     TradeModel,
     TradeProposalModel,
 )
+from packages.database.models.audit import AuditRecord
+from packages.database.models.idempotency import IdempotencyRecord
 from packages.database.models.vectors import TradingKnowledgeEmbedding
 
 __all__ = [
     "AgentDecisionModel",
     "AgentObservationModel",
     "AuditLogModel",
+    "AuditRecord",
     "BacktestModel",
     "ExecutionModel",
     "ExecutionRequestModel",
     "FillModel",
     "IdempotencyKeyModel",
+    "IdempotencyRecord",
     "IndicatorSnapshotModel",
     "MarketCandleModel",
     "MarketEventModel",
