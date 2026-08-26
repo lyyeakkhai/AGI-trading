@@ -29,6 +29,27 @@ services:
       redis:
         condition: service_healthy
 
+  hermes:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/hermes.Dockerfile
+    environment:
+      - APP_ENV
+      - TRADING_MODE
+      - LIVE_TRADING_ENABLED
+      - DATABASE_URL
+      - REDIS_URL
+      - HERMES_SERVICE_TOKEN
+      - LLM_GATEWAY_KEY
+    networks:
+      - trading-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+
   postgres:
     image: timescale/timescaledb-ha:pg16-latest
     environment:
