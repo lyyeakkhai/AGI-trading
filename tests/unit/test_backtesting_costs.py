@@ -20,11 +20,11 @@ def test_engine_look_ahead_prevention():
         candles.append(Candle(
             symbol="BTC/USDT",
             timeframe=Timeframe.H1,
-            open=Price(str(100 + i*10)),
-            high=Price(str(110 + i*10)),
-            low=Price(str(90 + i*10)),
-            close=Price(str(110 + i*10)),
-            volume=Quantity("1.0"),
+            open=Price(value=str(100 + i*10)),
+            high=Price(value=str(110 + i*10)),
+            low=Price(value=str(90 + i*10)),
+            close=Price(value=str(110 + i*10)),
+            volume=Quantity(value="1.0"),
             timestamp=base_time + timedelta(hours=i),
             is_closed=True,
             trading_mode=TradingMode.PAPER
