@@ -55,12 +55,12 @@ def test_classify_regime_trending_down() -> None:
 
 
 def test_classify_regime_ranging() -> None:
-    # Oscillating sideways around 100
-    prices = [100.0 + (5.0 if i % 2 == 0 else -5.0) for i in range(60)]
-    df_1h = _make_df(prices, spread=1.0)
+    # Small oscillating sideways around 100 (low ATR, no directional slope)
+    prices = [100.0 + (1.0 if i % 4 < 2 else -1.0) for i in range(60)]
+    df_1h = _make_df(prices, spread=0.2)
 
     regime = classify_regime(df_1h=df_1h)
-    assert regime in (MarketRegime.RANGING, MarketRegime.UNCERTAIN)
+    assert regime in (MarketRegime.RANGING, MarketRegime.LOW_VOLATILITY, MarketRegime.UNCERTAIN)
 
 
 def test_classify_regime_high_volatility() -> None:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock
 import httpx
 import pytest
@@ -46,12 +46,13 @@ async def test_get_indicators_api() -> None:
 @pytest.mark.asyncio
 async def test_get_regime_api() -> None:
     mock_session = AsyncMock()
+    base_time = datetime(2026, 1, 1, 0, 0, tzinfo=timezone.utc)
 
     # Generate 50 mock candle rows with strong uptrend
     mock_rows: list[MagicMock] = []
     for i in range(50):
         row = MagicMock()
-        row.timestamp = datetime(2026, 1, 1, i, 0, tzinfo=timezone.utc)
+        row.timestamp = base_time + timedelta(hours=i)
         row.open = 100.0 + i * 2
         row.high = 102.0 + i * 2
         row.low = 99.0 + i * 2

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock
 import pytest
 
@@ -16,21 +16,28 @@ def test_indicator_snapshot_model_structure() -> None:
 async def test_analytics_worker_persists_snapshot_on_closed_candle() -> None:
     mock_session = AsyncMock()
     mock_session.execute = AsyncMock()
-    mock_session.begin = MagicMock()
-    mock_session.begin.return_value.__aenter__ = AsyncMock(return_value=None)
-    mock_session.begin.return_value.__aexit__ = AsyncMock(return_value=None)
+
+    class MockContextManager:
+        async def __aenter__(self) -> None:
+            return None
+
+        async def __aexit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
+            return None
+
+    mock_session.begin = MagicMock(return_value=MockContextManager())
 
     def session_factory() -> AsyncMock:
         return mock_session
 
     worker = AnalyticsWorker(session_factory=session_factory, trading_mode="live")
+    base_time = datetime(2026, 1, 1, 0, 0, tzinfo=timezone.utc)
 
     # Ingest 25 candles, last one is_closed=True
     for i in range(25):
         candle = {
             "symbol": "SOL/USDT",
             "timeframe": "1h",
-            "timestamp": datetime(2026, 1, 1, i, 0, tzinfo=timezone.utc).isoformat(),
+            "timestamp": (base_time + timedelta(hours=i)).isoformat(),
             "open": 100.0 + i,
             "high": 105.0 + i,
             "low": 98.0 + i,
@@ -53,9 +60,15 @@ async def test_analytics_worker_persists_snapshot_on_closed_candle() -> None:
 async def test_persistence_error_handling_does_not_crash_worker() -> None:
     mock_session = AsyncMock()
     mock_session.execute = AsyncMock(side_effect=Exception("DB Connection Timeout"))
-    mock_session.begin = MagicMock()
-    mock_session.begin.return_value.__aenter__ = AsyncMock(return_value=None)
-    mock_session.begin.return_value.__aexit__ = AsyncMock(return_value=None)
+
+    class MockContextManager:
+        async def __aenter__(self) -> None:
+            return None
+
+        async def __aexit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
+            return None
+
+    mock_session.begin = MagicMock(return_value=MockContextManager())
 
     worker = AnalyticsWorker(session_factory=lambda: mock_session)
 

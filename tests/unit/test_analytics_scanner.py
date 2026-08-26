@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from unittest.mock import AsyncMock, MagicMock
 import pandas as pd
@@ -27,11 +27,10 @@ async def test_opportunity_scanner_breakout_detection() -> None:
     closes = [93.0] * 29 + [114.0]
     volumes = [100.0] * 29 + [300.0]
 
+    base_time = datetime(2026, 1, 1, 0, 0, tzinfo=timezone.utc)
     df = pd.DataFrame(
         {
-            "timestamp": [
-                datetime(2026, 1, 1, i, 0, tzinfo=timezone.utc) for i in range(30)
-            ],
+            "timestamp": [base_time + timedelta(hours=i) for i in range(30)],
             "open": opens,
             "high": highs,
             "low": lows,

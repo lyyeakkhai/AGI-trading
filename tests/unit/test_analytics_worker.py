@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock
 import pytest
 
@@ -11,12 +11,13 @@ from services.analytics.worker import AnalyticsWorker
 @pytest.mark.asyncio
 async def test_analytics_worker_ingest_candle_sliding_window() -> None:
     worker = AnalyticsWorker()
+    base_time = datetime(2026, 1, 1, 0, 0, tzinfo=timezone.utc)
 
     for i in range(30):
         candle = {
             "symbol": "BTC/USDT",
             "timeframe": "1h",
-            "timestamp": datetime(2026, 1, 1, i, 0, tzinfo=timezone.utc).isoformat(),
+            "timestamp": (base_time + timedelta(hours=i)).isoformat(),
             "open": 50000.0 + i * 100,
             "high": 50100.0 + i * 100,
             "low": 49900.0 + i * 100,

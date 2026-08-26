@@ -232,27 +232,37 @@ class AnalyticsWorker:
         indicators_dict: dict[str, Any],
     ) -> None:
         """Persist indicator snapshot to TimescaleDB."""
+        if not self._session_factory:
+            return
+
         try:
             async with self._get_session() as session:
-                async with session.begin():
-                    await session.execute(
-                        text("""
-                            INSERT INTO indicator_snapshots
-                                (symbol, timeframe, timestamp, indicators, trading_mode)
-                            VALUES
-                                (:symbol, :timeframe, :timestamp, :indicators, :trading_mode)
-                            ON CONFLICT (symbol, timeframe, timestamp)
-                            DO UPDATE SET
-                                indicators = EXCLUDED.indicators
-                        """),
-                        {
-                            "symbol": symbol,
-                            "timeframe": timeframe,
-                            "timestamp": timestamp,
-                            "indicators": indicators_dict,
-                            "trading_mode": self._trading_mode,
-                        },
-                    )
+                stmt = text("""
+                    INSERT INTO indicator_snapshots
+                        (symbol, timeframe, timestamp, indicators, trading_mode)
+                    VALUES
+                        (:symbol, :timeframe, :timestamp, :indicators, :trading_mode)
+                    ON CONFLICT (symbol, timeframe, timestamp)
+                    DO UPDATE SET
+                        indicators = EXCLUDED.indicators
+                """)
+                params = {
+                    "symbol": symbol,
+                    "timeframe": timeframe,
+                    "timestamp": timestamp,
+                    "indicators": indicators_dict,
+                    "trading_mode": self._trading_mode,
+                }
+
+                if hasattr(session, "begin"):
+                    begin_res = session.begin()
+                    if hasattr(begin_res, "__aenter__"):
+                        async with begin_res:
+                            await session.execute(stmt, params)
+                    else:
+                        await session.execute(stmt, params)
+                else:
+                    await session.execute(stmt, params)
         except Exception as exc:
             logger.error(
                 "persist_indicator_snapshot_failed",
