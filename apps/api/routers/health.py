@@ -5,14 +5,15 @@ import redis.asyncio as aioredis
 from sqlalchemy import text
 
 from packages.config import get_settings
-from packages.database import get_engine
+from packages.database import get_engine, get_session_factory
 from packages.logging import get_logger
 from services.market_data.health import get_global_health_monitor
+from services.reconciliation.worker import ReconciliationEngine
 
 router = APIRouter(prefix="/health", tags=["health"])
 logger = get_logger("health")
 
-EXPECTED_MIGRATION_HEAD = "0001"
+EXPECTED_MIGRATION_HEAD = "0004"
 
 
 @router.get("/live")
@@ -106,6 +107,21 @@ async def health_trading() -> dict[str, Any]:
             "code": "MARKET_DATA_NOT_VERIFIED",
             "message": "Market data pipeline not built (Foundation 2)",
         })
+
+    # Check reconciliation block status
+    try:
+        settings = get_settings()
+        engine = get_engine(settings)
+        session_factory = get_session_factory(engine)
+        async with session_factory() as session:
+            rec_engine = ReconciliationEngine()
+            if await rec_engine.is_blocked(session):
+                reasons.append({
+                    "code": "RECONCILIATION_BLOCKED",
+                    "message": "Trading halted due to reconciliation divergence",
+                })
+    except Exception as e:
+        logger.debug("reconciliation_check_skip", error=str(e))
 
     reasons.extend([
         {

@@ -4,6 +4,8 @@ from fastapi import FastAPI
 
 from apps.api.routers.health import router as health_router
 from apps.api.routers.markets import router as markets_router
+from apps.api.routers.portfolio import router as portfolio_router
+from apps.api.routers.reconciliation import router as reconciliation_router
 from packages.config import get_settings
 from packages.database import get_engine
 from packages.logging import configure_logging, get_logger
@@ -37,6 +39,8 @@ def create_app() -> FastAPI:
     )
     app.include_router(health_router)
     app.include_router(markets_router)
+    app.include_router(portfolio_router)
+    app.include_router(reconciliation_router)
     return app
 
 
