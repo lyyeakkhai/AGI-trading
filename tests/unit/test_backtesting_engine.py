@@ -1,4 +1,4 @@
-from packages.domain.types import Price, Quantity
+from packages.domain.value_objects import Price, Quantity
 import pytest
 from decimal import Decimal
 from datetime import datetime, timedelta
