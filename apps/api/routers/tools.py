@@ -48,6 +48,19 @@ async def search_memory(query: str) -> dict[str, Any]:
     return {"query": query, "results": []}
 
 # 7.9: TradingAgents Gateway
-@router.post("/research/deep_analyze", dependencies=[Depends(verify_tradingagents_token)])
+import httpx
+from packages.config.settings import get_settings
+
+@router.post("/research/deep_analyze", dependencies=[Depends(verify_hermes_token)])
 async def tradingagents_deep_analyze(payload: dict[str, Any]) -> dict[str, Any]:
-    return {"status": "analyzed", "result": "Some deep analysis."}
+    settings = get_settings()
+    url = f"{settings.trading_agents.base_url}/internal/v1/deep-analyze"
+    headers = {"Authorization": f"Bearer {settings.trading_agents.service_token}"}
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.post(url, json=payload, headers=headers, timeout=settings.trading_agents.timeout_seconds)
+            resp.raise_for_status()
+            return resp.json()
+        except httpx.HTTPError as e:
+            raise HTTPException(status_code=502, detail=f"TradingAgents error: {str(e)}")
+

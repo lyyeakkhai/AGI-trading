@@ -4,6 +4,8 @@ from decimal import Decimal
 
 class TradeProposal(BaseModel):
     direction: str = Field(description="Trade direction: 'long' or 'short' or 'neutral'")
+    confidence: float = Field(0.0, description="Confidence score from 0.0 to 1.0")
+
     entry: Optional[Decimal] = Field(None, description="Suggested entry price")
     stop_loss: Optional[Decimal] = Field(None, description="Suggested stop loss price")
     take_profit: Optional[Decimal] = Field(None, description="Suggested take profit price")

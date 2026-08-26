@@ -9,6 +9,8 @@ from packages.config import get_settings
 from services.hermes.context import ContextAssembler
 from services.hermes.reasoning import ReasoningEngine
 from services.hermes.proposal_client import ProposalClient
+from services.hermes.research_client import ResearchClient
+from services.hermes.escalation_policy import should_escalate
 from services.hermes.memory_recorder import MemoryRecorder
 
 logger = logging.getLogger(__name__)
@@ -23,6 +25,7 @@ class HermesOrchestrator:
         self.context_assembler = ContextAssembler()
         self.reasoning = ReasoningEngine()
         self.proposal_client = ProposalClient()
+        self.research_client = ResearchClient()
         self.memory = MemoryRecorder()
 
     async def initialize(self):
@@ -53,6 +56,16 @@ class HermesOrchestrator:
             # 2. LLM Reasoning
             proposal = await self.reasoning.evaluate(context)
             
+            if proposal:
+                # Escalation Check
+                regime = str(context.get("indicators", {}))
+                if should_escalate(symbol, timeframe, proposal.confidence, regime):
+                    logger.info(f"Escalating {symbol} to deep research")
+                    deep_report = await self.research_client.trigger_deep_research(symbol, timeframe, str(context))
+                    if deep_report:
+                        context["deep_research_report"] = deep_report
+                        proposal = await self.reasoning.evaluate(context)
+
             if proposal:
                 # 3. Submit Proposal
                 decision = await self.proposal_client.submit(proposal)
