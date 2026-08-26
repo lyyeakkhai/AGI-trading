@@ -1,3 +1,4 @@
+from packages.domain.models import Price, Quantity
 import pytest
 from decimal import Decimal
 from datetime import datetime, timedelta
@@ -18,12 +19,12 @@ def test_engine_look_ahead_prevention():
     for i in range(3):
         candles.append(Candle(
             symbol="BTC/USDT",
-            timeframe=Timeframe.ONE_HOUR,
-            open=Decimal(str(100 + i*10)),
-            high=Decimal(str(110 + i*10)),
-            low=Decimal(str(90 + i*10)),
-            close=Decimal(str(110 + i*10)),
-            volume=Decimal("1.0"),
+            timeframe=Timeframe.H1,
+            open=Price(str(100 + i*10)),
+            high=Price(str(110 + i*10)),
+            low=Price(str(90 + i*10)),
+            close=Price(str(110 + i*10)),
+            volume=Quantity("1.0"),
             timestamp=base_time + timedelta(hours=i),
             is_closed=True,
             trading_mode=TradingMode.PAPER

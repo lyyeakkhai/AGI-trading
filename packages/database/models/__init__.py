@@ -11,7 +11,6 @@ from packages.database.models.relational import (
     AgentDecisionModel,
     AgentObservationModel,
     AuditLogModel,
-    BacktestModel,
     ExecutionModel,
     ExecutionRequestModel,
     FillModel,
@@ -27,8 +26,6 @@ from packages.database.models.relational import (
     RiskDecisionModel,
     RiskRuleModel,
     SkillModel,
-    StrategyModel,
-    StrategyVersionModel,
     SystemConfigModel,
     TradeModel,
     TradeProposalModel,
@@ -42,7 +39,6 @@ __all__ = [
     "AgentObservationModel",
     "AuditLogModel",
     "AuditRecord",
-    "BacktestModel",
     "ExecutionModel",
     "ExecutionRequestModel",
     "FillModel",
@@ -66,11 +62,11 @@ __all__ = [
     "SignalEventModel",
     "SkillModel",
     "SocialMetricModel",
-    "StrategyModel",
-    "StrategyVersionModel",
     "SystemConfigModel",
     "TradeModel",
     "TradeProposalModel",
     "TradingKnowledgeEmbedding",
 ]
 from packages.database.models.intelligence import SocialMetricModel, NewsEventModel, EventCorrelationModel
+from packages.database.models.strategy import StrategyModel, StrategyVersionModel
+from packages.database.models.backtest import BacktestJobModel, BacktestResultModel
