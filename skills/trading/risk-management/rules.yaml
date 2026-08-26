@@ -1,0 +1,2 @@
+max_risk_per_trade_percent: 0.5
+default_stop_loss_atr_multiplier: 2.0
