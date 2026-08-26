@@ -13,7 +13,7 @@ def mock_settings(mocker):
 
 @pytest.fixture
 def orchestrator(mock_settings, mocker):
-    with patch("services.hermes.orchestrator.get_redis_client") as mock_redis, \
+    with patch("services.hermes.orchestrator.redis.from_url") as mock_redis, \
          patch("services.hermes.orchestrator.ContextAssembler") as mock_ctx, \
          patch("services.hermes.orchestrator.ReasoningEngine") as mock_reasoning, \
          patch("services.hermes.orchestrator.ProposalClient") as mock_prop, \
