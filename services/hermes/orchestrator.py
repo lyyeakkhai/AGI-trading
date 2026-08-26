@@ -4,7 +4,8 @@ import logging
 from typing import Any, Dict
 
 from packages.config.settings import get_settings
-from packages.redis.client import get_redis_client
+import redis.asyncio as redis
+from packages.config import get_settings
 from services.hermes.context import ContextAssembler
 from services.hermes.reasoning import ReasoningEngine
 from services.hermes.proposal_client import ProposalClient
