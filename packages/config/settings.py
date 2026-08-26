@@ -169,6 +169,12 @@ class AuthSettings(BaseSettings):
     dashboard_auth_secret: Optional[str] = Field(
         default=None, validation_alias="DASHBOARD_AUTH_SECRET"
     )
+    dashboard_owner_password_hash: Optional[str] = Field(
+        default=None, validation_alias="DASHBOARD_OWNER_PASSWORD_HASH"
+    )
+    dashboard_totp_secret: Optional[str] = Field(
+        default=None, validation_alias="DASHBOARD_TOTP_SECRET"
+    )
 
 
 class Settings(BaseSettings):
