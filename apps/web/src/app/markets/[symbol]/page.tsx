@@ -1,15 +1,16 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { createChart, IChartApi, ISeriesApi } from 'lightweight-charts';
+import { createChart, IChartApi, ColorType } from 'lightweight-charts';
 import { useParams } from 'next/navigation';
 
 export default function MarketPage() {
     const params = useParams();
-    const symbol = params.symbol as string;
+    const symbol = (params.symbol as string) || '';
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const [chartData, setChartData] = useState<any[]>([]);
 
     useEffect(() => {
+        if (!symbol) return;
         fetch(`/api/v1/owner/market/candles?symbol=${symbol}`)
             .then(res => res.json())
             .then(data => setChartData(data))
@@ -20,7 +21,7 @@ export default function MarketPage() {
         if (!chartContainerRef.current || chartData.length === 0) return;
 
         const chart: IChartApi = createChart(chartContainerRef.current, {
-            layout: { background: { type: 'solid', color: '#111827' }, textColor: '#d1d5db' },
+            layout: { background: { type: ColorType.Solid, color: '#111827' }, textColor: '#d1d5db' },
             grid: { vertLines: { color: '#374151' }, horzLines: { color: '#374151' } },
             width: chartContainerRef.current.clientWidth,
             height: 400,

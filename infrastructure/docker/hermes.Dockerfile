@@ -1,20 +1,19 @@
 FROM python:3.12-slim
 
-# Prevent python from writing pyc files to disc
-ENV PYTHONDONTWRITEBYTECODE=1
-# Prevent python from buffering stdout and stderr
-ENV PYTHONUNBUFFERED=1
-
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends     build-essential     && rm -rf /var/lib/apt/lists/*
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/root/.local/bin:$PATH"
 
-RUN pip install --no-cache-dir uv
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && \
+    curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    apt-get purge -y --auto-remove curl && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml uv.lock ./
-RUN uv pip install --system --no-dev -r pyproject.toml
+RUN uv sync --frozen --no-dev
 
 COPY . .
 
-# Failsafe default command
-CMD ["python", "-m", "services.hermes.orchestrator"]
+CMD ["uv", "run", "python", "-m", "services.hermes.orchestrator"]
