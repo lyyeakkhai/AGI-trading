@@ -15,6 +15,11 @@ from packages.quant.regime import (
     classify_regime,
     classify_regime_detailed,
 )
+from packages.quant.scoring import (
+    ConfidenceLevel,
+    ConfidenceScore,
+    calculate_confidence,
+)
 from packages.quant.structure import (
     SwingPoint,
     calculate_rvol,
@@ -26,12 +31,15 @@ from packages.quant.structure import (
 )
 
 __all__ = [
+    "ConfidenceLevel",
+    "ConfidenceScore",
     "MarketRegime",
     "RegimeDetails",
     "SwingPoint",
     "TALIB_AVAILABLE",
     "adx",
     "atr",
+    "calculate_confidence",
     "calculate_rvol",
     "classify_regime",
     "classify_regime_detailed",
