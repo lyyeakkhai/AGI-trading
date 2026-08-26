@@ -35,6 +35,7 @@ Indicators: {json.dumps(context.get('indicators'))}
 Active Positions: {json.dumps(context.get('positions'))}
 
 Evaluate the data and generate a trade proposal.
+Deep Research Report: {json.dumps(context.get('deep_research_report'))}
 """
 
         try:

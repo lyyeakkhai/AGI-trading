@@ -50,6 +50,18 @@ services:
         condition: service_healthy
 
 
+  tradingagents:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/tradingagents.Dockerfile
+    environment:
+      - APP_ENV
+      - TRADING_MODE
+      - TRADINGAGENTS_SERVICE_TOKEN
+      - LLM_GATEWAY_KEY
+    networks:
+      - trading-net
+
   postgres:
     image: timescale/timescaledb-ha:pg16-latest
     environment:

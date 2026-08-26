@@ -48,6 +48,11 @@ from packages.domain.value_objects import (
     Price,
     Quantity,
 )
+from packages.domain.research import (
+    DeepResearchRequest,
+    BullBearDebateResult,
+    SynthesizedResearchReport,
+)
 
 __all__ = [
     "AgentDecision",
@@ -90,4 +95,7 @@ __all__ = [
     "TradeProposal",
     "TradingMode",
     "TradingSkill",
+    "DeepResearchRequest",
+    "BullBearDebateResult",
+    "SynthesizedResearchReport",
 ]
