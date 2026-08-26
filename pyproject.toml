@@ -36,6 +36,9 @@ dev = [
     "mypy>=1.10.0",
     "pre-commit>=3.7.0",
 ]
+quant = [
+    "vadersentiment>=3.3.2",
+]
 
 [tool.ruff]
 line-length = 100

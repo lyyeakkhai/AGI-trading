@@ -5,7 +5,7 @@ from packages.database.models.hypertables import (
     MarketTradeModel,
     PortfolioSnapshotModel,
     SignalEventModel,
-    SocialMetricModel,
+
 )
 from packages.database.models.relational import (
     AgentDecisionModel,
@@ -73,3 +73,4 @@ __all__ = [
     "TradeProposalModel",
     "TradingKnowledgeEmbedding",
 ]
+from packages.database.models.intelligence import SocialMetricModel, NewsEventModel, EventCorrelationModel

@@ -77,18 +77,6 @@ class MarketEventModel(Base):
     trading_mode: Mapped[str] = mapped_column(String(10), nullable=False)
 
 
-class SocialMetricModel(Base):
-    __tablename__ = "social_metrics"
-    __table_args__ = (
-        PrimaryKeyConstraint("symbol", "window", "source", "timestamp", name="pk_social_metrics"),
-    )
-
-    symbol: Mapped[str] = mapped_column(String(20), nullable=False)
-    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    window: Mapped[str] = mapped_column(String(10), nullable=False)
-    sentiment_score: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False)
-    volume_mentions: Mapped[int] = mapped_column(Integer, nullable=False)
-    source: Mapped[str] = mapped_column(String(50), nullable=False)
 
 
 class SignalEventModel(Base):
