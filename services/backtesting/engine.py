@@ -69,7 +69,7 @@ class EventDrivenBacktester:
 
         # Force close position at the end if any
         if self.position > Decimal("0"):
-            self._execute_order({"side": OrderSide.SELL, "quantity": self.position}, self.candles[-1].close, self.candles[-1])
+            self._execute_order({"side": OrderSide.SELL, "quantity": self.position}, self.candles[-1].close.value, self.candles[-1])
 
     def _execute_order(self, order: Dict[str, Any], raw_price: Decimal, candle: Candle):
         side = order.get("side")
