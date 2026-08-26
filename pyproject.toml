@@ -23,6 +23,10 @@ dependencies = [
     "sentence-transformers>=6.0.0",
     "openai>=2.54.0",
     "instructor>=1.15.4",
+    "argon2-cffi>=23.1.0",
+    "pyotp>=2.9.0",
+    "itsdangerous>=2.2.0",
+    "websockets>=12.0",
 ]
 
 [project.optional-dependencies]

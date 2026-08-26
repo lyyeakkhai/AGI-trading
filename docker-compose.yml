@@ -29,6 +29,19 @@ services:
       redis:
         condition: service_healthy
 
+
+  web:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/web.Dockerfile
+    environment:
+      - APP_ENV
+      - NEXT_PUBLIC_API_URL=http://api:8000
+    networks:
+      - trading-net
+    depends_on:
+      - api
+
   hermes:
     build:
       context: .

@@ -1,3 +1,11 @@
 :80 {
-    reverse_proxy api:8000
+    # API routes
+    route /api* {
+        reverse_proxy api:8000
+    }
+    
+    # All other requests to Next.js
+    handle {
+        reverse_proxy web:3000
+    }
 }
