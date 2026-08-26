@@ -1,4 +1,5 @@
 """Quant package for technical analysis, market structure, regime detection, and scoring."""
+from packages.domain.enums import MarketRegime
 from packages.quant.indicators import (
     TALIB_AVAILABLE,
     adx,
@@ -8,6 +9,11 @@ from packages.quant.indicators import (
     rsi,
     sma,
     stddev,
+)
+from packages.quant.regime import (
+    RegimeDetails,
+    classify_regime,
+    classify_regime_detailed,
 )
 from packages.quant.structure import (
     SwingPoint,
@@ -20,11 +26,15 @@ from packages.quant.structure import (
 )
 
 __all__ = [
-    "TALIB_AVAILABLE",
+    "MarketRegime",
+    "RegimeDetails",
     "SwingPoint",
+    "TALIB_AVAILABLE",
     "adx",
     "atr",
     "calculate_rvol",
+    "classify_regime",
+    "classify_regime_detailed",
     "detect_breakout",
     "detect_swing_highs_lows",
     "detect_swing_points",
