@@ -1,4 +1,4 @@
-from packages.domain.models import Price, Quantity
+from packages.domain.types import Price, Quantity
 import pytest
 from decimal import Decimal
 from datetime import datetime, timedelta
