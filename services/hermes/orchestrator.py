@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class HermesOrchestrator:
     def __init__(self):
         self.settings = get_settings()
-        self.redis = get_redis_client()
+        self.redis = redis.from_url(self.settings.redis.url)
         self.stream_name = f"{self.settings.redis.key_prefix}opportunity.detected"
         self.consumer_group = "hermes_group"
         self.consumer_name = "hermes_worker_1"
