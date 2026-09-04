@@ -12,7 +12,7 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/web ./apps/web
 
 # Install dependencies
-RUN pnpm install --no-frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --fetch-timeout=600000 --fetch-retries=5 --no-frozen-lockfile
 
 # Build Next.js app
 RUN pnpm --filter web build

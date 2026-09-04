@@ -13,7 +13,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
 
     useEffect(() => {
-        if (!csrfToken && pathname !== '/login') {
+        if (!csrfToken && pathname !== '/login' && !pathname.startsWith('/design-system')) {
             router.push('/login');
         }
     }, [csrfToken, pathname, router]);

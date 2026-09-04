@@ -1,3 +1,4 @@
+<!-- /autoplan restore point: /Users/lyyeakkhai/.gstack/projects/AGI-trading/development-autoplan-restore-20260901-022433.md -->
 # AI Trading Intelligence Platform
 ## Product Requirements Document — MVP 1
 
