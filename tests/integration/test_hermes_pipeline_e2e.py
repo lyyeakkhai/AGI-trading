@@ -7,6 +7,9 @@ from services.hermes.orchestrator import HermesOrchestrator
 from services.hermes.proposal_builder import TradeProposal
 
 
+pytestmark = pytest.mark.integration
+
+
 @pytest.fixture(autouse=True)
 def mock_openai_env(monkeypatch):
     monkeypatch.setenv("OPENAI_API_KEY", "mock-key")
@@ -51,7 +54,8 @@ async def test_full_hermes_pipeline_flow():
         mock_ctx.assert_called_once_with("BTC/USDT", "1h")
         # Should escalate because confidence 0.5 < 0.6
         mock_research.assert_called_once()
-        mock_submit.assert_called_once()
+        assert mock_reason.call_count == 2
+        mock_submit.assert_called_once_with(proposal)
         mock_mem.assert_called_once()
 
 
