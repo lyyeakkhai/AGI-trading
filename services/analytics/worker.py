@@ -4,12 +4,13 @@ Maintains an in-memory sliding window of candle data per symbol/timeframe,
 calculates technical indicators and market regimes in real-time,
 and coordinates snapshot persistence and opportunity scanning.
 """
+
 from __future__ import annotations
 
 import asyncio
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import numpy as np
@@ -144,7 +145,7 @@ class AnalyticsWorker:
         elif isinstance(ts_raw, datetime):
             ts = ts_raw
         else:
-            ts = datetime.now(timezone.utc)
+            ts = datetime.now(UTC)
 
         open_val = float(candle_data["open"])
         high_val = float(candle_data["high"])

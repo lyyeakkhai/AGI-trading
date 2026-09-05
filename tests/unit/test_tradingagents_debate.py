@@ -20,9 +20,11 @@ async def test_debate_orchestrator_runs_concurrently():
     orchestrator = DebateOrchestrator()
 
     # Mock specialists
-    orchestrator.technical.analyze = AsyncMock(return_value=TechnicalAnalysisResult(
-        trend="bullish", key_levels=["50000"], signals=["RSI oversold"]
-    ))
+    orchestrator.technical.analyze = AsyncMock(
+        return_value=TechnicalAnalysisResult(
+            trend="bullish", key_levels=["50000"], signals=["RSI oversold"]
+        )
+    )
     orchestrator.bull.argue = AsyncMock(return_value="Strong upside target")
     orchestrator.bear.argue = AsyncMock(return_value="Resistance at 52000")
     orchestrator.synthesizer.synthesize = AsyncMock(
@@ -148,7 +150,7 @@ def test_synthesized_research_report_schema_and_compat():
         confidence=0.85,
         catalysts=["Volume surge"],
         risks=["Overbought"],
-        summary="Clear uptrend"
+        summary="Clear uptrend",
     )
     assert report.direction == "long"
     assert report.confidence == 0.85
@@ -168,7 +170,7 @@ def test_synthesized_research_report_schema_and_compat():
         confidence_score=0.7,
         key_catalysts=["Breakdown"],
         key_risks=["Reversal"],
-        summary="Bearish continuation"
+        summary="Bearish continuation",
     )
     assert legacy_report.direction == "short"
     assert legacy_report.consensus_direction == "short"
@@ -192,12 +194,7 @@ def test_debate_orchestrator_dependency_injection():
     bear = BearSpecialist()
     synth = SynthesizerSpecialist()
 
-    orch = DebateOrchestrator(
-        technical=tech,
-        bull=bull,
-        bear=bear,
-        synthesizer=synth
-    )
+    orch = DebateOrchestrator(technical=tech, bull=bull, bear=bear, synthesizer=synth)
     assert orch.technical is tech
     assert orch.bull is bull
     assert orch.bear is bear
@@ -215,4 +212,3 @@ async def test_specialists_client_injection():
     res = await tech.analyze("BTC/USDT", "1h", "Test context")
     assert res.trend == "bullish"
     mock_client.chat.completions.create.assert_awaited_once()
-

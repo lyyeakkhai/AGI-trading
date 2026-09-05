@@ -1,5 +1,6 @@
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
 import yaml
 
@@ -35,7 +36,7 @@ def test_docker_compose_environment_and_workers():
     compose_path = Path("docker-compose.yml")
     assert compose_path.exists()
 
-    with open(compose_path, "r") as f:
+    with open(compose_path) as f:
         config = yaml.safe_load(f)
 
     services = config.get("services", {})

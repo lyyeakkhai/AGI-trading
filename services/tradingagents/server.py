@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="TradingAgents Microservice")
 
+
 async def verify_token(authorization: str = Header(None)):
     settings = get_settings()
     expected_token = settings.trading_agents.service_token
@@ -20,6 +21,7 @@ async def verify_token(authorization: str = Header(None)):
         return
     if authorization != f"Bearer {expected_token}":
         raise HTTPException(status_code=403, detail="Forbidden")
+
 
 @app.post("/internal/v1/deep-analyze", response_model=SynthesizedResearchReport)
 async def deep_analyze(request: DeepResearchRequest, _: None = Depends(verify_token)):

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 from pathlib import Path
@@ -14,9 +15,10 @@ class ContextAssembler:
         self,
         constitution_path: str | None = None,
         skills_dir: str | None = None,
+        tools_client: HermesToolsClient | None = None,
     ):
         self.settings = get_settings()
-        self.tools_client = HermesToolsClient(
+        self.tools_client = tools_client or HermesToolsClient(
             base_url=self.settings.hermes.base_url,
             token=self.settings.hermes.service_token,
         )
@@ -63,12 +65,31 @@ class ContextAssembler:
         return skills
 
     async def assemble(self, symbol: str, timeframe: str) -> dict[str, Any]:
-        # Tools client uses synchronous HTTP; call synchronously or in executor
         constitution = self._load_constitution()
         skills = self._load_trading_skills()
-        market_candles = self.tools_client.get_market_candles(symbol, timeframe)
-        indicators = self.tools_client.get_analytics_indicators(symbol)
-        positions = self.tools_client.get_portfolio_positions()
+
+        def _fetch_tool_data() -> tuple[Any, Any, Any]:
+            try:
+                candles = self.tools_client.get_market_candles(symbol, timeframe)
+            except Exception as e:
+                logger.warning(f"Failed to fetch market candles for {symbol}: {e}")
+                candles = []
+
+            try:
+                indicators = self.tools_client.get_analytics_indicators(symbol, timeframe)
+            except Exception as e:
+                logger.warning(f"Failed to fetch indicators for {symbol}: {e}")
+                indicators = {}
+
+            try:
+                positions = self.tools_client.get_portfolio_positions()
+            except Exception as e:
+                logger.warning(f"Failed to fetch positions: {e}")
+                positions = {}
+
+            return candles, indicators, positions
+
+        market_candles, indicators, positions = await asyncio.to_thread(_fetch_tool_data)
 
         return {
             "symbol": symbol,

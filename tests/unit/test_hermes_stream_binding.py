@@ -19,11 +19,13 @@ def test_hermes_stream_name_matches_scanner():
 
 @pytest.mark.asyncio
 async def test_process_opportunity_handles_str_and_bytes_keys():
-    with patch("services.hermes.orchestrator.redis.from_url"), \
-         patch("services.hermes.orchestrator.ContextAssembler"), \
-         patch("services.hermes.orchestrator.ReasoningEngine"), \
-         patch("services.hermes.orchestrator.ProposalClient"), \
-         patch("services.hermes.orchestrator.MemoryRecorder"):
+    with (
+        patch("services.hermes.orchestrator.redis.from_url"),
+        patch("services.hermes.orchestrator.ContextAssembler"),
+        patch("services.hermes.orchestrator.ReasoningEngine"),
+        patch("services.hermes.orchestrator.ProposalClient"),
+        patch("services.hermes.orchestrator.MemoryRecorder"),
+    ):
         orch = HermesOrchestrator()
         orch.context_assembler.assemble = AsyncMock(return_value={"symbol": "BTC/USDT"})
         orch.reasoning.evaluate = AsyncMock(return_value=None)

@@ -11,12 +11,13 @@ Runs six concurrent asyncio tasks:
 Reconnection: exponential backoff (1s base, 60s max).
 On reconnect: triggers gap detection + backfill (Task 2.5/2.6).
 """
+
 from __future__ import annotations
 
 import asyncio
+import time
 from collections.abc import Callable, Coroutine
 from dataclasses import dataclass
-import time
 from typing import Any
 
 import structlog
@@ -94,9 +95,7 @@ class IngestionWorker:
                 else:
                     attempts[name] = 0  # reset on clean exit
 
-        await asyncio.gather(*[
-            supervised(name, fn) for name, fn in tasks.items()
-        ])
+        await asyncio.gather(*[supervised(name, fn) for name, fn in tasks.items()])
 
     async def stop(self) -> None:
         self._running = False

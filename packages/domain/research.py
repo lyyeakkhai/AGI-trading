@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -7,9 +6,11 @@ class DeepResearchRequest(BaseModel):
     timeframe: str
     context: str | None = None
 
+
 class BullBearDebateResult(BaseModel):
     bull_thesis: str
     bear_thesis: str
+
 
 class SynthesizedResearchReport(BaseModel):
     model_config = ConfigDict(populate_by_name=True)

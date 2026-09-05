@@ -8,6 +8,7 @@ from packages.domain.research import SynthesizedResearchReport
 
 logger = logging.getLogger(__name__)
 
+
 class SynthesizerSpecialist:
     def __init__(self, client=None):
         self.settings = get_settings()
@@ -19,10 +20,7 @@ class SynthesizerSpecialist:
         if self._client is None:
             api_key = self.settings.llm.api_key or "mock-key"
             self._client = instructor.from_openai(
-                AsyncOpenAI(
-                    api_key=api_key,
-                    base_url=self.settings.llm.base_url
-                )
+                AsyncOpenAI(api_key=api_key, base_url=self.settings.llm.base_url)
             )
         return self._client
 
@@ -63,7 +61,7 @@ class SynthesizerSpecialist:
             f"Bull Thesis: {bull_thesis}\n"
             f"Bear Thesis: {bear_thesis}"
         )
-        
+
         try:
             return await self.client.chat.completions.create(
                 model=self.model,

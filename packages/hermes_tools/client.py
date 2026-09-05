@@ -1,5 +1,7 @@
+from typing import Any
+
 import httpx
-from typing import Any, Dict, List
+
 
 class HermesToolsClient:
     def __init__(self, base_url: str, token: str):
@@ -7,47 +9,51 @@ class HermesToolsClient:
         self.headers = {"Authorization": f"Bearer {token}"}
         self.client = httpx.Client(base_url=self.base_url, headers=self.headers)
 
-    def get_market_price(self, symbol: str) -> Dict[str, Any]:
+    def get_market_price(self, symbol: str) -> dict[str, Any]:
         resp = self.client.get("/api/v1/tools/market/price", params={"symbol": symbol})
         resp.raise_for_status()
         return resp.json()
 
-    def get_market_candles(self, symbol: str, timeframe: str) -> Dict[str, Any]:
-        resp = self.client.get("/api/v1/tools/market/candles", params={"symbol": symbol, "timeframe": timeframe})
+    def get_market_candles(self, symbol: str, timeframe: str) -> dict[str, Any]:
+        resp = self.client.get(
+            "/api/v1/tools/market/candles", params={"symbol": symbol, "timeframe": timeframe}
+        )
         resp.raise_for_status()
         return resp.json()
 
-    def get_analytics_indicators(self, symbol: str) -> Dict[str, Any]:
-        resp = self.client.get("/api/v1/tools/analytics/indicators", params={"symbol": symbol})
+    def get_analytics_indicators(self, symbol: str, timeframe: str = "1h") -> dict[str, Any]:
+        resp = self.client.get(
+            "/api/v1/tools/analytics/indicators", params={"symbol": symbol, "timeframe": timeframe}
+        )
         resp.raise_for_status()
         return resp.json()
 
-    def get_portfolio_positions(self) -> Dict[str, Any]:
+    def get_portfolio_positions(self) -> dict[str, Any]:
         resp = self.client.get("/api/v1/tools/portfolio/positions")
         resp.raise_for_status()
         return resp.json()
 
-    def get_strategy_list(self) -> Dict[str, Any]:
+    def get_strategy_list(self) -> dict[str, Any]:
         resp = self.client.get("/api/v1/tools/strategy/list")
         resp.raise_for_status()
         return resp.json()
 
-    def create_trade_proposal(self, intent: Dict[str, Any]) -> Dict[str, Any]:
+    def create_trade_proposal(self, intent: dict[str, Any]) -> dict[str, Any]:
         resp = self.client.post("/api/v1/tools/proposal/create", json=intent)
         resp.raise_for_status()
         return resp.json()
 
-    def search_knowledge(self, query: str) -> Dict[str, Any]:
+    def search_knowledge(self, query: str) -> dict[str, Any]:
         resp = self.client.get("/api/v1/tools/knowledge/search", params={"query": query})
         resp.raise_for_status()
         return resp.json()
 
-    def store_memory(self, observation: Dict[str, Any]) -> Dict[str, Any]:
+    def store_memory(self, observation: dict[str, Any]) -> dict[str, Any]:
         resp = self.client.post("/api/v1/tools/memory/store", json=observation)
         resp.raise_for_status()
         return resp.json()
 
-    def search_memory(self, query: str) -> Dict[str, Any]:
+    def search_memory(self, query: str) -> dict[str, Any]:
         resp = self.client.get("/api/v1/tools/memory/search", params={"query": query})
         resp.raise_for_status()
         return resp.json()

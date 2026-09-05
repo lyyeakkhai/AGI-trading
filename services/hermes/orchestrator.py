@@ -15,6 +15,7 @@ from services.hermes.research_client import ResearchClient
 
 logger = logging.getLogger(__name__)
 
+
 class HermesOrchestrator:
     def __init__(self):
         self.settings = get_settings()
@@ -31,9 +32,7 @@ class HermesOrchestrator:
     async def initialize(self):
         try:
             await self.redis.xgroup_create(
-                name=self.stream_name,
-                groupname=self.consumer_group,
-                mkstream=True
+                name=self.stream_name, groupname=self.consumer_group, mkstream=True
             )
         except Exception as e:
             if "BUSYGROUP" not in str(e):
@@ -49,19 +48,19 @@ class HermesOrchestrator:
 
             symbol = str(decoded_data.get("symbol", ""))
             timeframe = str(decoded_data.get("timeframe", ""))
-            
+
             if not symbol or not timeframe:
                 logger.error("Missing symbol or timeframe in event")
                 return
 
             logger.info(f"Processing opportunity for {symbol} {timeframe}")
-            
+
             # 1. Context Assembly
             context = await self.context_assembler.assemble(symbol, timeframe)
-            
+
             # 2. LLM Reasoning
             proposal = await self.reasoning.evaluate(context)
-            
+
             if proposal:
                 # Escalation Check
                 regime = str(context.get("indicators", {}))
@@ -77,17 +76,17 @@ class HermesOrchestrator:
             if proposal:
                 # 3. Submit Proposal
                 decision = await self.proposal_client.submit(proposal)
-                
+
                 # 4. Episodic Memory
                 await self.memory.record(context, proposal, decision)
-                
+
         except Exception as e:
             logger.error(f"Error processing opportunity: {e}", exc_info=True)
 
     async def run(self):
         await self.initialize()
         logger.info(f"Hermes Orchestrator started listening on {self.stream_name}")
-        
+
         while True:
             try:
                 # Read from stream
@@ -96,20 +95,21 @@ class HermesOrchestrator:
                     consumername=self.consumer_name,
                     streams={self.stream_name: ">"},
                     count=1,
-                    block=5000
+                    block=5000,
                 )
-                
+
                 for _stream, stream_messages in messages:
                     for message_id, message_data in stream_messages:
                         await self.process_opportunity(message_data)
                         await self.redis.xack(self.stream_name, self.consumer_group, message_id)
-                        
+
             except asyncio.CancelledError:
                 logger.info("Orchestrator shutting down")
                 break
             except Exception as e:
                 logger.error(f"Error reading from stream: {e}", exc_info=True)
                 await asyncio.sleep(1)
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

@@ -311,18 +311,17 @@ async def create_trade_proposal(
 
     quantity_val = intent.get("quantity") or intent.get("size")
     if quantity_val is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Missing required field: quantity"
-        )
-    try:
-        quantity = Decimal(str(quantity_val))
-        if quantity <= Decimal("0"):
-            raise ValueError()
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid quantity: must be a positive number",
-        ) from None
+        quantity = Decimal("0.01")
+    else:
+        try:
+            quantity = Decimal(str(quantity_val))
+            if quantity <= Decimal("0"):
+                raise ValueError()
+        except Exception:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid quantity: must be a positive number",
+            ) from None
 
     limit_price = None
     price_val = intent.get("entry") or intent.get("limit_price") or intent.get("entry_price")

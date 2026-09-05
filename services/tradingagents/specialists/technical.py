@@ -8,10 +8,12 @@ from packages.config.settings import get_settings
 
 logger = logging.getLogger(__name__)
 
+
 class TechnicalAnalysisResult(BaseModel):
     trend: str
     key_levels: list[str]
     signals: list[str]
+
 
 class TechnicalSpecialist:
     def __init__(self, client=None):
@@ -24,10 +26,7 @@ class TechnicalSpecialist:
         if self._client is None:
             api_key = self.settings.llm.api_key or "mock-key"
             self._client = instructor.from_openai(
-                AsyncOpenAI(
-                    api_key=api_key,
-                    base_url=self.settings.llm.base_url
-                )
+                AsyncOpenAI(api_key=api_key, base_url=self.settings.llm.base_url)
             )
         return self._client
 
@@ -37,9 +36,7 @@ class TechnicalSpecialist:
 
     async def analyze(self, symbol: str, timeframe: str, context: str) -> TechnicalAnalysisResult:
         if self._client is None and not self.settings.llm.api_key:
-            logger.warning(
-                "No LLM API key configured. Returning fallback TechnicalAnalysisResult."
-            )
+            logger.warning("No LLM API key configured. Returning fallback TechnicalAnalysisResult.")
             return TechnicalAnalysisResult(
                 trend="neutral",
                 key_levels=[],
@@ -51,7 +48,7 @@ class TechnicalSpecialist:
             "Focus only on price action, volume, trend lines, and momentum indicators."
         )
         user_prompt = f"Analyze {symbol} on {timeframe} timeframe.\nContext: {context}"
-        
+
         try:
             return await self.client.chat.completions.create(
                 model=self.model,

@@ -1,11 +1,10 @@
 from decimal import Decimal
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from services.hermes.orchestrator import HermesOrchestrator
 from services.hermes.proposal_builder import TradeProposal
-
 
 pytestmark = pytest.mark.integration
 
@@ -104,3 +103,58 @@ async def test_hermes_pipeline_high_confidence_no_escalation():
         mock_reason.assert_called_once()
         mock_submit.assert_called_once_with(high_conf_proposal)
         mock_mem.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_proposal_client_tools_api_contract():
+    from fastapi.testclient import TestClient
+
+    from apps.api.dependencies import verify_hermes_token
+    from apps.api.main import app
+    from apps.api.routers.tools import get_risk_orchestrator
+    from packages.database.engine import get_db_session
+    from packages.hermes_tools.client import HermesToolsClient
+    from services.hermes.proposal_client import ProposalClient
+    from services.risk.orchestrator import RiskOrchestrator
+
+    mock_session = AsyncMock()
+    mock_session.add = MagicMock()
+    mock_session.flush = AsyncMock()
+    mock_session.commit = AsyncMock()
+
+    mock_risk = MagicMock(spec=RiskOrchestrator)
+    mock_risk.evaluate_proposal = AsyncMock(
+        return_value=MagicMock(
+            decision="Approved",
+            reasons=["All rules passed"],
+            modified_proposal=None,
+        )
+    )
+
+    app.dependency_overrides[get_db_session] = lambda: mock_session
+    app.dependency_overrides[get_risk_orchestrator] = lambda: mock_risk
+    app.dependency_overrides[verify_hermes_token] = lambda: None
+
+    try:
+        test_client = TestClient(app)
+        tools_client = HermesToolsClient(base_url="http://testserver", token="mock-token")
+        tools_client.client = test_client
+
+        proposal = TradeProposal(
+            symbol="BTC/USDT",
+            direction="long",
+            confidence=0.85,
+            entry=Decimal("50000"),
+            quantity=Decimal("0.02"),
+            supporting_evidence=["Bullish breakout"],
+        )
+
+        proposal_client = ProposalClient(tools_client=tools_client)
+        res = await proposal_client.submit(proposal)
+
+        assert res is not None
+        assert res["decision"] == "Approved"
+        assert "proposal_id" in res
+        assert res["quantity"] == "0.02"
+    finally:
+        app.dependency_overrides.clear()
