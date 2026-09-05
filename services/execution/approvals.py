@@ -1,13 +1,16 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+import asyncio
+import logging
 import uuid
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from packages.database.models.relational import OwnerApprovalModel
 from packages.domain.enums import ApprovalStatus
+from services.tradingagents.orchestrator import DebateOrchestrator
 
 
 class ApprovalError(Exception):
@@ -49,7 +52,7 @@ class OwnerApprovalService:
         correlation_id: uuid.UUID | None = None,
         status: str = ApprovalStatus.APPROVED.value,
     ) -> OwnerApprovalModel:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         approval = OwnerApprovalModel(
             id=uuid.uuid4(),
             proposal_id=proposal_id,
@@ -88,11 +91,11 @@ class OwnerApprovalService:
                 f"Approval {approval_id} has status '{approval.status}', expected '{ApprovalStatus.APPROVED.value}'"
             )
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         # Ensure UTC timezone comparability
         expires_at = approval.expires_at
         if expires_at.tzinfo is None:
-            expires_at = expires_at.replace(tzinfo=timezone.utc)
+            expires_at = expires_at.replace(tzinfo=UTC)
 
         if now > expires_at:
             approval.status = ApprovalStatus.EXPIRED.value
@@ -105,3 +108,37 @@ class OwnerApprovalService:
         approval.consumed_at = now
         await session.flush()
         return approval
+
+logger = logging.getLogger(__name__)
+
+async def get_sync_ai_consensus(symbol: str, timeframe: str, context: str) -> dict:
+    """
+    Synchronous AI Gating: wait for AIs to reach consensus before executing.
+    Has a strict 10-second timeout and 3-strike exponential backoff for rate limits.
+    Returns serialized consensus.
+    """
+    orchestrator = DebateOrchestrator()
+    max_retries = 3
+    base_delay = 1.0
+
+    for attempt in range(max_retries):
+        try:
+            # 10s strict timeout
+            report = await asyncio.wait_for(
+                orchestrator.run_deep_research(symbol, timeframe, context),
+                timeout=10.0
+            )
+            # Assuming report has dict-like structure or pydantic model
+            if hasattr(report, "model_dump"):
+                return report.model_dump()
+            return {"verdict": getattr(report, "verdict", "HOLD"), "reasoning": getattr(report, "reasoning", "")}
+        except TimeoutError:
+            logger.warning(f"AI Gating timeout for {symbol} on attempt {attempt + 1}")
+        except Exception as e:
+            logger.warning(f"AI Gating error for {symbol} on attempt {attempt + 1}: {e}")
+        
+        if attempt < max_retries - 1:
+            await asyncio.sleep(base_delay * (2 ** attempt))
+
+    logger.error(f"AI Gating failed after {max_retries} attempts for {symbol}. Rejecting trade.")
+    return {"verdict": "HOLD", "reasoning": "AI Gating failed due to timeouts or errors."}

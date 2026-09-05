@@ -1,82 +1,67 @@
 services:
-  caddy:
-    image: caddy:2-alpine
-    ports:
-      - "8080:80"         # ONLY service publishing a host port
-    volumes:
-      - ./infrastructure/caddy/Caddyfile:/etc/caddy/Caddyfile
-    networks:
-      - trading-net
-    depends_on:
-      - api
-
   api:
     image: agi-trading-api:latest
     build:
       context: .
       dockerfile: infrastructure/docker/api.Dockerfile
     environment:
-      - APP_ENV
-      - TRADING_MODE
-      - LIVE_TRADING_ENABLED
-      - DATABASE_URL
-      - REDIS_URL
-      - DASHBOARD_AUTH_SECRET
+    - APP_ENV
+    - TRADING_MODE
+    - LIVE_TRADING_ENABLED
+    - DATABASE_URL
+    - REDIS_URL
+    - DASHBOARD_AUTH_SECRET
     networks:
-      - trading-net
+    - trading-net
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
-
   web:
     image: agi-trading-web:latest
     build:
       context: .
       dockerfile: infrastructure/docker/web.Dockerfile
     environment:
-      - APP_ENV
-      - NEXT_PUBLIC_API_URL=http://api:8000
+    - APP_ENV
+    - NEXT_PUBLIC_API_URL=http://api:8000
     networks:
-      - trading-net
+    - trading-net
     depends_on:
-      - api
-
+    - api
   hermes:
     image: agi-trading-hermes:latest
     build:
       context: .
       dockerfile: infrastructure/docker/hermes.Dockerfile
     environment:
-      - APP_ENV
-      - TRADING_MODE
-      - LIVE_TRADING_ENABLED
-      - DATABASE_URL
-      - REDIS_URL
-      - HERMES_SERVICE_TOKEN
-      - LLM_GATEWAY_KEY
+    - APP_ENV
+    - TRADING_MODE
+    - LIVE_TRADING_ENABLED
+    - DATABASE_URL
+    - REDIS_URL
+    - HERMES_SERVICE_TOKEN
+    - LLM_GATEWAY_KEY
     networks:
-      - trading-net
+    - trading-net
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
-
   tradingagents:
     image: agi-trading-tradingagents:latest
     build:
       context: .
       dockerfile: infrastructure/docker/tradingagents.Dockerfile
     environment:
-      - APP_ENV
-      - TRADING_MODE
-      - TRADINGAGENTS_SERVICE_TOKEN
-      - LLM_GATEWAY_KEY
+    - APP_ENV
+    - TRADING_MODE
+    - TRADINGAGENTS_SERVICE_TOKEN
+    - LLM_GATEWAY_KEY
     networks:
-      - trading-net
-
+    - trading-net
   postgres:
     image: timescale/timescaledb-ha:pg16
     environment:
@@ -84,28 +69,30 @@ services:
       POSTGRES_USER: trading
       POSTGRES_PASSWORD: trading_dev
     volumes:
-      - pgdata:/var/lib/postgresql/data
+    - pgdata:/var/lib/postgresql/data
     networks:
-      - trading-net
+    - trading-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U trading"]
+      test:
+      - CMD-SHELL
+      - pg_isready -U trading
       interval: 10s
       timeout: 5s
       retries: 5
-
   redis:
     image: redis:7.4-alpine
     networks:
-      - trading-net
+    - trading-net
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test:
+      - CMD
+      - redis-cli
+      - ping
       interval: 10s
       timeout: 5s
       retries: 5
-
 networks:
   trading-net:
     driver: bridge
-
 volumes:
-  pgdata:
+  pgdata: null

@@ -59,6 +59,8 @@ def create_app() -> FastAPI:
     app.include_router(auth_router)
     app.include_router(websocket_router)
     app.include_router(owner_router)
+    from apps.api.routers.trading import router as trading_router
+    app.include_router(trading_router)
     return app
 
 
