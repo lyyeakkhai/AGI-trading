@@ -15,6 +15,6 @@ def test_tradingagents_endpoints_reject_invalid_token():
     assert response.status_code == 403
 
 def test_owner_endpoints_reject_service_tokens():
-    # Attempt to hit an owner endpoint with service token or invalid token
-    response = client.get("/api/v1/owner/portfolio", headers={"Authorization": "Bearer invalid"})
+    # Attempt to hit an owner endpoint with service token
+    response = client.get("/api/v1/owner/portfolio", headers={"Authorization": "Bearer test-service-token"})
     assert response.status_code == 401

@@ -71,6 +71,7 @@ def test_proposal_create_routes_to_risk_engine(client: TestClient, auth_headers:
     payload = {
         "symbol": "BTC/USDT",
         "direction": "long",
+        "quantity": "1.0",
         "entry": "50000",
         "stop_loss": "49000",
         "take_profit": "52000",
@@ -92,6 +93,7 @@ def test_proposal_create_routes_to_risk_engine(client: TestClient, auth_headers:
             assert data.get("status") == "PENDING_APPROVAL"
             assert "proposal_id" in data
             assert data["proposal_id"] != "prop_123"
+            assert data["approved_quantity"] == "1.0"
             mock_eval.assert_awaited_once()
             mock_session.commit.assert_awaited_once()
     finally:
@@ -100,6 +102,24 @@ def test_proposal_create_routes_to_risk_engine(client: TestClient, auth_headers:
 
 def test_proposal_create_missing_symbol_returns_400(client: TestClient, auth_headers: dict[str, str]) -> None:
     response = client.post("/api/v1/tools/proposal/create", headers=auth_headers, json={})
+    assert response.status_code == 400
+
+
+def test_proposal_create_invalid_quantity_returns_400(client: TestClient, auth_headers: dict[str, str]) -> None:
+    response = client.post(
+        "/api/v1/tools/proposal/create",
+        headers=auth_headers,
+        json={"symbol": "BTC/USDT", "quantity": "-5"},
+    )
+    assert response.status_code == 400
+
+
+def test_proposal_create_invalid_limit_price_returns_400(client: TestClient, auth_headers: dict[str, str]) -> None:
+    response = client.post(
+        "/api/v1/tools/proposal/create",
+        headers=auth_headers,
+        json={"symbol": "BTC/USDT", "quantity": "1.0", "order_type": "limit", "limit_price": "-10"},
+    )
     assert response.status_code == 400
 
 
@@ -119,6 +139,7 @@ def test_proposal_create_modified_and_rejected_status(client: TestClient, auth_h
     mock_modified.decision = "modified"
     mock_modified.rule_codes = ["RULE_MODIFIED_SIZE"]
     mock_modified.risk_score = Decimal("0.12")
+    mock_modified.approved_quantity = Decimal("0.5")
 
     payload = {"symbol": "BTC/USDT", "direction": "long", "quantity": "1.0"}
 
@@ -131,6 +152,7 @@ def test_proposal_create_modified_and_rejected_status(client: TestClient, auth_h
             assert response.status_code == 201
             assert response.json()["decision"] == "modified"
             assert response.json()["status"] == "PENDING_APPROVAL"
+            assert response.json()["approved_quantity"] == "0.5"
 
         # 2. Test rejected
         mock_rejected = MagicMock()
@@ -146,6 +168,7 @@ def test_proposal_create_modified_and_rejected_status(client: TestClient, auth_h
             assert response.status_code == 201
             assert response.json()["decision"] == "rejected"
             assert response.json()["status"] == "REJECTED"
+            assert response.json()["approved_quantity"] == "0"
     finally:
         app.dependency_overrides.pop(get_db_session, None)
 
@@ -214,6 +237,30 @@ def test_get_market_price_fallback_to_ccxt(client: TestClient, auth_headers: dic
             data = response.json()
             assert data["symbol"] == "BTC/USDT"
             assert data["price"] == 52000.0
+        finally:
+            app.dependency_overrides.pop(get_db_session, None)
+
+
+def test_get_market_price_dual_failure_fails_closed(client: TestClient, auth_headers: dict[str, str]) -> None:
+    mock_session = AsyncMock()
+    scalar_result = MagicMock()
+    scalar_result.scalar_one_or_none.return_value = None
+    mock_session.execute = AsyncMock(return_value=scalar_result)
+
+    async def override_db():
+        yield mock_session
+
+    app.dependency_overrides[get_db_session] = override_db
+
+    with patch("apps.api.routers.tools.get_binance_adapter") as mock_get_adapter:
+        mock_adapter = MagicMock()
+        mock_adapter.get_ticker = AsyncMock(side_effect=Exception("Exchange down"))
+        mock_get_adapter.return_value = mock_adapter
+
+        try:
+            response = client.get("/api/v1/tools/market/price?symbol=BTC/USDT", headers=auth_headers)
+            assert response.status_code == 503
+            assert "Market price unavailable" in response.json()["detail"]
         finally:
             app.dependency_overrides.pop(get_db_session, None)
 
@@ -320,6 +367,25 @@ def test_get_analytics_indicators_from_db(client: TestClient, auth_headers: dict
         app.dependency_overrides.pop(get_db_session, None)
 
 
+def test_get_analytics_indicators_not_found_fails_closed(client: TestClient, auth_headers: dict[str, str]) -> None:
+    mock_session = AsyncMock()
+    scalar_res = MagicMock()
+    scalar_res.scalar_one_or_none.return_value = None
+    mock_session.execute = AsyncMock(return_value=scalar_res)
+
+    async def override_db():
+        yield mock_session
+
+    app.dependency_overrides[get_db_session] = override_db
+
+    try:
+        response = client.get("/api/v1/tools/analytics/indicators?symbol=BTC/USDT", headers=auth_headers)
+        assert response.status_code == 404
+        assert "Indicators not found" in response.json()["detail"]
+    finally:
+        app.dependency_overrides.pop(get_db_session, None)
+
+
 def test_get_portfolio_positions_returns_real_data(client: TestClient, auth_headers: dict[str, str]) -> None:
     mock_session = AsyncMock()
     account_id = uuid.uuid4()
@@ -372,6 +438,58 @@ def test_get_portfolio_positions_returns_real_data(client: TestClient, auth_head
             assert data["positions"][0]["quantity"] == "0.5"
             assert "balances" in data
             assert data["balances"]["USDT"] == "15000.0"
+        finally:
+            app.dependency_overrides.pop(get_db_session, None)
+
+
+def test_get_portfolio_positions_unseeded_returns_empty_balances(client: TestClient, auth_headers: dict[str, str]) -> None:
+    mock_session = AsyncMock()
+    account_id = uuid.uuid4()
+    mock_account = PortfolioAccountModel(
+        id=account_id,
+        name="Empty Account",
+        trading_mode="paper",
+        created_at=datetime.now(timezone.utc),
+    )
+
+    async def override_db():
+        yield mock_session
+
+    app.dependency_overrides[get_db_session] = override_db
+
+    with patch("apps.api.routers.tools.portfolio_engine.get_or_create_account", new=AsyncMock(return_value=mock_account)):
+        exec_entry = MagicMock()
+        exec_entry.scalars.return_value.all.return_value = []
+
+        exec_pos = MagicMock()
+        exec_pos.scalars.return_value.all.return_value = []
+
+        mock_session.execute = AsyncMock(side_effect=[exec_entry, exec_pos])
+
+        try:
+            response = client.get("/api/v1/tools/portfolio/positions", headers=auth_headers)
+            assert response.status_code == 200
+            data = response.json()
+            assert data["positions"] == []
+            assert data["balances"] == {}
+        finally:
+            app.dependency_overrides.pop(get_db_session, None)
+
+
+def test_get_portfolio_positions_db_error_fails_closed(client: TestClient, auth_headers: dict[str, str]) -> None:
+    async def override_db():
+        yield AsyncMock()
+
+    app.dependency_overrides[get_db_session] = override_db
+
+    with patch(
+        "apps.api.routers.tools.portfolio_engine.get_or_create_account",
+        new=AsyncMock(side_effect=Exception("DB connection error")),
+    ):
+        try:
+            response = client.get("/api/v1/tools/portfolio/positions", headers=auth_headers)
+            assert response.status_code == 503
+            assert "Portfolio engine unavailable" in response.json()["detail"]
         finally:
             app.dependency_overrides.pop(get_db_session, None)
 

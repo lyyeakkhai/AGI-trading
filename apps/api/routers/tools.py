@@ -7,7 +7,7 @@ import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 import httpx
-from sqlalchemy import select
+from sqlalchemy import cast, or_, select, String
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.api.dependencies import verify_hermes_token
@@ -58,13 +58,17 @@ def get_portfolio_engine() -> PortfolioEngine:
 @router.get("/market/price", dependencies=[Depends(verify_hermes_token)])
 async def get_market_price(
     symbol: str = Query(..., description="Market symbol, e.g. BTC/USDT"),
+    trading_mode: str = Query("paper", description="Trading mode filter"),
     session: AsyncSession = Depends(get_db_session),
 ) -> dict[str, Any]:
     # 1. Attempt TimescaleDB fetch
     try:
         stmt = (
             select(MarketCandleModel)
-            .where(MarketCandleModel.symbol == symbol)
+            .where(
+                MarketCandleModel.symbol == symbol,
+                MarketCandleModel.trading_mode == trading_mode,
+            )
             .order_by(MarketCandleModel.timestamp.desc())
             .limit(1)
         )
@@ -90,11 +94,12 @@ async def get_market_price(
         }
     except Exception as e:
         logger.warning("tools_market_price_ccxt_failed", error=str(e), symbol=symbol)
-        return {
-            "symbol": symbol,
-            "price": 50000.0,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        }
+
+    # Fail closed: do not return fabricated price
+    raise HTTPException(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        detail=f"Market price unavailable for {symbol}",
+    )
 
 
 @router.get("/market/candles", dependencies=[Depends(verify_hermes_token)])
@@ -192,13 +197,16 @@ async def get_analytics_indicators(
             }
     except Exception as e:
         logger.debug("tools_analytics_indicators_db_failed", error=str(e), symbol=symbol)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Database error querying indicators for {symbol}",
+        )
 
-    return {
-        "symbol": symbol,
-        "timeframe": timeframe,
-        "indicators": {"rsi": 55.0, "macd": 1.2},
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-    }
+    # Fail closed: indicators not found
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"Indicators not found for {symbol} ({timeframe})",
+    )
 
 
 @router.get("/portfolio/positions", dependencies=[Depends(verify_hermes_token)])
@@ -216,8 +224,6 @@ async def get_portfolio_positions(
         )
         entries = list((await session.execute(entry_stmt)).scalars().all())
         balances = {e.asset: str(e.balance) for e in entries}
-        if not balances:
-            balances = {"USDT": "10000.00"}
 
         pos_stmt = select(PositionModel).where(
             PositionModel.account_id == account.id,
@@ -247,7 +253,10 @@ async def get_portfolio_positions(
         }
     except Exception as e:
         logger.warning("tools_portfolio_positions_failed", error=str(e))
-        return {"positions": [], "balances": {"USDT": "10000.00"}, "trading_mode": trading_mode}
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Portfolio engine unavailable",
+        )
 
 
 @router.get("/strategy/list", dependencies=[Depends(verify_hermes_token)])
@@ -294,19 +303,27 @@ async def create_trade_proposal(
     ).lower()
     order_type = "limit" if order_type_raw in ("limit",) else "market"
 
+    quantity_val = intent.get("quantity") or intent.get("size")
+    if quantity_val is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing required field: quantity")
+    try:
+        quantity = Decimal(str(quantity_val))
+        if quantity <= Decimal("0"):
+            raise ValueError()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid quantity: must be a positive number")
+
     limit_price = None
     price_val = intent.get("entry") or intent.get("limit_price") or intent.get("entry_price")
     if price_val is not None:
         try:
             limit_price = Decimal(str(price_val))
+            if limit_price <= Decimal("0"):
+                raise ValueError()
         except Exception:
-            limit_price = None
-
-    quantity_val = intent.get("quantity") or intent.get("size") or "0.01"
-    try:
-        quantity = Decimal(str(quantity_val))
-    except Exception:
-        quantity = Decimal("0.01")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid limit_price: must be a positive number")
+    elif order_type == "limit":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Limit orders require an entry or limit_price")
 
     trading_mode = str(intent.get("trading_mode", "paper"))
 
@@ -374,6 +391,12 @@ async def create_trade_proposal(
     risk_score = float(raw_risk_score) if raw_risk_score is not None else 0.0
 
     status_val = "PENDING_APPROVAL" if decision_val in ("approved", "modified") else "REJECTED"
+    if decision_val == "rejected":
+        approved_quantity = "0"
+    elif decision_val == "modified":
+        approved_quantity = str(getattr(decision_record, "approved_quantity", proposal.quantity))
+    else:
+        approved_quantity = str(proposal.quantity)
 
     return {
         "proposal_id": str(proposal.id),
@@ -382,7 +405,7 @@ async def create_trade_proposal(
         "rule_codes": rule_codes,
         "risk_score": risk_score,
         "quantity": str(proposal.quantity),
-        "approved_quantity": str(proposal.quantity),
+        "approved_quantity": approved_quantity,
         "intent": intent,
     }
 
@@ -463,11 +486,17 @@ async def search_memory(
     limit: int = Query(20, ge=1, le=100),
     session: AsyncSession = Depends(get_db_session),
 ) -> dict[str, Any]:
-    stmt = (
-        select(AgentObservationModel)
-        .order_by(AgentObservationModel.observed_at.desc())
-        .limit(limit)
-    )
+    stmt = select(AgentObservationModel)
+    if query:
+        search_pattern = f"%{query}%"
+        stmt = stmt.where(
+            or_(
+                AgentObservationModel.agent_id.ilike(search_pattern),
+                AgentObservationModel.observation_type.ilike(search_pattern),
+                cast(AgentObservationModel.content, String).ilike(search_pattern),
+            )
+        )
+    stmt = stmt.order_by(AgentObservationModel.observed_at.desc()).limit(limit)
     results = list((await session.execute(stmt)).scalars().all())
     formatted = [
         {
@@ -480,15 +509,6 @@ async def search_memory(
         }
         for r in results
     ]
-    if query:
-        q_lower = query.lower()
-        formatted = [
-            f
-            for f in formatted
-            if q_lower in str(f["content"]).lower()
-            or q_lower in f["observation_type"].lower()
-            or q_lower in f["agent_id"].lower()
-        ]
     return {"query": query, "results": formatted}
 
 
