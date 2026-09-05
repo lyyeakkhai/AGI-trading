@@ -184,6 +184,37 @@ export const mockMarketContexts: MarketAssetContext[] = [
     low24h: 236.5,
     regime: "Momentum Breakout",
   },
+
+  {
+    symbol: "BNB/USDT",
+    name: "Binance Coin",
+    price: 594.30,
+    change24h: 1.2,
+    volume24h: "$120M",
+    high24h: 605.0,
+    low24h: 582.0,
+    regime: "Range Bound",
+  },
+  {
+    symbol: "AVAX/USDT",
+    name: "Avalanche",
+    price: 38.20,
+    change24h: 8.5,
+    volume24h: "$45.8M",
+    high24h: 39.5,
+    low24h: 35.0,
+    regime: "Momentum Breakout",
+  },
+  {
+    symbol: "XRP/USDT",
+    name: "Ripple",
+    price: 0.62,
+    change24h: 12.5,
+    volume24h: "$337M",
+    high24h: 0.65,
+    low24h: 0.54,
+    regime: "Regulatory Breakout",
+  },
 ];
 
 export const mockHermesOverview: HermesOverviewState = {

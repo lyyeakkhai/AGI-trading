@@ -34,12 +34,12 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
 
   return (
     <Surface
-      variant="default"
+      variant="iron"
       padded="none"
       className={`flex flex-col overflow-hidden ${className}`}
     >
       {/* Tab Controls Bar */}
-      <div className="px-3 pt-2 border-b border-border-color bg-surface-2/40">
+      <div className="px-3 pt-2 border-b border-[#222B32] iron-header">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabList variant="line" className="gap-2">
             <TabTrigger
@@ -75,7 +75,7 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
 
           {/* TAB 1: HERMES INTELLIGENCE */}
           <TabContent value="hermes" className="p-4 space-y-4 pt-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-border-color/60">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#222B32]/60">
               <div className="flex items-center gap-2">
                 <AIStatusIndicator state={market.hermes.state} size="sm" />
                 <span className="font-mono text-xs font-semibold text-gray-200">
@@ -101,7 +101,7 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
             </div>
 
             {/* Rationale Observation */}
-            <div className="space-y-1.5 bg-bg-950/70 p-3 rounded border border-border-color">
+            <div className="space-y-1.5 bg-iron-950/80 p-3 rounded border border-iron-700/60">
               <div className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold flex items-center justify-between">
                 <span>Autonomous Market Reasoning</span>
                 <span className="text-gray-400 font-normal">MODEL: HERMES CORE</span>
@@ -113,14 +113,14 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
 
             {/* Metrics Breakdown */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-2.5 rounded bg-surface-2/60 border border-border-color space-y-1">
+              <div className="p-2.5 rounded iron-inset space-y-1">
                 <span className="text-[10px] font-mono uppercase text-gray-400">
                   Confidence Score
                 </span>
                 <ConfidenceIndicator score={market.hermes.confidence} />
               </div>
 
-              <div className="p-2.5 rounded bg-surface-2/60 border border-border-color space-y-1">
+              <div className="p-2.5 rounded iron-inset space-y-1">
                 <span className="text-[10px] font-mono uppercase text-gray-400">
                   Active Regime
                 </span>
@@ -129,7 +129,7 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
                 </div>
               </div>
 
-              <div className="p-2.5 rounded bg-surface-2/60 border border-border-color space-y-1">
+              <div className="p-2.5 rounded iron-inset space-y-1">
                 <span className="text-[10px] font-mono uppercase text-gray-400">
                   Risk Engine Status
                 </span>
@@ -146,7 +146,7 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
             {market.position ? (
               <div className="space-y-4">
                 {/* Position Header */}
-                <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded bg-surface-2/60 border border-border-color">
+                <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded iron-inset">
                   <div className="flex items-center gap-3">
                     <PositionSide side={market.position.side} size="md" />
                     <div>
@@ -177,7 +177,7 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
 
                 {/* Price Lines & Levels Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
-                  <div className="p-2.5 rounded bg-bg-950 border border-cyan-500/30">
+                  <div className="p-2.5 rounded bg-iron-950 border border-cyan-500/30">
                     <span className="text-[10px] text-gray-400 uppercase block">
                       Entry Price
                     </span>
@@ -186,7 +186,7 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
                     </span>
                   </div>
 
-                  <div className="p-2.5 rounded bg-bg-950 border border-loss/30">
+                  <div className="p-2.5 rounded bg-iron-950 border border-loss/30">
                     <span className="text-[10px] text-loss uppercase block">
                       Stop Loss
                     </span>
@@ -195,7 +195,7 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
                     </span>
                   </div>
 
-                  <div className="p-2.5 rounded bg-bg-950 border border-profit/30">
+                  <div className="p-2.5 rounded bg-iron-950 border border-profit/30">
                     <span className="text-[10px] text-profit uppercase block">
                       Take Profit
                     </span>
@@ -204,7 +204,7 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
                     </span>
                   </div>
 
-                  <div className="p-2.5 rounded bg-bg-950 border border-border-color">
+                  <div className="p-2.5 rounded bg-iron-950 border border-[#222B32]">
                     <span className="text-[10px] text-gray-400 uppercase block">
                       Liquidation Est.
                     </span>
@@ -256,10 +256,10 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
                   <span>Spread: {market.spread}</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-[11px] font-mono bg-bg-950 p-2.5 rounded border border-border-color">
+                <div className="grid grid-cols-2 gap-2 text-[11px] font-mono bg-iron-950 p-2.5 rounded border border-[#222B32]">
                   {/* Bids */}
                   <div className="space-y-1">
-                    <div className="text-[9px] text-gray-400 font-bold uppercase border-b border-border-color pb-1">
+                    <div className="text-[9px] text-gray-400 font-bold uppercase border-b border-[#222B32] pb-1">
                       Bid Price • Size
                     </div>
                     {market.orderBook.bids.map((b, idx) => (
@@ -272,7 +272,7 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
 
                   {/* Asks */}
                   <div className="space-y-1">
-                    <div className="text-[9px] text-gray-400 font-bold uppercase border-b border-border-color pb-1">
+                    <div className="text-[9px] text-gray-400 font-bold uppercase border-b border-[#222B32] pb-1">
                       Ask Price • Size
                     </div>
                     {market.orderBook.asks.map((a, idx) => (
@@ -292,7 +292,7 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                  <div className="p-2 rounded bg-surface-2/60 border border-border-color">
+                  <div className="p-2 rounded iron-inset">
                     <span className="text-[10px] text-gray-400 block">RSI (14)</span>
                     <span
                       className={`font-bold ${
@@ -307,21 +307,21 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
                     </span>
                   </div>
 
-                  <div className="p-2 rounded bg-surface-2/60 border border-border-color">
+                  <div className="p-2 rounded iron-inset">
                     <span className="text-[10px] text-gray-400 block">Support / Resist</span>
                     <span className="font-bold text-gray-200 text-[11px]">
                       ${market.technicals.support.toLocaleString()} / ${market.technicals.resistance.toLocaleString()}
                     </span>
                   </div>
 
-                  <div className="p-2 rounded bg-surface-2/60 border border-border-color">
+                  <div className="p-2 rounded iron-inset">
                     <span className="text-[10px] text-gray-400 block">EMA 20 / 50</span>
                     <span className="font-bold text-gray-200 text-[11px]">
                       ${market.technicals.ema20.toLocaleString()}
                     </span>
                   </div>
 
-                  <div className="p-2 rounded bg-surface-2/60 border border-border-color">
+                  <div className="p-2 rounded iron-inset">
                     <span className="text-[10px] text-gray-400 block">EMA 200 (Long Term)</span>
                     <span className="font-bold text-cyan-400 text-[11px]">
                       ${market.technicals.ema200.toLocaleString()}
@@ -335,7 +335,7 @@ export function MarketDetailsPanel({ market, className = "" }: MarketDetailsPane
       </div>
 
       {/* Footer System Status */}
-      <div className="px-4 py-2 border-t border-border-color bg-surface-2/20 text-[10px] font-mono text-gray-400 flex items-center justify-between select-none">
+      <div className="px-4 py-2 border-t border-[#222B32] bg-iron-950/60 text-[10px] font-mono text-gray-400 flex items-center justify-between select-none">
         <span>MARKET ANALYSIS FEED: ACTIVE</span>
         <span className="text-profit font-semibold">PRE-TRADE INTERLOCK ENGAGED</span>
       </div>

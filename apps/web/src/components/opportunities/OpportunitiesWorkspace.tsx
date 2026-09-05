@@ -57,7 +57,12 @@ export function OpportunitiesWorkspace() {
       list = list.filter((opp) => opp.direction === filters.direction);
     }
 
-    // 4. Timeframe filter
+    // 4. Strategy filter
+    if (filters.strategy && filters.strategy !== "All") {
+      list = list.filter((opp) => opp.strategy === filters.strategy);
+    }
+
+    // 5. Timeframe filter
     if (filters.timeframe !== "All") {
       list = list.filter((opp) => opp.timeframe === filters.timeframe);
     }

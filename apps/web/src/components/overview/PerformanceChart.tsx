@@ -52,21 +52,21 @@ export function PerformanceChart({ className = "" }: PerformanceChartProps) {
   const isPositive = diffVal >= 0;
 
   return (
-    <Surface variant="default" padded="none" className={`flex flex-col overflow-hidden ${className}`}>
+    <Surface variant="iron" padded="none" className={`flex flex-col overflow-hidden ${className}`}>
       {/* Chart Header Bar */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-border-color bg-surface-2/40">
+      <div className="flex items-center justify-between px-4 py-2.5 iron-header">
         <div className="flex items-center gap-2">
-          <TrendingUp size={15} className="text-cyan-500" />
-          <span className="text-xs font-semibold text-gray-200 uppercase tracking-wide">
+          <TrendingUp size={15} className="text-cyan-400" />
+          <span className="text-xs font-semibold text-gray-100 uppercase tracking-wide">
             Portfolio Equity Trajectory
           </span>
-          <span className="hidden sm:inline-block px-1.5 py-0.2 rounded bg-cyan-dim/30 text-[10px] font-mono text-cyan-400 border border-cyan-500/30">
+          <span className="hidden sm:inline-block px-2 py-0.5 rounded bg-cyan-dim/30 text-xs font-sans font-medium text-cyan-400 border border-cyan-500/30">
             SIMULATED
           </span>
         </div>
 
         {/* Timeframe selector */}
-        <div className="flex items-center gap-1 bg-surface rounded p-0.5 border border-border-color">
+        <div className="flex items-center gap-1 bg-iron-950/80 rounded p-0.5 border border-iron-700/60">
           {timeframes.map((tf) => (
             <button
               key={tf}
@@ -75,7 +75,7 @@ export function PerformanceChart({ className = "" }: PerformanceChartProps) {
                 setActiveTf(tf);
                 setHoverIndex(null);
               }}
-              className={`px-2 py-0.5 text-[11px] font-mono font-medium rounded transition-colors ${
+              className={`px-2.5 py-0.5 text-xs font-sans font-medium rounded transition-colors ${
                 activeTf === tf
                   ? "bg-cyan-dim/40 text-cyan-300 border border-cyan-500/40 shadow-[0_0_6px_rgba(0,229,255,0.2)] font-bold"
                   : "text-gray-400 hover:text-gray-200"
@@ -90,11 +90,11 @@ export function PerformanceChart({ className = "" }: PerformanceChartProps) {
       {/* Trajectory Stat Overlay */}
       <div className="flex items-baseline justify-between px-4 pt-3">
         <div className="flex items-baseline gap-3">
-          <span className="font-mono text-xl font-bold text-gray-100 tracking-tight">
+          <span className="font-mono tabular-nums text-xl font-bold text-gray-100 tracking-tight">
             ${activePoint.value.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </span>
           <span
-            className={`font-mono text-xs font-semibold inline-flex items-center gap-0.5 ${
+            className={`font-mono tabular-nums text-xs font-semibold inline-flex items-center gap-0.5 ${
               isPositive ? "text-profit" : "text-loss"
             }`}
           >
@@ -102,12 +102,12 @@ export function PerformanceChart({ className = "" }: PerformanceChartProps) {
             ${diffVal.toFixed(2)} ({isPositive ? "+" : ""}
             {diffPct}%)
           </span>
-          <span className="text-[11px] font-mono text-gray-500 hidden sm:inline">
+          <span className="text-xs font-mono tabular-nums text-gray-400 hidden sm:inline">
             Point: {activePoint.time}
           </span>
         </div>
 
-        <div className="flex items-center gap-3 text-[11px] font-mono text-gray-500">
+        <div className="flex items-center gap-3 text-xs font-mono tabular-nums text-gray-400">
           <span>High: ${Math.max(...values).toLocaleString()}</span>
           <span>Low: ${Math.min(...values).toLocaleString()}</span>
         </div>
@@ -212,7 +212,7 @@ export function PerformanceChart({ className = "" }: PerformanceChartProps) {
       </div>
 
       {/* Sub-bar / Statistical Summary */}
-      <div className="flex items-center justify-between px-4 py-2 border-t border-border-color bg-surface-2/20 text-[10px] font-mono text-gray-400">
+      <div className="flex items-center justify-between px-4 py-2 border-t border-[#222B32] bg-iron-950/60 text-[10px] font-mono text-gray-400">
         <div className="flex items-center gap-4">
           <span>Sharpe: <strong className="text-gray-200 font-bold">2.41</strong></span>
           <span>Profit Factor: <strong className="text-gray-200 font-bold">2.84</strong></span>

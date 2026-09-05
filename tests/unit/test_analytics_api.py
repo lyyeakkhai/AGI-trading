@@ -60,6 +60,7 @@ async def test_get_regime_api() -> None:
         row.volume = 1000.0
         mock_rows.append(row)
 
+    mock_rows.reverse()
     mock_res = MagicMock()
     mock_res.fetchall.return_value = mock_rows
     mock_session.execute.return_value = mock_res

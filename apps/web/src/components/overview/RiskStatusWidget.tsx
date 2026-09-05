@@ -18,15 +18,15 @@ interface RiskStatusWidgetProps {
 export function RiskStatusWidget({ risk, className = "" }: RiskStatusWidgetProps) {
   return (
     <Surface
-      variant="default"
+      variant="iron"
       padded="none"
       className={`flex flex-col justify-between overflow-hidden ${className}`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-border-color bg-surface-2/40">
+      <div className="flex items-center justify-between px-4 py-2.5 iron-header">
         <div className="flex items-center gap-2">
           <Shield size={15} className="text-profit" />
-          <span className="text-xs font-semibold text-gray-200 uppercase tracking-wide">
+          <span className="text-xs font-semibold text-gray-100 uppercase tracking-wide">
             Deterministic Risk Engine
           </span>
           <Badge variant="profit" size="sm" dot>
@@ -38,7 +38,7 @@ export function RiskStatusWidget({ risk, className = "" }: RiskStatusWidgetProps
             variant="ghost"
             size="xs"
             rightIcon={<ArrowRight size={12} />}
-            className="text-gray-400 hover:text-cyan-400 font-mono text-[11px]"
+            className="text-gray-400 hover:text-cyan-400 text-xs font-semibold"
           >
             RISK DASHBOARD
           </Button>
@@ -48,14 +48,14 @@ export function RiskStatusWidget({ risk, className = "" }: RiskStatusWidgetProps
       {/* Body Grid */}
       <div className="p-4 space-y-3.5">
         {/* Top Status Badges */}
-        <div className="flex items-center justify-between p-2 rounded bg-surface-2/60 border border-border-color">
+        <div className="flex items-center justify-between p-2.5 rounded iron-inset">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase text-gray-400">
+            <span className="text-xs font-medium uppercase text-gray-400">
               System Risk Status:
             </span>
             <RiskBadge level={risk.overallRisk} size="sm" />
           </div>
-          <div className="flex items-center gap-1.5 text-[11px] font-mono text-profit">
+          <div className="flex items-center gap-1.5 text-xs font-mono text-profit">
             <Lock size={12} />
             <span className="font-bold">INTERLOCK {risk.interlockStatus}</span>
           </div>
@@ -65,9 +65,9 @@ export function RiskStatusWidget({ risk, className = "" }: RiskStatusWidgetProps
         <div className="space-y-3">
           {/* Exposure */}
           <div className="space-y-1">
-            <div className="flex items-center justify-between text-[10px] font-mono">
-              <span className="text-gray-400 uppercase">Capital Exposure</span>
-              <span className="text-gray-200 font-semibold">
+            <div className="flex items-center justify-between text-xs font-sans">
+              <span className="text-gray-400 uppercase font-medium">Capital Exposure</span>
+              <span className="text-gray-200 font-mono tabular-nums font-semibold">
                 {risk.currentExposurePct}% / {risk.maxExposureCapPct}% Cap
               </span>
             </div>
@@ -81,9 +81,9 @@ export function RiskStatusWidget({ risk, className = "" }: RiskStatusWidgetProps
 
           {/* Daily Loss */}
           <div className="space-y-1">
-            <div className="flex items-center justify-between text-[10px] font-mono">
-              <span className="text-gray-400 uppercase">Daily Loss Utilized</span>
-              <span className="text-gray-200 font-semibold">
+            <div className="flex items-center justify-between text-xs font-sans">
+              <span className="text-gray-400 uppercase font-medium">Daily Loss Utilized</span>
+              <span className="text-gray-200 font-mono tabular-nums font-semibold">
                 {risk.dailyLossCurrentPct}% / {risk.dailyLossCapPct}% Max
               </span>
             </div>
@@ -97,9 +97,9 @@ export function RiskStatusWidget({ risk, className = "" }: RiskStatusWidgetProps
 
           {/* Max Drawdown */}
           <div className="space-y-1">
-            <div className="flex items-center justify-between text-[10px] font-mono">
-              <span className="text-gray-400 uppercase">Max Trailing Drawdown</span>
-              <span className="text-gray-200 font-semibold">
+            <div className="flex items-center justify-between text-xs font-sans">
+              <span className="text-gray-400 uppercase font-medium">Max Trailing Drawdown</span>
+              <span className="text-gray-200 font-mono tabular-nums font-semibold">
                 {risk.maxDrawdownCurrentPct}% / {risk.maxDrawdownCapPct}% Cap
               </span>
             </div>
@@ -114,9 +114,9 @@ export function RiskStatusWidget({ risk, className = "" }: RiskStatusWidgetProps
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-2 border-t border-border-color bg-surface-2/20 text-[10px] font-mono text-gray-500 flex items-center justify-between">
-        <span>MARGIN HEALTH: {risk.marginHealthScore}/100</span>
-        <span className="text-profit flex items-center gap-1">
+      <div className="px-4 py-2 border-t border-[#222B32] bg-iron-950/60 text-xs font-mono text-gray-400 flex items-center justify-between">
+        <span className="tabular-nums">MARGIN HEALTH: {risk.marginHealthScore}/100</span>
+        <span className="text-profit flex items-center gap-1 font-sans text-xs font-semibold">
           <CheckCircle2 size={11} />
           PRE-TRADE RULES ACTIVE
         </span>
