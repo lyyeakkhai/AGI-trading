@@ -1,6 +1,8 @@
 import logging
-from fastapi import FastAPI, Depends, HTTPException, Header
+
+from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.responses import JSONResponse
+
 from packages.config.settings import get_settings
 from packages.domain.research import DeepResearchRequest, SynthesizedResearchReport
 from services.tradingagents.orchestrator import DebateOrchestrator
@@ -24,7 +26,9 @@ async def deep_analyze(request: DeepResearchRequest, _: None = Depends(verify_to
     try:
         orchestrator = DebateOrchestrator()
         context_str = request.context or ""
-        report = await orchestrator.run_deep_research(request.symbol, request.timeframe, context_str)
+        report = await orchestrator.run_deep_research(
+            request.symbol, request.timeframe, context_str
+        )
         return report
     except Exception as e:
         logger.error(f"Error in deep_analyze: {e}", exc_info=True)
