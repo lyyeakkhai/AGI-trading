@@ -15,8 +15,6 @@ def test_tradingagents_endpoints_reject_invalid_token():
     assert response.status_code == 403
 
 def test_owner_endpoints_reject_service_tokens():
-    # We will assume some owner endpoints or check that the dependency works
-    response = client.get("/api/v1/portfolio/positions", headers={"Authorization": "Bearer invalid"})
-    # It might be 404 if not found, but if it has dependency, it's 403 or 401
-    # Actually wait, let's write a generic test that covers the spec
-    pass
+    # Attempt to hit an owner endpoint with service token or invalid token
+    response = client.get("/api/v1/owner/portfolio", headers={"Authorization": "Bearer invalid"})
+    assert response.status_code == 401
