@@ -79,6 +79,7 @@ services:
       context: .
       dockerfile: infrastructure/docker/hermes.Dockerfile
     command: ["uv", "run", "python", "-m", "services.market_data.worker"]
+    restart: unless-stopped
     environment:
     - APP_ENV
     - TRADING_MODE
@@ -97,6 +98,7 @@ services:
       context: .
       dockerfile: infrastructure/docker/hermes.Dockerfile
     command: ["uv", "run", "python", "-m", "services.analytics.worker"]
+    restart: unless-stopped
     environment:
     - APP_ENV
     - TRADING_MODE

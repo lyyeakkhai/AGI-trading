@@ -305,3 +305,41 @@ class AnalyticsWorker:
 
     async def stop(self) -> None:
         self._running = False
+
+
+async def run_worker() -> None:
+    from packages.config.settings import get_settings
+    from packages.database.engine import get_engine, get_session_factory
+    from packages.events.client import RedisClient
+    from packages.events.streams import RedisStreamConsumer, RedisStreamPublisher
+    from services.analytics.scanner import OpportunityScanner
+
+    settings = get_settings()
+    redis_client = RedisClient(
+        settings=settings.redis,
+        app_env=settings.app_env,
+        trading_mode=settings.trading_mode,
+    )
+    consumer = RedisStreamConsumer(
+        redis_client=redis_client,
+        group_name=f"{settings.redis.key_prefix}analytics_workers",
+        consumer_name="analytics_worker_1",
+    )
+    engine = get_engine(settings.database)
+    session_factory = get_session_factory(engine)
+    publisher = RedisStreamPublisher(redis_client)
+    scanner = OpportunityScanner(publisher=publisher, trading_mode=settings.trading_mode)
+    worker = AnalyticsWorker(
+        consumer=consumer,
+        session_factory=session_factory,
+        scanner=scanner,
+        trading_mode=settings.trading_mode,
+    )
+    await worker.run()
+
+
+if __name__ == "__main__":
+    import logging
+
+    logging.basicConfig(level=logging.INFO)
+    asyncio.run(run_worker())
