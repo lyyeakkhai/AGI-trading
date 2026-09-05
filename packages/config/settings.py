@@ -108,7 +108,7 @@ class HermesSettings(BaseSettings):
 
     model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
-    base_url: str = "http://localhost:8001"
+    base_url: str = "http://api:8000"
     service_token: Optional[str] = Field(default=None, validation_alias="HERMES_SERVICE_TOKEN")
     timeout_seconds: int = 30
 
@@ -118,7 +118,7 @@ class TradingAgentsSettings(BaseSettings):
 
     model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
-    base_url: str = "http://localhost:8002"
+    base_url: str = "http://tradingagents:8002"
     service_token: Optional[str] = Field(
         default=None, validation_alias="TRADINGAGENTS_SERVICE_TOKEN"
     )
@@ -134,7 +134,7 @@ class LLMSettings(BaseSettings):
     base_url: Optional[str] = Field(default=None, validation_alias="LLM_GATEWAY_URL")
     api_key: Optional[str] = Field(default=None, validation_alias="LLM_GATEWAY_KEY")
     model_routing: dict[str, str] = Field(
-        default_factory=lambda: {"fast": "gpt-4o-mini", "reasoning": "o1-preview"}
+        default_factory=lambda: {"fast": "gpt-4o-mini", "reasoning": "gpt-4o"}
     )
     cost_cap_usd_per_day: Decimal = Field(default=Decimal("50.0"))
 
