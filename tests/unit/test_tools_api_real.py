@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from decimal import Decimal
 import uuid
+from datetime import UTC, datetime
+from decimal import Decimal
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
@@ -18,7 +18,7 @@ from packages.database.models.portfolio import (
     PortfolioEntryModel,
     PositionModel,
 )
-from packages.database.models.relational import AgentObservationModel, TradeProposalModel
+from packages.database.models.relational import AgentObservationModel
 from packages.exchange.models import OHLCVCandle, Ticker
 
 
@@ -52,7 +52,9 @@ def client() -> TestClient:
     return TestClient(app)
 
 
-def test_proposal_create_routes_to_risk_engine(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_proposal_create_routes_to_risk_engine(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     mock_session.add = MagicMock()
     mock_session.flush = AsyncMock()
@@ -85,7 +87,9 @@ def test_proposal_create_routes_to_risk_engine(client: TestClient, auth_headers:
             "apps.api.routers.tools.risk_orchestrator.evaluate_proposal",
             new=AsyncMock(return_value=mock_decision),
         ) as mock_eval:
-            response = client.post("/api/v1/tools/proposal/create", headers=auth_headers, json=payload)
+            response = client.post(
+                "/api/v1/tools/proposal/create", headers=auth_headers, json=payload
+            )
             assert response.status_code == 201
             data = response.json()
             assert "decision" in data or "status" in data
@@ -100,12 +104,16 @@ def test_proposal_create_routes_to_risk_engine(client: TestClient, auth_headers:
         app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_proposal_create_missing_symbol_returns_400(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_proposal_create_missing_symbol_returns_400(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     response = client.post("/api/v1/tools/proposal/create", headers=auth_headers, json={})
     assert response.status_code == 400
 
 
-def test_proposal_create_invalid_quantity_returns_400(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_proposal_create_invalid_quantity_returns_400(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     response = client.post(
         "/api/v1/tools/proposal/create",
         headers=auth_headers,
@@ -114,7 +122,9 @@ def test_proposal_create_invalid_quantity_returns_400(client: TestClient, auth_h
     assert response.status_code == 400
 
 
-def test_proposal_create_invalid_limit_price_returns_400(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_proposal_create_invalid_limit_price_returns_400(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     response = client.post(
         "/api/v1/tools/proposal/create",
         headers=auth_headers,
@@ -123,7 +133,9 @@ def test_proposal_create_invalid_limit_price_returns_400(client: TestClient, aut
     assert response.status_code == 400
 
 
-def test_proposal_create_modified_and_rejected_status(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_proposal_create_modified_and_rejected_status(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     mock_session.add = MagicMock()
     mock_session.flush = AsyncMock()
@@ -148,7 +160,9 @@ def test_proposal_create_modified_and_rejected_status(client: TestClient, auth_h
             "apps.api.routers.tools.risk_orchestrator.evaluate_proposal",
             new=AsyncMock(return_value=mock_modified),
         ):
-            response = client.post("/api/v1/tools/proposal/create", headers=auth_headers, json=payload)
+            response = client.post(
+                "/api/v1/tools/proposal/create", headers=auth_headers, json=payload
+            )
             assert response.status_code == 201
             assert response.json()["decision"] == "modified"
             assert response.json()["status"] == "PENDING_APPROVAL"
@@ -164,7 +178,9 @@ def test_proposal_create_modified_and_rejected_status(client: TestClient, auth_h
             "apps.api.routers.tools.risk_orchestrator.evaluate_proposal",
             new=AsyncMock(return_value=mock_rejected),
         ):
-            response = client.post("/api/v1/tools/proposal/create", headers=auth_headers, json=payload)
+            response = client.post(
+                "/api/v1/tools/proposal/create", headers=auth_headers, json=payload
+            )
             assert response.status_code == 201
             assert response.json()["decision"] == "rejected"
             assert response.json()["status"] == "REJECTED"
@@ -173,12 +189,14 @@ def test_proposal_create_modified_and_rejected_status(client: TestClient, auth_h
         app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_get_market_price_from_timescaledb(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_get_market_price_from_timescaledb(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     mock_candle = MarketCandleModel(
         symbol="BTC/USDT",
         timeframe="1m",
-        timestamp=datetime(2026, 9, 5, 12, 0, 0, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 9, 5, 12, 0, 0, tzinfo=UTC),
         open=Decimal("51000.0"),
         high=Decimal("51500.0"),
         low=Decimal("50900.0"),
@@ -206,7 +224,9 @@ def test_get_market_price_from_timescaledb(client: TestClient, auth_headers: dic
         app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_get_market_price_fallback_to_ccxt(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_get_market_price_fallback_to_ccxt(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     scalar_result = MagicMock()
     scalar_result.scalar_one_or_none.return_value = None
@@ -223,7 +243,7 @@ def test_get_market_price_fallback_to_ccxt(client: TestClient, auth_headers: dic
         ask=Decimal("52100.0"),
         last=Decimal("52000.0"),
         volume=Decimal("150.0"),
-        timestamp=datetime(2026, 9, 5, 12, 5, 0, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 9, 5, 12, 5, 0, tzinfo=UTC),
     )
 
     with patch("apps.api.routers.tools.get_binance_adapter") as mock_get_adapter:
@@ -232,7 +252,9 @@ def test_get_market_price_fallback_to_ccxt(client: TestClient, auth_headers: dic
         mock_get_adapter.return_value = mock_adapter
 
         try:
-            response = client.get("/api/v1/tools/market/price?symbol=BTC/USDT", headers=auth_headers)
+            response = client.get(
+                "/api/v1/tools/market/price?symbol=BTC/USDT", headers=auth_headers
+            )
             assert response.status_code == 200
             data = response.json()
             assert data["symbol"] == "BTC/USDT"
@@ -241,7 +263,9 @@ def test_get_market_price_fallback_to_ccxt(client: TestClient, auth_headers: dic
             app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_get_market_price_dual_failure_fails_closed(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_get_market_price_dual_failure_fails_closed(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     scalar_result = MagicMock()
     scalar_result.scalar_one_or_none.return_value = None
@@ -258,19 +282,23 @@ def test_get_market_price_dual_failure_fails_closed(client: TestClient, auth_hea
         mock_get_adapter.return_value = mock_adapter
 
         try:
-            response = client.get("/api/v1/tools/market/price?symbol=BTC/USDT", headers=auth_headers)
+            response = client.get(
+                "/api/v1/tools/market/price?symbol=BTC/USDT", headers=auth_headers
+            )
             assert response.status_code == 503
             assert "Market price unavailable" in response.json()["detail"]
         finally:
             app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_get_market_candles_from_timescaledb(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_get_market_candles_from_timescaledb(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     mock_candle = MarketCandleModel(
         symbol="BTC/USDT",
         timeframe="1h",
-        timestamp=datetime(2026, 9, 5, 12, 0, 0, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 9, 5, 12, 0, 0, tzinfo=UTC),
         open=Decimal("50000.0"),
         high=Decimal("51000.0"),
         low=Decimal("49500.0"),
@@ -289,7 +317,9 @@ def test_get_market_candles_from_timescaledb(client: TestClient, auth_headers: d
     app.dependency_overrides[get_db_session] = override_db
 
     try:
-        response = client.get("/api/v1/tools/market/candles?symbol=BTC/USDT&timeframe=1h", headers=auth_headers)
+        response = client.get(
+            "/api/v1/tools/market/candles?symbol=BTC/USDT&timeframe=1h", headers=auth_headers
+        )
         assert response.status_code == 200
         data = response.json()
         assert data["symbol"] == "BTC/USDT"
@@ -300,7 +330,9 @@ def test_get_market_candles_from_timescaledb(client: TestClient, auth_headers: d
         app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_get_market_candles_fallback_to_ccxt(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_get_market_candles_fallback_to_ccxt(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     scalars_mock = MagicMock()
     scalars_mock.scalars.return_value.all.return_value = []
@@ -314,7 +346,7 @@ def test_get_market_candles_fallback_to_ccxt(client: TestClient, auth_headers: d
     mock_candle = OHLCVCandle(
         symbol="BTC/USDT",
         timeframe="1h",
-        timestamp=datetime(2026, 9, 5, 12, 0, 0, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 9, 5, 12, 0, 0, tzinfo=UTC),
         open=Decimal("50100.0"),
         high=Decimal("50900.0"),
         low=Decimal("49900.0"),
@@ -329,7 +361,9 @@ def test_get_market_candles_fallback_to_ccxt(client: TestClient, auth_headers: d
         mock_get_adapter.return_value = mock_adapter
 
         try:
-            response = client.get("/api/v1/tools/market/candles?symbol=BTC/USDT&timeframe=1h", headers=auth_headers)
+            response = client.get(
+                "/api/v1/tools/market/candles?symbol=BTC/USDT&timeframe=1h", headers=auth_headers
+            )
             assert response.status_code == 200
             data = response.json()
             assert data["symbol"] == "BTC/USDT"
@@ -344,7 +378,7 @@ def test_get_analytics_indicators_from_db(client: TestClient, auth_headers: dict
     mock_snap = IndicatorSnapshotModel(
         symbol="BTC/USDT",
         timeframe="1h",
-        timestamp=datetime(2026, 9, 5, 12, 0, 0, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 9, 5, 12, 0, 0, tzinfo=UTC),
         indicators={"rsi": 62.5, "macd": 2.4},
         trading_mode="paper",
     )
@@ -358,7 +392,9 @@ def test_get_analytics_indicators_from_db(client: TestClient, auth_headers: dict
     app.dependency_overrides[get_db_session] = override_db
 
     try:
-        response = client.get("/api/v1/tools/analytics/indicators?symbol=BTC/USDT", headers=auth_headers)
+        response = client.get(
+            "/api/v1/tools/analytics/indicators?symbol=BTC/USDT", headers=auth_headers
+        )
         assert response.status_code == 200
         data = response.json()
         assert data["symbol"] == "BTC/USDT"
@@ -367,7 +403,9 @@ def test_get_analytics_indicators_from_db(client: TestClient, auth_headers: dict
         app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_get_analytics_indicators_not_found_fails_closed(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_get_analytics_indicators_not_found_fails_closed(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     scalar_res = MagicMock()
     scalar_res.scalar_one_or_none.return_value = None
@@ -379,21 +417,25 @@ def test_get_analytics_indicators_not_found_fails_closed(client: TestClient, aut
     app.dependency_overrides[get_db_session] = override_db
 
     try:
-        response = client.get("/api/v1/tools/analytics/indicators?symbol=BTC/USDT", headers=auth_headers)
+        response = client.get(
+            "/api/v1/tools/analytics/indicators?symbol=BTC/USDT", headers=auth_headers
+        )
         assert response.status_code == 404
         assert "Indicators not found" in response.json()["detail"]
     finally:
         app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_get_portfolio_positions_returns_real_data(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_get_portfolio_positions_returns_real_data(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     account_id = uuid.uuid4()
     mock_account = PortfolioAccountModel(
         id=account_id,
         name="Test Account",
         trading_mode="paper",
-        created_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
     )
     mock_entry = PortfolioEntryModel(
         id=uuid.uuid4(),
@@ -401,7 +443,7 @@ def test_get_portfolio_positions_returns_real_data(client: TestClient, auth_head
         asset="USDT",
         balance=Decimal("15000.0"),
         trading_mode="paper",
-        updated_at=datetime.now(timezone.utc),
+        updated_at=datetime.now(UTC),
     )
     mock_pos = PositionModel(
         id=uuid.uuid4(),
@@ -411,7 +453,7 @@ def test_get_portfolio_positions_returns_real_data(client: TestClient, auth_head
         average_entry_price=Decimal("50000.0"),
         realized_pnl=Decimal("100.0"),
         trading_mode="paper",
-        updated_at=datetime.now(timezone.utc),
+        updated_at=datetime.now(UTC),
     )
 
     async def override_db():
@@ -419,7 +461,10 @@ def test_get_portfolio_positions_returns_real_data(client: TestClient, auth_head
 
     app.dependency_overrides[get_db_session] = override_db
 
-    with patch("apps.api.routers.tools.portfolio_engine.get_or_create_account", new=AsyncMock(return_value=mock_account)):
+    with patch(
+        "apps.api.routers.tools.portfolio_engine.get_or_create_account",
+        new=AsyncMock(return_value=mock_account),
+    ):
         exec_entry = MagicMock()
         exec_entry.scalars.return_value.all.return_value = [mock_entry]
 
@@ -442,14 +487,16 @@ def test_get_portfolio_positions_returns_real_data(client: TestClient, auth_head
             app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_get_portfolio_positions_unseeded_returns_empty_balances(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_get_portfolio_positions_unseeded_returns_empty_balances(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     account_id = uuid.uuid4()
     mock_account = PortfolioAccountModel(
         id=account_id,
         name="Empty Account",
         trading_mode="paper",
-        created_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
     )
 
     async def override_db():
@@ -457,7 +504,10 @@ def test_get_portfolio_positions_unseeded_returns_empty_balances(client: TestCli
 
     app.dependency_overrides[get_db_session] = override_db
 
-    with patch("apps.api.routers.tools.portfolio_engine.get_or_create_account", new=AsyncMock(return_value=mock_account)):
+    with patch(
+        "apps.api.routers.tools.portfolio_engine.get_or_create_account",
+        new=AsyncMock(return_value=mock_account),
+    ):
         exec_entry = MagicMock()
         exec_entry.scalars.return_value.all.return_value = []
 
@@ -476,7 +526,9 @@ def test_get_portfolio_positions_unseeded_returns_empty_balances(client: TestCli
             app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_get_portfolio_positions_db_error_fails_closed(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_get_portfolio_positions_db_error_fails_closed(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     async def override_db():
         yield AsyncMock()
 
@@ -494,7 +546,9 @@ def test_get_portfolio_positions_db_error_fails_closed(client: TestClient, auth_
             app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_store_memory_persists_observation(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_store_memory_persists_observation(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     mock_session.add = MagicMock()
     mock_session.commit = AsyncMock()
@@ -527,7 +581,9 @@ def test_store_memory_persists_observation(client: TestClient, auth_headers: dic
         app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_search_memory_queries_observations(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_search_memory_queries_observations(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     mock_session = AsyncMock()
     mock_obs = AgentObservationModel(
         id=uuid.uuid4(),
@@ -536,7 +592,7 @@ def test_search_memory_queries_observations(client: TestClient, auth_headers: di
         content={"summary": "Breakout above 52k failed"},
         trading_mode="paper",
         correlation_id=uuid.uuid4(),
-        observed_at=datetime(2026, 9, 5, 12, 0, 0, tzinfo=timezone.utc),
+        observed_at=datetime(2026, 9, 5, 12, 0, 0, tzinfo=UTC),
     )
     scalars_mock = MagicMock()
     scalars_mock.scalars.return_value.all.return_value = [mock_obs]
@@ -557,14 +613,20 @@ def test_search_memory_queries_observations(client: TestClient, auth_headers: di
         app.dependency_overrides.pop(get_db_session, None)
 
 
-def test_deep_analyze_proxies_to_tradingagents(client: TestClient, auth_headers: dict[str, str]) -> None:
+def test_deep_analyze_proxies_to_tradingagents(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
     payload = {"symbol": "BTC/USDT", "timeframe": "1h", "context": "Test context"}
     mock_response = MagicMock()
     mock_response.raise_for_status = MagicMock()
-    mock_response.json = MagicMock(return_value={"symbol": "BTC/USDT", "status": "completed", "summary": "Bullish"})
+    mock_response.json = MagicMock(
+        return_value={"symbol": "BTC/USDT", "status": "completed", "summary": "Bullish"}
+    )
 
     with patch("httpx.AsyncClient.post", new=AsyncMock(return_value=mock_response)) as mock_post:
-        response = client.post("/api/v1/tools/research/deep_analyze", headers=auth_headers, json=payload)
+        response = client.post(
+            "/api/v1/tools/research/deep_analyze", headers=auth_headers, json=payload
+        )
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "completed"
@@ -575,7 +637,12 @@ def test_deep_analyze_proxies_to_tradingagents(client: TestClient, auth_headers:
 def test_deep_analyze_error_returns_502(client: TestClient, auth_headers: dict[str, str]) -> None:
     payload = {"symbol": "BTC/USDT", "timeframe": "1h", "context": "Test context"}
 
-    with patch("httpx.AsyncClient.post", new=AsyncMock(side_effect=httpx.ConnectError("Service unreachable"))):
-        response = client.post("/api/v1/tools/research/deep_analyze", headers=auth_headers, json=payload)
+    with patch(
+        "httpx.AsyncClient.post",
+        new=AsyncMock(side_effect=httpx.ConnectError("Service unreachable")),
+    ):
+        response = client.post(
+            "/api/v1/tools/research/deep_analyze", headers=auth_headers, json=payload
+        )
         assert response.status_code == 502
         assert "TradingAgents error" in response.json()["detail"]

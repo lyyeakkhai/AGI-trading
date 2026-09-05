@@ -1,31 +1,29 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone, timedelta
-from decimal import Decimal
-from typing import Annotated, Any
+import contextlib
 import uuid
+from datetime import UTC, datetime, timedelta
+from decimal import Decimal
+from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
 import httpx
-from sqlalchemy import cast, or_, select, String
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import String, cast, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.api.dependencies import verify_hermes_token
-from packages.config.settings import Settings, get_settings
+from packages.config.settings import get_settings
 from packages.database.engine import get_db_session
 from packages.database.models.hypertables import IndicatorSnapshotModel, MarketCandleModel
 from packages.database.models.portfolio import (
-    PortfolioAccountModel,
     PortfolioEntryModel,
     PositionModel,
 )
 from packages.database.models.relational import (
     AgentObservationModel,
     TradeProposalModel,
-    RiskDecisionModel,
 )
 from packages.database.models.strategy import StrategyModel
-from packages.domain.enums import OrderSide, OrderType, RiskDecisionType
 from packages.exchange.binance import BinanceCCXTAdapter
 from packages.logging import get_logger
 from services.portfolio.engine import PortfolioEngine
@@ -151,7 +149,7 @@ async def get_market_candles(
                 "4h": timedelta(hours=limit * 4),
                 "1d": timedelta(days=limit),
             }
-            since = datetime.now(timezone.utc) - durations.get(timeframe, timedelta(hours=limit))
+            since = datetime.now(UTC) - durations.get(timeframe, timedelta(hours=limit))
             ccxt_candles = await adapter.get_candles(symbol, timeframe, since, limit)
             candles = [
                 {
@@ -200,7 +198,7 @@ async def get_analytics_indicators(
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=f"Database error querying indicators for {symbol}",
-        )
+        ) from e
 
     # Fail closed: indicators not found
     raise HTTPException(
@@ -256,7 +254,7 @@ async def get_portfolio_positions(
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Portfolio engine unavailable",
-        )
+        ) from e
 
 
 @router.get("/strategy/list", dependencies=[Depends(verify_hermes_token)])
@@ -282,7 +280,11 @@ async def get_strategy_list(
 
 
 # 7.4: Trade Proposal Tool API
-@router.post("/proposal/create", dependencies=[Depends(verify_hermes_token)], status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/proposal/create",
+    dependencies=[Depends(verify_hermes_token)],
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_trade_proposal(
     intent: dict[str, Any],
     session: AsyncSession = Depends(get_db_session),
@@ -290,7 +292,9 @@ async def create_trade_proposal(
 ) -> dict[str, Any]:
     symbol = intent.get("symbol")
     if not symbol:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing required field: symbol")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Missing required field: symbol"
+        )
 
     direction = intent.get("direction") or intent.get("side", "buy")
     side = "buy" if str(direction).lower() in ("long", "buy") else "sell"
@@ -298,20 +302,27 @@ async def create_trade_proposal(
     order_type_raw = str(
         intent.get(
             "order_type",
-            "limit" if (intent.get("entry") or intent.get("limit_price") or intent.get("entry_price")) else "market",
+            "limit"
+            if (intent.get("entry") or intent.get("limit_price") or intent.get("entry_price"))
+            else "market",
         )
     ).lower()
     order_type = "limit" if order_type_raw in ("limit",) else "market"
 
     quantity_val = intent.get("quantity") or intent.get("size")
     if quantity_val is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing required field: quantity")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Missing required field: quantity"
+        )
     try:
         quantity = Decimal(str(quantity_val))
         if quantity <= Decimal("0"):
             raise ValueError()
     except Exception:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid quantity: must be a positive number")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid quantity: must be a positive number",
+        ) from None
 
     limit_price = None
     price_val = intent.get("entry") or intent.get("limit_price") or intent.get("entry_price")
@@ -321,32 +332,32 @@ async def create_trade_proposal(
             if limit_price <= Decimal("0"):
                 raise ValueError()
         except Exception:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid limit_price: must be a positive number")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid limit_price: must be a positive number",
+            ) from None
     elif order_type == "limit":
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Limit orders require an entry or limit_price")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Limit orders require an entry or limit_price",
+        )
 
     trading_mode = str(intent.get("trading_mode", "paper"))
 
     correlation_id = uuid.uuid4()
     if "correlation_id" in intent and intent["correlation_id"]:
-        try:
+        with contextlib.suppress(ValueError, TypeError):
             correlation_id = uuid.UUID(str(intent["correlation_id"]))
-        except (ValueError, TypeError):
-            pass
 
     proposal_id = uuid.uuid4()
     if "proposal_id" in intent and intent["proposal_id"]:
-        try:
+        with contextlib.suppress(ValueError, TypeError):
             proposal_id = uuid.UUID(str(intent["proposal_id"]))
-        except (ValueError, TypeError):
-            pass
 
     strategy_id = None
     if "strategy_id" in intent and intent["strategy_id"]:
-        try:
+        with contextlib.suppress(ValueError, TypeError):
             strategy_id = uuid.UUID(str(intent["strategy_id"]))
-        except (ValueError, TypeError):
-            pass
 
     rationale = intent.get("rationale")
     if not rationale:
@@ -356,7 +367,7 @@ async def create_trade_proposal(
         else:
             rationale = "Hermes AI Proposal"
 
-    now_utc = datetime.now(timezone.utc)
+    now_utc = datetime.now(UTC)
     proposal = TradeProposalModel(
         id=proposal_id,
         symbol=symbol,
@@ -412,12 +423,18 @@ async def create_trade_proposal(
 
 # 7.6: Knowledge Base & Vector Embeddings
 @router.get("/knowledge/search", dependencies=[Depends(verify_hermes_token)])
-async def search_knowledge(query: str = Query("", description="Knowledge search query")) -> dict[str, Any]:
+async def search_knowledge(
+    query: str = Query("", description="Knowledge search query"),
+) -> dict[str, Any]:
     return {"query": query, "results": []}
 
 
 # 7.7: Agent Observation Memory
-@router.post("/memory/store", dependencies=[Depends(verify_hermes_token)], status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/memory/store",
+    dependencies=[Depends(verify_hermes_token)],
+    status_code=status.HTTP_201_CREATED,
+)
 async def store_memory(
     observation: dict[str, Any],
     session: AsyncSession = Depends(get_db_session),
@@ -439,10 +456,12 @@ async def store_memory(
             obs_id = uuid.uuid4()
 
     agent_id = str(observation.get("agent_id") or "hermes")
-    obs_type = str(observation.get("observation_type") or observation.get("type") or "trade_reflection")
+    obs_type = str(
+        observation.get("observation_type") or observation.get("type") or "trade_reflection"
+    )
     trading_mode = str(observation.get("trading_mode") or "paper")
 
-    obs_time = datetime.now(timezone.utc)
+    obs_time = datetime.now(UTC)
     if "observed_at" in observation and observation["observed_at"]:
         try:
             if isinstance(observation["observed_at"], str):
@@ -457,7 +476,15 @@ async def store_memory(
         content = {
             k: v
             for k, v in observation.items()
-            if k not in ("id", "agent_id", "observation_type", "trading_mode", "correlation_id", "observed_at")
+            if k
+            not in (
+                "id",
+                "agent_id",
+                "observation_type",
+                "trading_mode",
+                "correlation_id",
+                "observed_at",
+            )
         }
 
     record = AgentObservationModel(
@@ -520,8 +547,10 @@ async def tradingagents_deep_analyze(payload: dict[str, Any]) -> dict[str, Any]:
     headers = {"Authorization": f"Bearer {settings.trading_agents.service_token}"}
     async with httpx.AsyncClient() as client:
         try:
-            resp = await client.post(url, json=payload, headers=headers, timeout=settings.trading_agents.timeout_seconds)
+            resp = await client.post(
+                url, json=payload, headers=headers, timeout=settings.trading_agents.timeout_seconds
+            )
             resp.raise_for_status()
             return resp.json()
         except httpx.HTTPError as e:
-            raise HTTPException(status_code=502, detail=f"TradingAgents error: {str(e)}")
+            raise HTTPException(status_code=502, detail=f"TradingAgents error: {str(e)}") from e
