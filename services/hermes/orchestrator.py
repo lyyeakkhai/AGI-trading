@@ -1,17 +1,17 @@
 import asyncio
-import json
 import logging
-from typing import Any, Dict
+from typing import Any
+
+import redis.asyncio as redis
 
 from packages.config.settings import get_settings
-import redis.asyncio as redis
-from packages.config import get_settings
+from packages.events.streams import StreamNames
 from services.hermes.context import ContextAssembler
-from services.hermes.reasoning import ReasoningEngine
-from services.hermes.proposal_client import ProposalClient
-from services.hermes.research_client import ResearchClient
 from services.hermes.escalation_policy import should_escalate
 from services.hermes.memory_recorder import MemoryRecorder
+from services.hermes.proposal_client import ProposalClient
+from services.hermes.reasoning import ReasoningEngine
+from services.hermes.research_client import ResearchClient
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ class HermesOrchestrator:
     def __init__(self):
         self.settings = get_settings()
         self.redis = redis.from_url(self.settings.redis.url)
-        self.stream_name = f"{self.settings.redis.key_prefix}opportunity.detected"
+        self.stream_name = f"{self.settings.redis.key_prefix}{StreamNames.OPPORTUNITIES}"
         self.consumer_group = "hermes_group"
         self.consumer_name = "hermes_worker_1"
         self.context_assembler = ContextAssembler()
@@ -41,8 +41,14 @@ class HermesOrchestrator:
 
     async def process_opportunity(self, event_data: dict):
         try:
-            symbol = event_data.get(b"symbol", b"").decode("utf-8")
-            timeframe = event_data.get(b"timeframe", b"").decode("utf-8")
+            decoded_data: dict[str, Any] = {}
+            for k, v in event_data.items():
+                key_str = k.decode("utf-8") if isinstance(k, bytes) else str(k)
+                val_str = v.decode("utf-8") if isinstance(v, bytes) else v
+                decoded_data[key_str] = val_str
+
+            symbol = str(decoded_data.get("symbol", ""))
+            timeframe = str(decoded_data.get("timeframe", ""))
             
             if not symbol or not timeframe:
                 logger.error("Missing symbol or timeframe in event")
@@ -61,7 +67,9 @@ class HermesOrchestrator:
                 regime = str(context.get("indicators", {}))
                 if should_escalate(symbol, timeframe, proposal.confidence, regime):
                     logger.info(f"Escalating {symbol} to deep research")
-                    deep_report = await self.research_client.trigger_deep_research(symbol, timeframe, str(context))
+                    deep_report = await self.research_client.trigger_deep_research(
+                        symbol, timeframe, str(context)
+                    )
                     if deep_report:
                         context["deep_research_report"] = deep_report
                         proposal = await self.reasoning.evaluate(context)
@@ -91,7 +99,7 @@ class HermesOrchestrator:
                     block=5000
                 )
                 
-                for stream, stream_messages in messages:
+                for _stream, stream_messages in messages:
                     for message_id, message_data in stream_messages:
                         await self.process_opportunity(message_data)
                         await self.redis.xack(self.stream_name, self.consumer_group, message_id)
