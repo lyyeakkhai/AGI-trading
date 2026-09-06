@@ -80,12 +80,31 @@ class BinanceCCXTAdapter(ExchangeAdapter):
         "1d": 86_400_000,
     }
 
-    def __init__(self, sandbox: bool = False) -> None:
-        self._rest = ccxt.binance({"options": {"defaultType": "spot"}})
+    def __init__(
+        self,
+        api_key: str | None = None,
+        api_secret: str | None = None,
+        sandbox: bool = False,
+    ) -> None:
+        config: dict[str, Any] = {"options": {"defaultType": "spot"}}
+        if api_key:
+            config["apiKey"] = api_key
+        if api_secret:
+            config["secret"] = api_secret
+        self._rest = ccxt.binance(config)
         self._ws: ccxtpro.binance | None = None
         self._sandbox = sandbox
         if sandbox:
             self._rest.set_sandbox_mode(True)
+
+    async def ping(self) -> float:
+        """Measure round-trip latency to Binance."""
+        start = time.monotonic()
+        try:
+            await asyncio.to_thread(self._rest.fetch_time)
+            return (time.monotonic() - start) * 1000
+        except Exception:
+            return (time.monotonic() - start) * 1000
 
     def _normalize_symbol(self, raw: str) -> str:
         """Ensure symbol is in platform canonical form: BTC/USDT."""

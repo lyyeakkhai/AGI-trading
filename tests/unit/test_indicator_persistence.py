@@ -15,6 +15,7 @@ def test_indicator_snapshot_model_structure() -> None:
 @pytest.mark.asyncio
 async def test_analytics_worker_persists_snapshot_on_closed_candle() -> None:
     mock_session = AsyncMock()
+    mock_session.__aenter__.return_value = mock_session
     mock_session.execute = AsyncMock()
 
     class MockContextManager:
@@ -59,6 +60,7 @@ async def test_analytics_worker_persists_snapshot_on_closed_candle() -> None:
 @pytest.mark.asyncio
 async def test_persistence_error_handling_does_not_crash_worker() -> None:
     mock_session = AsyncMock()
+    mock_session.__aenter__.return_value = mock_session
     mock_session.execute = AsyncMock(side_effect=Exception("DB Connection Timeout"))
 
     class MockContextManager:

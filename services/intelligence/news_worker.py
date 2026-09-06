@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime, timezone
-from decimal import Decimal
 import random
-from typing import Any
 import uuid
+from datetime import UTC, datetime
+from typing import Any
 
-import httpx
-from sqlalchemy.ext.asyncio import AsyncSession
 import structlog
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from packages.config import Settings, get_settings
 from packages.database.models.intelligence import NewsEventModel
@@ -21,49 +19,137 @@ logger = structlog.get_logger(__name__)
 # Category keyword dictionaries
 _CATEGORY_KEYWORDS = {
     NewsCategory.REGULATORY: [
-        "sec", "cftc", "regulator", "regulation", "lawsuit", "court", "judge", "doj", "congress",
-        "bill", "legislation", "sanction", "compliance", "subpoena", "ban", "legal",
+        "sec",
+        "cftc",
+        "regulator",
+        "regulation",
+        "lawsuit",
+        "court",
+        "judge",
+        "doj",
+        "congress",
+        "bill",
+        "legislation",
+        "sanction",
+        "compliance",
+        "subpoena",
+        "ban",
+        "legal",
     ],
     NewsCategory.EXCHANGE: [
-        "binance", "coinbase", "kraken", "okx", "bybit", "listing", "delisting", "exchange",
-        "insolvency", "withdrawal halted", "trading halted",
+        "binance",
+        "coinbase",
+        "kraken",
+        "okx",
+        "bybit",
+        "listing",
+        "delisting",
+        "exchange",
+        "insolvency",
+        "withdrawal halted",
+        "trading halted",
     ],
     NewsCategory.ETF: [
-        "etf", "spot etf", "blackrock", "fidelity", "s-1", "19b-4", "etf approval", "etf outflow", "etf inflow",
+        "etf",
+        "spot etf",
+        "blackrock",
+        "fidelity",
+        "s-1",
+        "19b-4",
+        "etf approval",
+        "etf outflow",
+        "etf inflow",
     ],
     NewsCategory.MACROECONOMIC: [
-        "cpi", "fed", "federal reserve", "rate cut", "rate hike", "inflation", "fomc", "powell",
-        "treasury", "interest rates", "jobs report", "gdp",
+        "cpi",
+        "fed",
+        "federal reserve",
+        "rate cut",
+        "rate hike",
+        "inflation",
+        "fomc",
+        "powell",
+        "treasury",
+        "interest rates",
+        "jobs report",
+        "gdp",
     ],
     NewsCategory.SECURITY: [
-        "hack", "hacked", "exploit", "exploited", "stolen", "drained", "vulnerability", "breach",
-        "private key", "flash loan",
+        "hack",
+        "hacked",
+        "exploit",
+        "exploited",
+        "stolen",
+        "drained",
+        "vulnerability",
+        "breach",
+        "private key",
+        "flash loan",
     ],
     NewsCategory.PROTOCOL: [
-        "upgrade", "hard fork", "soft fork", "mainnet", "testnet", "eip", "halving", "validator",
-        "consensus", "layer 2", "zero knowledge",
+        "upgrade",
+        "hard fork",
+        "soft fork",
+        "mainnet",
+        "testnet",
+        "eip",
+        "halving",
+        "validator",
+        "consensus",
+        "layer 2",
+        "zero knowledge",
     ],
     NewsCategory.INSTITUTIONAL: [
-        "microstrategy", "saylor", "institutional", "pension fund", "treasury reserve", "corporate buy",
+        "microstrategy",
+        "saylor",
+        "institutional",
+        "pension fund",
+        "treasury reserve",
+        "corporate buy",
     ],
     NewsCategory.STABLECOIN: [
-        "usdt", "usdc", "tether", "circle", "depeg", "stablecoin", "backing",
+        "usdt",
+        "usdc",
+        "tether",
+        "circle",
+        "depeg",
+        "stablecoin",
+        "backing",
     ],
 }
 
 _CRITICAL_KEYWORDS = [
-    "sec approves", "etf approved", "exchange hacked", "billion stolen", "emergency rate",
-    "trading halted", "insolvency", "doj indicts", "ban passed",
+    "sec approves",
+    "etf approved",
+    "exchange hacked",
+    "billion stolen",
+    "emergency rate",
+    "trading halted",
+    "insolvency",
+    "doj indicts",
+    "ban passed",
 ]
 
 _HIGH_KEYWORDS = [
-    "lawsuit", "rate decision", "halving", "fomc", "cpi", "blackrock", "million exploit",
-    "delisting", "sec charges",
+    "lawsuit",
+    "rate decision",
+    "halving",
+    "fomc",
+    "cpi",
+    "blackrock",
+    "million exploit",
+    "delisting",
+    "sec charges",
+    "breaking",
 ]
 
 _MEDIUM_KEYWORDS = [
-    "protocol upgrade", "mainnet launch", "institutional inflow", "partnership",
-    "layer 2", "etf inflow",
+    "protocol upgrade",
+    "mainnet launch",
+    "institutional inflow",
+    "partnership",
+    "layer 2",
+    "etf inflow",
 ]
 
 
@@ -77,8 +163,7 @@ class NewsWorker:
     ) -> None:
         self._settings = settings or get_settings()
         self._poll_interval = (
-            poll_interval_seconds
-            or self._settings.intelligence.poll_interval_seconds
+            poll_interval_seconds or self._settings.intelligence.poll_interval_seconds
         )
         self._running = False
         self._task: asyncio.Task[None] | None = None
@@ -150,7 +235,7 @@ class NewsWorker:
 
         event = NewsEvent(
             id=uuid.uuid4(),
-            timestamp=timestamp or datetime.now(timezone.utc),
+            timestamp=timestamp or datetime.now(UTC),
             source=source,
             headline=headline.strip(),
             summary=summary.strip(),
@@ -191,11 +276,41 @@ class NewsWorker:
     async def poll_mock_feed(self) -> list[NewsEvent]:
         """Fetch synthetic crypto news items for testing/simulation."""
         mock_templates = [
-            ("SEC Approves Spot Bitcoin ETF Applications from Major Issuers", "The Securities and Exchange Commission has approved 11 spot bitcoin ETF applications in a landmark regulatory decision.", "regulatory", "CRITICAL", ["BTC"]),
-            ("Ethereum Dencun Upgrade Goes Live on Mainnet", "Ethereum network successfully completes major hard fork reducing layer 2 transaction fees significantly.", "protocol", "HIGH", ["ETH"]),
-            ("Federal Reserve Cuts Interest Rates by 50 Basis Points", "Federal Reserve announced a 50 bps interest rate cut following FOMC meeting, boosting liquidity across risk assets.", "macroeconomic", "HIGH", ["BTC", "ETH"]),
-            ("Leading Exchange Reports Temporary Maintenance Outage", "Binance reported brief scheduled maintenance on spot order books with no customer funds impacted.", "exchange", "MEDIUM", ["BTC", "ETH"]),
-            ("MicroStrategy Purchases Additional 12,000 BTC", "MicroStrategy acquired an additional 12,000 bitcoins for approximately $800 million in cash reserves.", "institutional", "HIGH", ["BTC"]),
+            (
+                "SEC Approves Spot Bitcoin ETF Applications from Major Issuers",
+                "The Securities and Exchange Commission has approved 11 spot bitcoin ETF applications in a landmark regulatory decision.",
+                "regulatory",
+                "CRITICAL",
+                ["BTC"],
+            ),
+            (
+                "Ethereum Dencun Upgrade Goes Live on Mainnet",
+                "Ethereum network successfully completes major hard fork reducing layer 2 transaction fees significantly.",
+                "protocol",
+                "HIGH",
+                ["ETH"],
+            ),
+            (
+                "Federal Reserve Cuts Interest Rates by 50 Basis Points",
+                "Federal Reserve announced a 50 bps interest rate cut following FOMC meeting, boosting liquidity across risk assets.",
+                "macroeconomic",
+                "HIGH",
+                ["BTC", "ETH"],
+            ),
+            (
+                "Leading Exchange Reports Temporary Maintenance Outage",
+                "Binance reported brief scheduled maintenance on spot order books with no customer funds impacted.",
+                "exchange",
+                "MEDIUM",
+                ["BTC", "ETH"],
+            ),
+            (
+                "MicroStrategy Purchases Additional 12,000 BTC",
+                "MicroStrategy acquired an additional 12,000 bitcoins for approximately $800 million in cash reserves.",
+                "institutional",
+                "HIGH",
+                ["BTC"],
+            ),
         ]
         chosen = random.sample(mock_templates, k=min(2, len(mock_templates)))
         events: list[NewsEvent] = []
@@ -203,7 +318,7 @@ class NewsWorker:
             sentiment = analyze_sentiment(f"{headline} {summary}")
             ev = NewsEvent(
                 id=uuid.uuid4(),
-                timestamp=datetime.now(timezone.utc),
+                timestamp=datetime.now(UTC),
                 source="mock_crypto_wire",
                 headline=headline,
                 summary=summary,

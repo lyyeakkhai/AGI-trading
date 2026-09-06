@@ -43,9 +43,19 @@ def test_terminal_states() -> None:
     assert sm.is_terminal(ExecutionState.FILLED) is True
     assert sm.is_terminal(ExecutionState.CANCELLED) is True
     assert sm.is_terminal(ExecutionState.REJECTED) is True
+    assert sm.is_terminal(ExecutionState.FAILED) is True
     assert sm.is_terminal(ExecutionState.EXPIRED) is True
     assert sm.is_terminal(ExecutionState.SUBMITTED) is False
     assert sm.is_terminal(ExecutionState.UNKNOWN) is False
+
+
+def test_failed_state_transitions() -> None:
+    sm = ExecutionStateMachine()
+    assert sm.transition(ExecutionState.SUBMITTING, ExecutionState.FAILED) == ExecutionState.FAILED
+    assert sm.transition(ExecutionState.SUBMITTED, ExecutionState.FAILED) == ExecutionState.FAILED
+    assert sm.transition(ExecutionState.PENDING, ExecutionState.FAILED) == ExecutionState.FAILED
+    with pytest.raises(ValueError, match="Invalid transition from FAILED to SUBMITTED"):
+        sm.transition(ExecutionState.FAILED, ExecutionState.SUBMITTED)
 
 
 def test_string_inputs() -> None:

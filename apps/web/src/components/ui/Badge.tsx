@@ -53,9 +53,9 @@ const variantStyles: Record<BadgeVariant, { container: string; dot: string }> = 
 };
 
 const sizeStyles: Record<BadgeSize, string> = {
-  sm: "text-[10px] px-1.5 py-0.5 gap-1 rounded-sm",
-  md: "text-[11px] px-2 py-0.5 gap-1.5 rounded-md",
-  lg: "text-xs px-2.5 py-1 gap-1.5 rounded-md",
+  sm: "text-[11px] px-2 py-0.5 gap-1 rounded-sm font-medium tracking-wide",
+  md: "text-xs px-2.5 py-0.5 gap-1.5 rounded-md font-medium tracking-wide",
+  lg: "text-xs px-3 py-1 gap-1.5 rounded-md font-semibold tracking-wide",
 };
 
 export function Badge({
@@ -72,7 +72,7 @@ export function Badge({
 
   return (
     <span
-      className={`inline-flex items-center font-mono font-medium tracking-tight whitespace-nowrap select-none ${currentVariant.container} ${sizeStyles[size]} ${className}`}
+      className={`inline-flex items-center font-sans whitespace-nowrap select-none ${currentVariant.container} ${sizeStyles[size]} ${className}`}
       {...props}
     >
       {dot && (

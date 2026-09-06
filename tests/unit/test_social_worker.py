@@ -68,7 +68,7 @@ async def test_social_worker_exponential_backoff_on_error() -> None:
         raise ConnectionError("Network unreachable")
         yield  # type: ignore
 
-    mock_client.stream_posts.return_value = fail_stream()
+    mock_client.stream_posts.side_effect = fail_stream
 
     worker = SocialWorker(
         x_client=mock_client,

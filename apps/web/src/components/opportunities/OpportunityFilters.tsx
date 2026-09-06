@@ -139,6 +139,24 @@ export function OpportunityFilters({
           </select>
         </div>
 
+        {/* Strategy Filter */}
+        <div className="flex items-center gap-1">
+          <span className="text-[10px] text-gray-400 uppercase">Strategy:</span>
+          <select
+            value={filters.strategy}
+            onChange={(e) => updateFilter("strategy", e.target.value)}
+            className="bg-bg-950 border border-border-color text-gray-200 text-[11px] rounded px-2 py-1 outline-none focus:border-cyan-500 cursor-pointer"
+          >
+            <option value="All">All Strategies</option>
+            <option value="Breakout Continuation">Breakout Continuation</option>
+            <option value="Trend Continuation">Trend Continuation</option>
+            <option value="Momentum">Momentum</option>
+            <option value="Mean Reversion">Mean Reversion</option>
+            <option value="Volatility Compression">Volatility Compression</option>
+            <option value="Liquidity Sweep">Liquidity Sweep</option>
+          </select>
+        </div>
+
         {/* Timeframe Filter */}
         <div className="flex items-center gap-1">
           <span className="text-[10px] text-gray-400 uppercase">Timeframe:</span>

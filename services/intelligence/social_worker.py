@@ -88,11 +88,11 @@ class SocialWorker:
             try:
                 logger.info("social_worker_connecting", mock=self._client.is_mock)
                 self._connected = True
-                self._current_backoff = self._base_backoff
 
                 async for post in self._client.stream_posts():
                     if not self._running:
                         break
+                    self._current_backoff = self._base_backoff
                     self._posts_received_count += 1
                     self._last_post_time = time.monotonic()
 

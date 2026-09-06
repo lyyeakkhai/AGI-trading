@@ -27,7 +27,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   secondary:
     "bg-surface-2 text-gray-200 border border-border-hi hover:bg-surface-elevated hover:border-cyan-500/30 active:bg-surface focus-visible:ring-1 focus-visible:ring-cyan-500/50",
   outline:
-    "bg-transparent text-gray-300 border border-border-color hover:border-border-hi hover:bg-surface-2 hover:text-white focus-visible:ring-1 focus-visible:ring-border-hi",
+    "bg-transparent text-gray-200 border border-border-color hover:border-border-hi hover:bg-surface-2 hover:text-white focus-visible:ring-1 focus-visible:ring-border-hi",
   ghost:
     "bg-transparent text-gray-400 hover:text-gray-200 hover:bg-surface-2 border border-transparent focus-visible:ring-1 focus-visible:ring-border-hi",
   danger:
@@ -37,10 +37,10 @@ const variantStyles: Record<ButtonVariant, string> = {
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  xs: "h-6 px-2 text-[11px] gap-1.5 rounded-sm",
-  sm: "h-7 px-2.5 text-xs gap-1.5 rounded-md",
-  md: "h-8 px-3 text-xs gap-2 rounded-md",
-  lg: "h-10 px-4 text-sm gap-2.5 rounded-md",
+  xs: "h-6 px-2.5 text-xs gap-1.5 rounded-sm font-medium",
+  sm: "h-7 px-3 text-xs gap-1.5 rounded-md font-medium",
+  md: "h-8 px-3.5 text-xs gap-2 rounded-md font-medium",
+  lg: "h-10 px-4 text-sm gap-2.5 rounded-md font-semibold",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

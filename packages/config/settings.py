@@ -1,6 +1,6 @@
 from decimal import Decimal
 from functools import lru_cache
-from typing import Optional
+
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -39,9 +39,7 @@ class RedisSettings(BaseSettings):
     url: str = Field(default="redis://localhost:6379", validation_alias="REDIS_URL")
     key_prefix: str = "trading:paper:"
     live_key_prefix: str = "trading:live:"
-    stream_names: list[str] = Field(
-        default_factory=lambda: ["market_data", "signals", "orders"]
-    )
+    stream_names: list[str] = Field(default_factory=lambda: ["market_data", "signals", "orders"])
     consumer_groups: list[str] = Field(
         default_factory=lambda: ["api_group", "risk_group", "execution_group"]
     )
@@ -55,8 +53,8 @@ class ExchangeSettings(BaseSettings):
     exchange_id: str = "binance"
     sandbox_flag: bool = True
     rate_limits_per_second: int = 10
-    binance_api_key: Optional[str] = Field(default=None, validation_alias="BINANCE_API_KEY")
-    binance_secret_key: Optional[str] = Field(default=None, validation_alias="BINANCE_SECRET_KEY")
+    binance_api_key: str | None = Field(default=None, validation_alias="BINANCE_API_KEY")
+    binance_secret_key: str | None = Field(default=None, validation_alias="BINANCE_SECRET_KEY")
 
 
 class TradingSettings(BaseSettings):
@@ -108,8 +106,8 @@ class HermesSettings(BaseSettings):
 
     model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
-    base_url: str = "http://localhost:8001"
-    service_token: Optional[str] = Field(default=None, validation_alias="HERMES_SERVICE_TOKEN")
+    base_url: str = "http://api:8000"
+    service_token: str | None = Field(default=None, validation_alias="HERMES_SERVICE_TOKEN")
     timeout_seconds: int = 30
 
 
@@ -118,10 +116,8 @@ class TradingAgentsSettings(BaseSettings):
 
     model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
-    base_url: str = "http://localhost:8002"
-    service_token: Optional[str] = Field(
-        default=None, validation_alias="TRADINGAGENTS_SERVICE_TOKEN"
-    )
+    base_url: str = "http://tradingagents:8002"
+    service_token: str | None = Field(default=None, validation_alias="TRADINGAGENTS_SERVICE_TOKEN")
     timeout_seconds: int = 30
     escalation_budget_usd: Decimal = Field(default=Decimal("100.0"))
 
@@ -131,10 +127,10 @@ class LLMSettings(BaseSettings):
 
     model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
-    base_url: Optional[str] = Field(default=None, validation_alias="LLM_GATEWAY_URL")
-    api_key: Optional[str] = Field(default=None, validation_alias="LLM_GATEWAY_KEY")
+    base_url: str | None = Field(default=None, validation_alias="LLM_GATEWAY_URL")
+    api_key: str | None = Field(default=None, validation_alias="LLM_GATEWAY_KEY")
     model_routing: dict[str, str] = Field(
-        default_factory=lambda: {"fast": "gpt-4o-mini", "reasoning": "o1-preview"}
+        default_factory=lambda: {"fast": "gpt-4o-mini", "reasoning": "gpt-4o"}
     )
     cost_cap_usd_per_day: Decimal = Field(default=Decimal("50.0"))
 
@@ -144,10 +140,8 @@ class IntelligenceSettings(BaseSettings):
 
     model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
-    x_api_token: Optional[str] = Field(default=None, validation_alias="X_API_TOKEN")
-    news_sources: list[str] = Field(
-        default_factory=lambda: ["coindesk", "cointelegraph"]
-    )
+    x_api_token: str | None = Field(default=None, validation_alias="X_API_TOKEN")
+    news_sources: list[str] = Field(default_factory=lambda: ["coindesk", "cointelegraph"])
     poll_interval_seconds: int = 300
 
 
@@ -166,13 +160,13 @@ class AuthSettings(BaseSettings):
 
     model_config = SettingsConfigDict(extra="ignore", frozen=True, populate_by_name=True)
 
-    dashboard_auth_secret: Optional[str] = Field(
+    dashboard_auth_secret: str | None = Field(
         default=None, validation_alias="DASHBOARD_AUTH_SECRET"
     )
-    dashboard_owner_password_hash: Optional[str] = Field(
+    dashboard_owner_password_hash: str | None = Field(
         default=None, validation_alias="DASHBOARD_OWNER_PASSWORD_HASH"
     )
-    dashboard_totp_secret: Optional[str] = Field(
+    dashboard_totp_secret: str | None = Field(
         default=None, validation_alias="DASHBOARD_TOTP_SECRET"
     )
 
@@ -292,10 +286,9 @@ class Settings(BaseSettings):
             )
 
         # Rule 11: max_risk_per_trade_percent <= 0 or > 100 -> reject
-        if (
-            self.risk.max_risk_per_trade_percent <= Decimal("0")
-            or self.risk.max_risk_per_trade_percent > Decimal("100")
-        ):
+        if self.risk.max_risk_per_trade_percent <= Decimal(
+            "0"
+        ) or self.risk.max_risk_per_trade_percent > Decimal("100"):
             raise ValueError(
                 f"Invalid configuration: max_risk_per_trade_percent must be > 0 and <= 100 "
                 f"(got {self.risk.max_risk_per_trade_percent}). "

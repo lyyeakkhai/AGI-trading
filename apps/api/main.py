@@ -2,6 +2,8 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from apps.api.routers.analytics import router as analytics_router
 from apps.api.routers.health import router as health_router
 from apps.api.routers.markets import router as markets_router
@@ -45,6 +47,13 @@ def create_app() -> FastAPI:
         version="0.1.0",
         lifespan=lifespan,
     )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     app.include_router(health_router)
     app.include_router(markets_router)
     app.include_router(risk_router)
@@ -60,7 +69,11 @@ def create_app() -> FastAPI:
     app.include_router(websocket_router)
     app.include_router(owner_router)
     from apps.api.routers.trading import router as trading_router
+    from apps.api.routers.exchange import router as exchange_router
+    from apps.api.routers.live import router as live_router
     app.include_router(trading_router)
+    app.include_router(exchange_router)
+    app.include_router(live_router)
     return app
 
 

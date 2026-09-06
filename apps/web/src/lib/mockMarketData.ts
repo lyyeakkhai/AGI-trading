@@ -252,7 +252,178 @@ function getSolMarkers(candles: CandleData[]): AIMarketMarker[] {
   ];
 }
 
+
+// Additional Pre-generated timeframes
+
+const xrpTimeframes = generateTimeframeData(0.55, 0.62, 0.02, 100000, 707);
+const adaTimeframes = generateTimeframeData(0.40, 0.45, 0.015, 200000, 808);
+const linkTimeframes = generateTimeframeData(15.0, 18.2, 0.025, 50000, 909);
+
+const bnbTimeframes = generateTimeframeData(580, 594.3, 0.005, 500, 404);
+const avaxTimeframes = generateTimeframeData(34, 38.2, 0.015, 20000, 505);
+const dogeTimeframes = generateTimeframeData(0.14, 0.162, 0.018, 500000, 606);
+
+// Additional markers
+function getBasicMarkers(candles: CandleData[], color: string, type: "BULLISH" | "BEARISH"): AIMarketMarker[] {
+  if (candles.length < 50) return [];
+  const pos: "belowBar" | "aboveBar" = type === "BULLISH" ? "belowBar" : "aboveBar";
+  const shape: "arrowUp" | "arrowDown" = type === "BULLISH" ? "arrowUp" : "arrowDown";
+  return [
+    {
+      time: candles[candles.length - 10].time,
+      position: pos,
+      color: color,
+      shape: shape,
+      text: type === "BULLISH" ? "◆ VOL SURGE" : "◆ EXHAUSTION",
+      description: "AI pattern recognition signal",
+      confidence: 75,
+    }
+  ];
+}
+
 export const mockMarketDetails: Record<string, MarketDetail> = {
+
+  "XRP-USDT": {
+    symbol: "XRP/USDT",
+    name: "Ripple",
+    baseAsset: "XRP",
+    quoteAsset: "USDT",
+    price: 0.62,
+    change24h: 12.5,
+    high24h: 0.65,
+    low24h: 0.54,
+    volume24h: "545M XRP",
+    quoteVolume24h: "$337M",
+    fundingRate: 0.015,
+    openInterest: "$150M",
+    regime: "Momentum Breakout",
+    trend: "BULLISH",
+    volatility: "HIGH",
+    spread: "$0.0001 (0.01%)",
+    orderBook: { bids: [{price: 0.619, size: 50000}], asks: [{price: 0.621, size: 45000}] },
+    technicals: { rsi14: 82, macd: "Bullish (+0.05)", ema20: 0.58, ema50: 0.55, ema200: 0.50, support: 0.55, resistance: 0.65 },
+    hermes: { state: "ANALYZING", summary: "Regulatory news breakout.", reasoning: "Volume expansion.", confidence: 90, signalType: "Long", lastAudit: "Just now" },
+    timeframes: xrpTimeframes,
+    aiMarkers: { "1h": getBasicMarkers(xrpTimeframes["1h"], "#00E5FF", "BULLISH"), "15m": [], "4h": [], "1m": [], "5m": [], "1D": [] },
+  },
+  "ADA-USDT": {
+    symbol: "ADA/USDT",
+    name: "Cardano",
+    baseAsset: "ADA",
+    quoteAsset: "USDT",
+    price: 0.45,
+    change24h: -1.2,
+    high24h: 0.47,
+    low24h: 0.44,
+    volume24h: "120M ADA",
+    quoteVolume24h: "$54M",
+    fundingRate: 0.001,
+    openInterest: "$45M",
+    regime: "Range Bound",
+    trend: "NEUTRAL",
+    volatility: "LOW",
+    spread: "$0.0002 (0.04%)",
+    orderBook: { bids: [{price: 0.449, size: 10000}], asks: [{price: 0.451, size: 12000}] },
+    technicals: { rsi14: 48, macd: "Neutral", ema20: 0.46, ema50: 0.45, ema200: 0.40, support: 0.43, resistance: 0.48 },
+    hermes: { state: "MONITORING", summary: "Consolidating.", reasoning: "Low volume.", confidence: 45, signalType: "None", lastAudit: "1 hr ago" },
+    timeframes: adaTimeframes,
+    aiMarkers: { "1h": [], "15m": [], "4h": [], "1m": [], "5m": [], "1D": [] },
+  },
+  "LINK-USDT": {
+    symbol: "LINK/USDT",
+    name: "Chainlink",
+    baseAsset: "LINK",
+    quoteAsset: "USDT",
+    price: 18.20,
+    change24h: 4.5,
+    high24h: 18.5,
+    low24h: 17.0,
+    volume24h: "5M LINK",
+    quoteVolume24h: "$91M",
+    fundingRate: 0.01,
+    openInterest: "$75M",
+    regime: "Steady Uptrend",
+    trend: "BULLISH",
+    volatility: "MODERATE",
+    spread: "$0.01 (0.05%)",
+    orderBook: { bids: [{price: 18.15, size: 2000}], asks: [{price: 18.25, size: 2200}] },
+    technicals: { rsi14: 65, macd: "Bullish (+0.4)", ema20: 17.5, ema50: 16.8, ema200: 15.0, support: 17.0, resistance: 19.5 },
+    hermes: { state: "MONITORING", summary: "Uptrend intact.", reasoning: "Higher lows.", confidence: 78, signalType: "Long", lastAudit: "2 min ago" },
+    timeframes: linkTimeframes,
+    aiMarkers: { "1h": getBasicMarkers(linkTimeframes["1h"], "#00E5FF", "BULLISH"), "15m": [], "4h": [], "1m": [], "5m": [], "1D": [] },
+  },
+
+
+  "BNB-USDT": {
+    symbol: "BNB/USDT",
+    name: "Binance Coin",
+    baseAsset: "BNB",
+    quoteAsset: "USDT",
+    price: 594.30,
+    change24h: 1.2,
+    high24h: 605.0,
+    low24h: 582.0,
+    volume24h: "45,200 BNB",
+    quoteVolume24h: "$26.8M",
+    fundingRate: 0.005,
+    openInterest: "$180M",
+    regime: "Range Bound",
+    trend: "NEUTRAL",
+    volatility: "LOW",
+    spread: "$0.10 (0.016%)",
+    orderBook: { bids: [{price: 594.2, size: 10}, {price: 594.0, size: 25}], asks: [{price: 594.4, size: 12}, {price: 594.5, size: 30}] },
+    technicals: { rsi14: 55, macd: "Neutral (+0.5)", ema20: 590, ema50: 585, ema200: 560, support: 580, resistance: 605 },
+    hermes: { state: "MONITORING", summary: "Low volatility consolidation.", reasoning: "No clear edge in current structure.", confidence: 50, signalType: "None", lastAudit: "10 min ago" },
+    timeframes: bnbTimeframes,
+    aiMarkers: { "1h": getBasicMarkers(bnbTimeframes["1h"], "#00E5FF", "BULLISH"), "15m": [], "4h": [], "1m": [], "5m": [], "1D": [] },
+  },
+  "AVAX-USDT": {
+    symbol: "AVAX/USDT",
+    name: "Avalanche",
+    baseAsset: "AVAX",
+    quoteAsset: "USDT",
+    price: 38.20,
+    change24h: 8.5,
+    high24h: 39.5,
+    low24h: 35.0,
+    volume24h: "1.2M AVAX",
+    quoteVolume24h: "$45.8M",
+    fundingRate: 0.025,
+    openInterest: "$110M",
+    regime: "Momentum Breakout",
+    trend: "BULLISH",
+    volatility: "HIGH",
+    spread: "$0.01 (0.02%)",
+    orderBook: { bids: [{price: 38.15, size: 1000}, {price: 38.0, size: 2500}], asks: [{price: 38.25, size: 1200}, {price: 38.3, size: 3000}] },
+    technicals: { rsi14: 78, macd: "Strong Bullish (+1.2)", ema20: 36, ema50: 34, ema200: 30, support: 36, resistance: 40 },
+    hermes: { state: "ANALYZING", summary: "Strong breakout detected.", reasoning: "Volume expansion supports trend.", confidence: 85, signalType: "Long", lastAudit: "1 min ago" },
+    timeframes: avaxTimeframes,
+    aiMarkers: { "1h": getBasicMarkers(avaxTimeframes["1h"], "#00E5FF", "BULLISH"), "15m": [], "4h": [], "1m": [], "5m": [], "1D": [] },
+  },
+  "DOGE-USDT": {
+    symbol: "DOGE/USDT",
+    name: "Dogecoin",
+    baseAsset: "DOGE",
+    quoteAsset: "USDT",
+    price: 0.162,
+    change24h: -3.2,
+    high24h: 0.170,
+    low24h: 0.155,
+    volume24h: "145M DOGE",
+    quoteVolume24h: "$23.4M",
+    fundingRate: -0.01,
+    openInterest: "$85M",
+    regime: "Mean Reversion",
+    trend: "BEARISH",
+    volatility: "MODERATE",
+    spread: "$0.0001 (0.06%)",
+    orderBook: { bids: [{price: 0.161, size: 100000}, {price: 0.160, size: 250000}], asks: [{price: 0.163, size: 120000}, {price: 0.164, size: 300000}] },
+    technicals: { rsi14: 42, macd: "Bearish (-0.002)", ema20: 0.165, ema50: 0.168, ema200: 0.15, support: 0.155, resistance: 0.170 },
+    hermes: { state: "MONITORING", summary: "Pullback to support.", reasoning: "Testing local demands.", confidence: 60, signalType: "Wait", lastAudit: "5 min ago" },
+    timeframes: dogeTimeframes,
+    aiMarkers: { "1h": getBasicMarkers(dogeTimeframes["1h"], "#FF3B30", "BEARISH"), "15m": [], "4h": [], "1m": [], "5m": [], "1D": [] },
+  },
+
   "BTC-USDT": {
     symbol: "BTC/USDT",
     name: "Bitcoin Perpetual",
@@ -460,4 +631,4 @@ export const mockMarketDetails: Record<string, MarketDetail> = {
   },
 };
 
-export const watchlistSymbols = ["BTC-USDT", "ETH-USDT", "SOL-USDT"];
+export const watchlistSymbols = ["BTC-USDT", "ETH-USDT", "SOL-USDT", "BNB-USDT", "AVAX-USDT", "DOGE-USDT", "XRP-USDT", "ADA-USDT", "LINK-USDT"];

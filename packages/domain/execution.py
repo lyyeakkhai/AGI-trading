@@ -14,6 +14,7 @@ class ExecutionState(str, Enum):
     FILLED = "FILLED"
     CANCELLED = "CANCELLED"
     REJECTED = "REJECTED"
+    FAILED = "FAILED"
     EXPIRED = "EXPIRED"
     UNKNOWN = "UNKNOWN"
 
@@ -37,11 +38,13 @@ class ExecutionStateMachine:
             ExecutionState.REJECTED,
             ExecutionState.CANCELLED,
             ExecutionState.EXPIRED,
+            ExecutionState.FAILED,
         },
         ExecutionState.SUBMITTING: {
             ExecutionState.SUBMITTED,
             ExecutionState.REJECTED,
             ExecutionState.UNKNOWN,
+            ExecutionState.FAILED,
         },
         ExecutionState.SUBMITTED: {
             ExecutionState.PARTIALLY_FILLED,
@@ -49,12 +52,14 @@ class ExecutionStateMachine:
             ExecutionState.CANCELLED,
             ExecutionState.EXPIRED,
             ExecutionState.UNKNOWN,
+            ExecutionState.FAILED,
         },
         ExecutionState.PARTIALLY_FILLED: {
             ExecutionState.FILLED,
             ExecutionState.CANCELLED,
             ExecutionState.EXPIRED,
             ExecutionState.UNKNOWN,
+            ExecutionState.FAILED,
         },
         ExecutionState.UNKNOWN: {
             ExecutionState.SUBMITTED,
@@ -63,11 +68,13 @@ class ExecutionStateMachine:
             ExecutionState.CANCELLED,
             ExecutionState.REJECTED,
             ExecutionState.EXPIRED,
+            ExecutionState.FAILED,
         },
         ExecutionState.FILLED: set(),
         ExecutionState.CANCELLED: set(),
         ExecutionState.REJECTED: set(),
         ExecutionState.EXPIRED: set(),
+        ExecutionState.FAILED: set(),
     }
 
     TERMINAL_STATES: ClassVar[set[ExecutionState]] = {
@@ -75,6 +82,7 @@ class ExecutionStateMachine:
         ExecutionState.CANCELLED,
         ExecutionState.REJECTED,
         ExecutionState.EXPIRED,
+        ExecutionState.FAILED,
     }
 
     def can_transition(

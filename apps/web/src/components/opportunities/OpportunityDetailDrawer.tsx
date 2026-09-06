@@ -199,6 +199,13 @@ export function OpportunityDetailDrawer({
                 {opportunity.volumeState}
               </span>
             </div>
+
+            <div className="p-2.5 rounded bg-surface-2/60 border border-border-color col-span-2 sm:col-span-1">
+              <span className="text-[10px] text-gray-400 uppercase block">Volatility State</span>
+              <span className="text-cyan-300 font-medium text-[11px] truncate block">
+                {opportunity.volatilityState}
+              </span>
+            </div>
           </div>
         </div>
 

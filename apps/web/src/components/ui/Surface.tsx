@@ -2,7 +2,7 @@
 
 import React, { forwardRef } from "react";
 
-export type SurfaceVariant = "default" | "elevated" | "interactive" | "subtle";
+export type SurfaceVariant = "default" | "elevated" | "interactive" | "subtle" | "iron";
 
 export interface SurfaceProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: SurfaceVariant;
@@ -11,11 +11,12 @@ export interface SurfaceProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const variantStyles: Record<SurfaceVariant, string> = {
-  default: "bg-surface border border-border-color",
-  elevated: "bg-surface-elevated border border-border-hi shadow-sm",
+  default: "iron-card shadow-sm",
+  elevated: "iron-panel shadow-lg",
   interactive:
-    "bg-surface border border-border-color hover:border-border-hi hover:bg-surface-hover transition-colors duration-150 cursor-pointer focus-visible:ring-1 focus-visible:ring-cyan-500/40 outline-none",
-  subtle: "bg-bg-900 border border-border-color",
+    "iron-card-interactive cursor-pointer focus-visible:ring-1 focus-visible:ring-cyan-500/40 outline-none",
+  subtle: "bg-bg-900 border border-border-color/60",
+  iron: "iron-card",
 };
 
 const paddingStyles = {

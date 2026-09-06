@@ -12,6 +12,7 @@ import {
   Time,
 } from "lightweight-charts";
 import { CandleData, AIMarketMarker, PositionContext } from "@/lib/mockMarketData";
+import { CryptoIcon } from "@/components/ui/CryptoIcon";
 import { Maximize2, Eye, EyeOff, Sparkles, BarChart2 } from "lucide-react";
 
 export interface MarketChartProps {
@@ -252,22 +253,23 @@ export function MarketChart({
   }, []);
 
   return (
-    <div className={`flex flex-col w-full bg-bg-900 border border-border-color rounded-lg overflow-hidden ${className}`}>
+    <div className={`flex flex-col w-full iron-card border border-[#222B32] border-t-[#384652] rounded-lg shadow-lg overflow-hidden ${className}`}>
       {/* 1. Professional Chart Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 border-b border-border-color bg-surface-2/40 select-none">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 iron-header select-none">
         {/* Left: Symbol and Timeframe Selector */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
+            <CryptoIcon symbol={symbol} size="sm" />
             <span className="font-mono text-xs font-bold text-gray-100">{symbol}</span>
-            <span className="px-1.5 py-0.2 rounded bg-bg-950 border border-border-color text-[10px] font-mono text-cyan-400">
+            <span className="px-1.5 py-0.2 rounded bg-iron-950 border border-iron-700/60 text-[10px] font-mono text-cyan-400">
               PERP
             </span>
           </div>
 
-          <div className="h-4 w-px bg-border-color hidden sm:block" />
+          <div className="h-4 w-px bg-[#222B32] hidden sm:block" />
 
           {/* Timeframe Buttons */}
-          <div className="flex items-center gap-0.5 bg-bg-950 p-0.5 rounded border border-border-color">
+          <div className="flex items-center gap-0.5 bg-iron-950/90 p-0.5 rounded border border-iron-700/60">
             {availableTimeframes.map((tf) => {
               const isActive = timeframe === tf;
               return (
@@ -296,8 +298,8 @@ export function MarketChart({
             onClick={() => setShowVolume((prev) => !prev)}
             className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-mono border transition-colors ${
               showVolume
-                ? "bg-surface-2 text-gray-200 border-border-hi"
-                : "bg-transparent text-gray-500 border-border-color hover:text-gray-300"
+                ? "bg-iron-800 text-gray-200 border-iron-600"
+                : "bg-transparent text-gray-500 border-iron-800 hover:text-gray-300"
             }`}
             title="Toggle Volume Series"
           >
@@ -312,7 +314,7 @@ export function MarketChart({
             className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-mono border transition-colors ${
               showAIMarkers
                 ? "bg-cyan-dim/30 text-cyan-300 border-cyan-500/40 shadow-[0_0_6px_rgba(0,229,255,0.15)]"
-                : "bg-transparent text-gray-500 border-border-color hover:text-gray-300"
+                : "bg-transparent text-gray-500 border-iron-800 hover:text-gray-300"
             }`}
             title="Toggle Hermes AI Market Markers"
           >
@@ -324,7 +326,7 @@ export function MarketChart({
           <button
             type="button"
             onClick={handleFitContent}
-            className="p-1 rounded bg-surface-2 border border-border-color text-gray-400 hover:text-gray-200 hover:border-border-hi transition-colors"
+            className="p-1 rounded bg-iron-900 border border-[#222B32] text-gray-400 hover:text-gray-200 hover:border-iron-600 transition-colors"
             title="Fit Chart to Content"
             aria-label="Reset chart scale"
           >
@@ -334,7 +336,7 @@ export function MarketChart({
       </div>
 
       {/* 2. OHLCV Bar Hover Legend */}
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-3 py-1.5 border-b border-border-color/60 bg-bg-950 text-[11px] font-mono select-none">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-3 py-1.5 border-b border-[#222B32]/70 bg-iron-950/90 text-[11px] font-mono select-none">
         {activeBar ? (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-gray-400">
             <span className="text-gray-500">

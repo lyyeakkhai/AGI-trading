@@ -1,1 +1,10 @@
-export default function Page() { return <div className="text-gray-400">settings page placeholder</div>; }
+import { SettingsWorkspace } from "@/components/settings/SettingsWorkspace";
+
+export const metadata = {
+  title: "Settings & Configuration | AGI Trading",
+  description: "Deterministic risk boundaries, Hermes operating parameters, exchange simulation, and environment security.",
+};
+
+export default function SettingsPage() {
+  return <SettingsWorkspace />;
+}

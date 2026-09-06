@@ -5,6 +5,7 @@ import { Surface } from "@/components/ui/Surface";
 import { Badge } from "@/components/ui/Badge";
 import { MarketDetail } from "@/lib/mockMarketData";
 import { ArrowUpRight, ArrowDownRight, Layers, Briefcase } from "lucide-react";
+import { CryptoIcon } from "@/components/ui/CryptoIcon";
 
 interface WatchlistProps {
   markets: MarketDetail[];
@@ -21,14 +22,14 @@ export function Watchlist({
 }: WatchlistProps) {
   return (
     <Surface
-      variant="default"
+      variant="iron"
       padded="none"
       className={`flex flex-col overflow-hidden ${className}`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2.5 border-b border-border-color bg-surface-2/60 select-none">
+      <div className="flex items-center justify-between px-3 py-2.5 iron-header select-none">
         <div className="flex items-center gap-2">
-          <Layers size={14} className="text-cyan-500" />
+          <Layers size={14} className="text-cyan-400" />
           <span className="text-xs font-semibold text-gray-200 uppercase tracking-wide">
             Market Watchlist
           </span>
@@ -39,7 +40,7 @@ export function Watchlist({
       </div>
 
       {/* Symbol List */}
-      <div className="divide-y divide-border-color/60 overflow-y-auto">
+      <div className="divide-y divide-[#222B32]/70 overflow-y-auto">
         {markets.map((m) => {
           const key = m.symbol.replace("/", "-");
           const isSelected = selectedSymbolKey === key;
@@ -52,12 +53,13 @@ export function Watchlist({
               onClick={() => onSelectSymbol(key)}
               className={`w-full text-left p-3 transition-all duration-150 flex flex-col gap-1 outline-none ${
                 isSelected
-                  ? "bg-cyan-dim/20 border-l-2 border-l-cyan-500 shadow-[inset_0_0_12px_rgba(0,229,255,0.08)]"
-                  : "hover:bg-surface-hover/70 border-l-2 border-l-transparent"
+                  ? "bg-gradient-to-r from-cyan-950/40 via-cyan-950/20 to-transparent border-l-2 border-l-cyan-400 shadow-[inset_0_0_14px_rgba(0,229,255,0.1)]"
+                  : "hover:bg-iron-800/40 border-l-2 border-l-transparent"
               }`}
             >
               <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
+                  <CryptoIcon symbol={m.symbol} size="sm" />
                   <span
                     className={`font-mono text-xs font-bold ${
                       isSelected ? "text-cyan-300" : "text-gray-200"
@@ -113,7 +115,7 @@ export function Watchlist({
       </div>
 
       {/* Watchlist Footer */}
-      <div className="px-3 py-1.5 border-t border-border-color bg-surface-2/20 text-[10px] font-mono text-gray-400 flex items-center justify-between select-none">
+      <div className="px-3 py-1.5 border-t border-[#222B32] bg-iron-950/60 text-[10px] font-mono text-gray-400 flex items-center justify-between select-none">
         <span>PERP MARGIN</span>
         <span className="text-cyan-400">SYNC ACTIVE</span>
       </div>

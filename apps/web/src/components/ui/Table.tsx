@@ -31,7 +31,7 @@ export const TableHeader = forwardRef<
   return (
     <thead
       ref={ref}
-      className={`border-b border-border-color bg-bg-900/80 text-[11px] uppercase tracking-wider text-gray-400 font-semibold select-none ${className}`}
+      className={`border-b border-border-color bg-bg-900/80 text-xs uppercase tracking-wider text-gray-300 font-semibold select-none ${className}`}
       {...props}
     >
       {children}
@@ -123,7 +123,7 @@ export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
     return (
       <td
         ref={ref}
-        className={`px-3 py-2.5 text-gray-300 ${mono ? "font-mono tracking-tight" : ""} ${alignClass} ${className}`}
+        className={`px-3 py-2.5 text-gray-200 ${mono ? "font-mono tabular-nums tracking-tight" : "font-sans"} ${alignClass} ${className}`}
         {...props}
       >
         {children}
@@ -144,7 +144,7 @@ export function TableEmpty({
     <tr>
       <td
         colSpan={colSpan}
-        className="px-4 py-8 text-center text-xs text-gray-500 font-mono"
+        className="px-4 py-8 text-center text-xs text-gray-400 font-sans"
       >
         {message}
       </td>
