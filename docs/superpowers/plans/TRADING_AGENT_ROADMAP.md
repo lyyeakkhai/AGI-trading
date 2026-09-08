@@ -12,14 +12,14 @@ This roadmap breaks the Master Goal into 9 strictly sequential phases. **Do not 
 
 ### 🤖 Parallel Tasks
 - **Agent A (Database Architect):**
-  - [ ] Implement `ChartDrawingModel` and `ChartAnnotationModel`.
-  - [ ] Implement `TradingPlanModel` (matching the required fields: Entry, SL, TP, Risk, Thesis, Invalidation).
-  - [ ] Implement `AuditDecisionModel` (capturing market data snapshot, drawings, plan, and risk result).
-  - [ ] Generate and run Alembic migrations for all new models.
+  - [x] Implement `ChartDrawingModel` and `ChartAnnotationModel`.
+  - [x] Implement `TradingPlanModel` (matching the required fields: Entry, SL, TP, Risk, Thesis, Invalidation).
+  - [x] Implement `AuditDecisionModel` (capturing market data snapshot, drawings, plan, and risk result).
+  - [ ] Generate and run Alembic migrations for all new models (requires running Docker container).
 
 ### ✅ Definition of Done
 - [ ] Database schema successfully migrated locally.
-- [ ] Pydantic domain schemas strictly map to SQLAlchemy models.
+- [x] Pydantic domain schemas strictly map to SQLAlchemy models.
 
 ---
 
