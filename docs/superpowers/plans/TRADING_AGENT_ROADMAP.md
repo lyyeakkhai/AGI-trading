@@ -29,16 +29,16 @@ This roadmap breaks the Master Goal into 9 strictly sequential phases. **Do not 
 
 ### 🤖 Parallel Tasks
 - **Agent A (Integration Specialist):**
-  - [ ] Investigate `agent.binance.com/mcp/agentic` (Does it support WebSockets? What order types?). Document findings.
-  - [ ] Implement/Expose `market.get_candles` (supporting multiple timeframes).
-  - [ ] Implement/Expose `market.get_ticker` and `market.get_order_book`.
+  - [x] Investigate `agent.binance.com/mcp/agentic` (Does it support WebSockets? What order types?). Document findings.
+  - [x] Implement/Expose `market.get_candles` (supporting multiple timeframes).
+  - [x] Implement/Expose `market.get_ticker` and `market.get_order_book`.
 - **Agent B (Data Engineer):**
-  - [ ] Implement/Expose `market.get_trades`.
-  - [ ] Implement/Expose `market.get_volume` and `market.get_funding_rate`.
+  - [x] Implement/Expose `market.get_trades`.
+  - [x] Implement/Expose `market.get_volume` and `market.get_funding_rate`.
 
 ### ✅ Definition of Done
-- [ ] All 6 market tools are exposed via `packages/hermes_tools/client.py`.
-- [ ] Hermes can successfully retrieve a 1H and 15m candle set for BTCUSDT.
+- [x] All 6 market tools are exposed via `packages/hermes_tools/client.py`.
+- [x] Hermes can successfully retrieve a 1H and 15m candle set for BTCUSDT.
 
 ---
 
