@@ -105,6 +105,8 @@ async def get_market_candles(
     symbol: str = Query(..., description="Market symbol, e.g. BTC/USDT"),
     timeframe: str = Query("1h", description="Candle timeframe"),
     limit: int = Query(100, ge=1, le=1000),
+    start: datetime | None = Query(None, description="Start timestamp filter"),
+    end: datetime | None = Query(None, description="End timestamp filter"),
     session: AsyncSession = Depends(get_db_session),
 ) -> dict[str, Any]:
     candles: list[dict[str, Any]] = []
@@ -117,9 +119,13 @@ async def get_market_candles(
                 MarketCandleModel.symbol == symbol,
                 MarketCandleModel.timeframe == timeframe,
             )
-            .order_by(MarketCandleModel.timestamp.desc())
-            .limit(limit)
         )
+        if start is not None:
+            stmt = stmt.where(MarketCandleModel.timestamp >= start)
+        if end is not None:
+            stmt = stmt.where(MarketCandleModel.timestamp <= end)
+        stmt = stmt.order_by(MarketCandleModel.timestamp.desc()).limit(limit)
+
         result = await session.execute(stmt)
         rows = list(result.scalars().all())
         if rows:
@@ -149,8 +155,8 @@ async def get_market_candles(
                 "4h": timedelta(hours=limit * 4),
                 "1d": timedelta(days=limit),
             }
-            since = datetime.now(UTC) - durations.get(timeframe, timedelta(hours=limit))
-            ccxt_candles = await adapter.get_candles(symbol, timeframe, since, limit)
+            since = start if start is not None else (datetime.now(UTC) - durations.get(timeframe, timedelta(hours=limit)))
+            ccxt_candles = await adapter.get_candles(symbol, timeframe, since, limit, until=end)
             candles = [
                 {
                     "timestamp": c.timestamp.isoformat(),
@@ -166,6 +172,164 @@ async def get_market_candles(
             logger.warning("tools_market_candles_ccxt_failed", error=str(e), symbol=symbol)
 
     return {"symbol": symbol, "timeframe": timeframe, "candles": candles}
+
+
+@router.get("/market/ticker", dependencies=[Depends(verify_hermes_token)])
+async def get_market_ticker(
+    symbol: str = Query(..., description="Market symbol, e.g. BTC/USDT"),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict[str, Any]:
+    # 1. Check TimescaleDB recent candle
+    try:
+        stmt = (
+            select(MarketCandleModel)
+            .where(MarketCandleModel.symbol == symbol)
+            .order_by(MarketCandleModel.timestamp.desc())
+            .limit(1)
+        )
+        result = await session.execute(stmt)
+        candle = result.scalar_one_or_none()
+        if candle is not None:
+            try:
+                adapter = get_binance_adapter()
+                ticker = await adapter.get_ticker(symbol)
+                return {
+                    "symbol": symbol,
+                    "bid": float(ticker.bid),
+                    "ask": float(ticker.ask),
+                    "last": float(ticker.last),
+                    "volume": float(ticker.volume),
+                    "timestamp": ticker.timestamp.isoformat(),
+                }
+            except Exception:
+                return {
+                    "symbol": symbol,
+                    "bid": float(candle.close),
+                    "ask": float(candle.close),
+                    "last": float(candle.close),
+                    "volume": float(candle.volume),
+                    "timestamp": candle.timestamp.isoformat(),
+                }
+    except Exception as e:
+        logger.debug("tools_market_ticker_db_failed", error=str(e), symbol=symbol)
+
+    # 2. Live CCXT Binance Fallback
+    try:
+        adapter = get_binance_adapter()
+        ticker = await adapter.get_ticker(symbol)
+        return {
+            "symbol": symbol,
+            "bid": float(ticker.bid),
+            "ask": float(ticker.ask),
+            "last": float(ticker.last),
+            "volume": float(ticker.volume),
+            "timestamp": ticker.timestamp.isoformat(),
+        }
+    except Exception as e:
+        logger.warning("tools_market_ticker_ccxt_failed", error=str(e), symbol=symbol)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Market ticker unavailable for {symbol}",
+        )
+
+
+@router.get("/market/order_book", dependencies=[Depends(verify_hermes_token)])
+@router.get("/market/orderbook", dependencies=[Depends(verify_hermes_token)], include_in_schema=False)
+async def get_market_order_book(
+    symbol: str = Query(..., description="Market symbol, e.g. BTC/USDT"),
+    depth: int = Query(20, ge=1, le=100, description="Order book depth"),
+) -> dict[str, Any]:
+    try:
+        adapter = get_binance_adapter()
+        ob = await adapter.get_order_book(symbol, depth)
+        return {
+            "symbol": ob.symbol,
+            "timestamp": ob.timestamp.isoformat(),
+            "bids": [[float(p), float(q)] for p, q in ob.bids[:depth]],
+            "asks": [[float(p), float(q)] for p, q in ob.asks[:depth]],
+        }
+    except Exception as e:
+        logger.warning("tools_market_order_book_failed", error=str(e), symbol=symbol)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Order book unavailable for {symbol}: {e}",
+        )
+
+
+@router.get("/market/trades", dependencies=[Depends(verify_hermes_token)])
+async def get_market_trades(
+    symbol: str = Query(..., description="Market symbol, e.g. BTC/USDT"),
+    limit: int = Query(50, ge=1, le=200, description="Max trades to retrieve"),
+    since: datetime | None = Query(None, description="Fetch trades starting from timestamp"),
+) -> dict[str, Any]:
+    try:
+        adapter = get_binance_adapter()
+        trades_since = since or (datetime.now(UTC) - timedelta(minutes=15))
+        recent_trades = await adapter.get_recent_trades(symbol, trades_since, limit)
+        return {
+            "symbol": symbol,
+            "trades": [
+                {
+                    "symbol": t.symbol,
+                    "price": float(t.price),
+                    "amount": float(t.amount),
+                    "side": t.side,
+                    "exchange_trade_id": t.exchange_trade_id,
+                    "timestamp": t.timestamp.isoformat(),
+                }
+                for t in recent_trades
+            ],
+        }
+    except Exception as e:
+        logger.warning("tools_market_trades_failed", error=str(e), symbol=symbol)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Recent trades unavailable for {symbol}: {e}",
+        )
+
+
+@router.get("/market/volume", dependencies=[Depends(verify_hermes_token)])
+async def get_market_volume(
+    symbol: str = Query(..., description="Market symbol, e.g. BTC/USDT"),
+) -> dict[str, Any]:
+    try:
+        adapter = get_binance_adapter()
+        vol = await adapter.get_volume(symbol)
+        return {
+            "symbol": vol.symbol,
+            "base_volume": float(vol.base_volume),
+            "quote_volume": float(vol.quote_volume),
+            "timestamp": vol.timestamp.isoformat(),
+        }
+    except Exception as e:
+        logger.warning("tools_market_volume_failed", error=str(e), symbol=symbol)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Volume data unavailable for {symbol}: {e}",
+        )
+
+
+@router.get("/market/funding_rate", dependencies=[Depends(verify_hermes_token)])
+async def get_market_funding_rate(
+    symbol: str = Query(..., description="Market symbol, e.g. BTC/USDT"),
+) -> dict[str, Any]:
+    try:
+        adapter = get_binance_adapter()
+        fr = await adapter.get_funding_rate(symbol)
+        return {
+            "symbol": fr.symbol,
+            "funding_rate": float(fr.funding_rate),
+            "mark_price": float(fr.mark_price) if fr.mark_price is not None else None,
+            "index_price": float(fr.index_price) if fr.index_price is not None else None,
+            "next_funding_time": fr.next_funding_time.isoformat() if fr.next_funding_time else None,
+            "timestamp": fr.timestamp.isoformat(),
+        }
+    except Exception as e:
+        logger.warning("tools_market_funding_rate_failed", error=str(e), symbol=symbol)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Funding rate unavailable for {symbol}: {e}",
+        )
 
 
 @router.get("/analytics/indicators", dependencies=[Depends(verify_hermes_token)])
@@ -553,3 +717,105 @@ async def tradingagents_deep_analyze(payload: dict[str, Any]) -> dict[str, Any]:
             return resp.json()
         except httpx.HTTPError as e:
             raise HTTPException(status_code=502, detail=f"TradingAgents error: {str(e)}") from e
+
+
+# ── Research Experiment Tools (Hermes integration boundary) ──────────────────
+# These endpoints allow Hermes to read and create research experiments.
+# Hermes interprets results — it does NOT calculate financial metrics.
+
+
+@router.get("/research/experiments", dependencies=[Depends(verify_hermes_token)])
+async def tool_list_experiments(
+    status: str | None = Query(None),
+    category: str | None = Query(None),
+    asset: str | None = Query(None),
+    limit: int = Query(20, le=100),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict[str, Any]:
+    """Hermes tool: list research experiments with optional filters."""
+    from services.research.service import ResearchService
+
+    svc = ResearchService(session)
+    items = await svc.list_experiments(
+        status=status, category=category, asset=asset, limit=limit
+    )
+    return {
+        "experiments": [item.model_dump(mode="json") for item in items],
+        "count": len(items),
+    }
+
+
+@router.get(
+    "/research/experiments/{experiment_id}", dependencies=[Depends(verify_hermes_token)]
+)
+async def tool_get_experiment(
+    experiment_id: str,
+    session: AsyncSession = Depends(get_db_session),
+) -> dict[str, Any]:
+    """Hermes tool: retrieve full experiment detail for interpretation."""
+    import uuid as _uuid
+
+    from services.research.service import ResearchService
+
+    try:
+        eid = _uuid.UUID(experiment_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Invalid experiment_id UUID") from exc
+
+    svc = ResearchService(session)
+    result = await svc.get_experiment(eid)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+    return result.model_dump(mode="json")
+
+
+@router.post(
+    "/research/experiments",
+    dependencies=[Depends(verify_hermes_token)],
+    status_code=201,
+)
+async def tool_create_experiment(
+    payload: dict[str, Any],
+    session: AsyncSession = Depends(get_db_session),
+) -> dict[str, Any]:
+    """Hermes tool: create a research experiment from a structured payload."""
+    from packages.domain.experiment import CreateExperimentRequest
+    from services.research.service import ResearchService
+
+    try:
+        req = CreateExperimentRequest.model_validate(payload)
+    except Exception as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    svc = ResearchService(session)
+    result = await svc.create_experiment(req)
+    return result.model_dump(mode="json")
+
+
+@router.post(
+    "/research/experiments/{experiment_id}/notes",
+    dependencies=[Depends(verify_hermes_token)],
+    status_code=201,
+)
+async def tool_add_research_note(
+    experiment_id: str,
+    payload: dict[str, Any],
+    session: AsyncSession = Depends(get_db_session),
+) -> dict[str, Any]:
+    """Hermes tool: add a research note to an experiment."""
+    import uuid as _uuid
+
+    from packages.domain.experiment import AddNoteRequest
+    from services.research.service import ResearchService
+
+    try:
+        eid = _uuid.UUID(experiment_id)
+        req = AddNoteRequest.model_validate(payload)
+    except Exception as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    svc = ResearchService(session)
+    result = await svc.add_note(eid, req)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+    return result.model_dump(mode="json")

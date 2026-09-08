@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
-import { AppShell } from "@/components/shell/AppShell";
+import { AppShell } from "@/components/layout/AppShell";
 import { ToastProvider } from "@/components/ui/Toast";
 
 const ibmPlexSans = IBM_Plex_Sans({

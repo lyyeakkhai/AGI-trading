@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Surface } from "@/components/ui/Surface";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { PositionSide } from "@/components/trading/PositionSide";
+import { PositionSide } from "@/features/trading/components/PositionSide";
 import { OpportunityConfidence } from "@/components/opportunities/OpportunityConfidence";
 import { ProposalStatusBadge } from "./ProposalStatusBadge";
 import { ProposalPriceLevels } from "./ProposalPriceLevels";

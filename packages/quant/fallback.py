@@ -243,3 +243,51 @@ def adx(
             out[i] = (out[i - 1] * (period - 1) + dx[i]) / period
 
     return out
+
+
+def vwap(
+    high: Sequence[float] | np.ndarray | pd.Series,
+    low: Sequence[float] | np.ndarray | pd.Series,
+    close: Sequence[float] | np.ndarray | pd.Series,
+    volume: Sequence[float] | np.ndarray | pd.Series,
+) -> np.ndarray:
+    """Calculate Volume Weighted Average Price (VWAP)."""
+    h = np.asarray(high, dtype=np.float64)
+    l_arr = np.asarray(low, dtype=np.float64)
+    c = np.asarray(close, dtype=np.float64)
+    v = np.asarray(volume, dtype=np.float64)
+    n = len(c)
+    if n == 0 or len(h) != n or len(l_arr) != n or len(v) != n:
+        return np.full_like(c, np.nan, dtype=np.float64)
+
+    typical_price = (h + l_arr + c) / 3.0
+    cum_vp = np.cumsum(typical_price * v)
+    cum_v = np.cumsum(v)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        out = np.where(cum_v > 0, cum_vp / cum_v, typical_price)
+    return out
+
+
+def bollinger_bands(
+    data: Sequence[float] | np.ndarray | pd.Series,
+    period: int = 20,
+    nbdev: float = 2.0,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Calculate Bollinger Bands (upper, middle, lower, bandwidth, percent_b)."""
+    if period <= 0:
+        raise ValueError("period must be positive")
+    arr = np.asarray(data, dtype=np.float64)
+    if len(arr) < period:
+        nan_arr = np.full_like(arr, np.nan, dtype=np.float64)
+        return nan_arr, nan_arr, nan_arr, nan_arr, nan_arr
+
+    mid = sma(arr, period=period)
+    std = stddev(arr, period=period, nbdev=1.0)
+    upper = mid + (std * nbdev)
+    lower = mid - (std * nbdev)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        bandwidth = np.where(mid > 0, (upper - lower) / mid, np.nan)
+        diff = upper - lower
+        percent_b = np.where(diff > 0, (arr - lower) / diff, np.nan)
+    return upper, mid, lower, bandwidth, percent_b
+

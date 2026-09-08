@@ -22,6 +22,8 @@ class TradingPlanModel(Base):
     symbol: Mapped[str] = mapped_column(String(20), nullable=False)
     market: Mapped[str] = mapped_column(String(20), nullable=False, default="spot")
     direction: Mapped[str] = mapped_column(String(10), nullable=False)  # LONG or SHORT
+    leverage: Mapped[Optional[int]] = mapped_column(nullable=True)
+    reduce_only: Mapped[bool] = mapped_column(nullable=False, default=False)
     
     entry_price: Mapped[Optional[Decimal]] = mapped_column(Numeric(20, 8), nullable=True)
     stop_loss_price: Mapped[Optional[Decimal]] = mapped_column(Numeric(20, 8), nullable=True)

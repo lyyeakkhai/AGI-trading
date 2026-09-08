@@ -19,7 +19,15 @@ from packages.database.models.portfolio import (
     PositionModel,
 )
 from packages.database.models.relational import AgentObservationModel
-from packages.exchange.models import OHLCVCandle, Ticker
+from packages.exchange.models import (
+    FundingRate,
+    MarketTrade,
+    MarketVolume,
+    OHLCVCandle,
+    OrderBook,
+    Ticker,
+)
+from packages.hermes_tools.client import HermesToolsClient
 
 
 @pytest.fixture(autouse=True)
@@ -646,3 +654,286 @@ def test_deep_analyze_error_returns_502(client: TestClient, auth_headers: dict[s
         )
         assert response.status_code == 502
         assert "TradingAgents error" in response.json()["detail"]
+
+
+def test_get_market_ticker(client: TestClient, auth_headers: dict[str, str]) -> None:
+    mock_ticker = Ticker(
+        symbol="BTC/USDT",
+        bid=Decimal("64990.0"),
+        ask=Decimal("65010.0"),
+        last=Decimal("65000.0"),
+        volume=Decimal("1234.56"),
+        timestamp=datetime(2026, 9, 8, 12, 0, 0, tzinfo=UTC),
+    )
+    with patch("apps.api.routers.tools.get_binance_adapter") as mock_get_adapter:
+        mock_adapter = MagicMock()
+        mock_adapter.get_ticker = AsyncMock(return_value=mock_ticker)
+        mock_get_adapter.return_value = mock_adapter
+
+        response = client.get("/api/v1/tools/market/ticker?symbol=BTC/USDT", headers=auth_headers)
+        assert response.status_code == 200
+        data = response.json()
+        assert data["symbol"] == "BTC/USDT"
+        assert data["bid"] == 64990.0
+        assert data["ask"] == 65010.0
+        assert data["last"] == 65000.0
+        assert data["volume"] == 1234.56
+
+
+def test_get_market_order_book(client: TestClient, auth_headers: dict[str, str]) -> None:
+    mock_ob = OrderBook(
+        symbol="BTC/USDT",
+        timestamp=datetime(2026, 9, 8, 12, 0, 0, tzinfo=UTC),
+        bids=[(Decimal("64990.0"), Decimal("1.5")), (Decimal("64980.0"), Decimal("2.0"))],
+        asks=[(Decimal("65010.0"), Decimal("1.2")), (Decimal("65020.0"), Decimal("3.0"))],
+    )
+    with patch("apps.api.routers.tools.get_binance_adapter") as mock_get_adapter:
+        mock_adapter = MagicMock()
+        mock_adapter.get_order_book = AsyncMock(return_value=mock_ob)
+        mock_get_adapter.return_value = mock_adapter
+
+        response = client.get(
+            "/api/v1/tools/market/order_book?symbol=BTC/USDT&depth=2", headers=auth_headers
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["symbol"] == "BTC/USDT"
+        assert len(data["bids"]) == 2
+        assert len(data["asks"]) == 2
+        assert data["bids"][0] == [64990.0, 1.5]
+        assert data["asks"][0] == [65010.0, 1.2]
+
+        # Alias test
+        alias_resp = client.get("/api/v1/tools/market/orderbook?symbol=BTC/USDT", headers=auth_headers)
+        assert alias_resp.status_code == 200
+
+
+def test_get_market_trades(client: TestClient, auth_headers: dict[str, str]) -> None:
+    mock_trades = [
+        MarketTrade(
+            symbol="BTC/USDT",
+            timestamp=datetime(2026, 9, 8, 12, 0, 1, tzinfo=UTC),
+            price=Decimal("65000.0"),
+            amount=Decimal("0.5"),
+            side="buy",
+            exchange_trade_id="trade_123",
+        )
+    ]
+    with patch("apps.api.routers.tools.get_binance_adapter") as mock_get_adapter:
+        mock_adapter = MagicMock()
+        mock_adapter.get_recent_trades = AsyncMock(return_value=mock_trades)
+        mock_get_adapter.return_value = mock_adapter
+
+        response = client.get(
+            "/api/v1/tools/market/trades?symbol=BTC/USDT&limit=10", headers=auth_headers
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["symbol"] == "BTC/USDT"
+        assert len(data["trades"]) == 1
+        assert data["trades"][0]["exchange_trade_id"] == "trade_123"
+        assert data["trades"][0]["price"] == 65000.0
+        assert data["trades"][0]["side"] == "buy"
+
+
+def test_get_market_volume(client: TestClient, auth_headers: dict[str, str]) -> None:
+    mock_volume = MarketVolume(
+        symbol="BTC/USDT",
+        base_volume=Decimal("15000.50"),
+        quote_volume=Decimal("975000000.0"),
+        timestamp=datetime(2026, 9, 8, 12, 0, 0, tzinfo=UTC),
+    )
+    with patch("apps.api.routers.tools.get_binance_adapter") as mock_get_adapter:
+        mock_adapter = MagicMock()
+        mock_adapter.get_volume = AsyncMock(return_value=mock_volume)
+        mock_get_adapter.return_value = mock_adapter
+
+        response = client.get("/api/v1/tools/market/volume?symbol=BTC/USDT", headers=auth_headers)
+        assert response.status_code == 200
+        data = response.json()
+        assert data["symbol"] == "BTC/USDT"
+        assert data["base_volume"] == 15000.50
+        assert data["quote_volume"] == 975000000.0
+
+
+def test_get_market_funding_rate(client: TestClient, auth_headers: dict[str, str]) -> None:
+    mock_fr = FundingRate(
+        symbol="BTC/USDT",
+        funding_rate=Decimal("0.000100"),
+        mark_price=Decimal("65010.0"),
+        index_price=Decimal("65005.0"),
+        next_funding_time=datetime(2026, 9, 8, 16, 0, 0, tzinfo=UTC),
+        timestamp=datetime(2026, 9, 8, 12, 0, 0, tzinfo=UTC),
+    )
+    with patch("apps.api.routers.tools.get_binance_adapter") as mock_get_adapter:
+        mock_adapter = MagicMock()
+        mock_adapter.get_funding_rate = AsyncMock(return_value=mock_fr)
+        mock_get_adapter.return_value = mock_adapter
+
+        response = client.get(
+            "/api/v1/tools/market/funding_rate?symbol=BTC/USDT", headers=auth_headers
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["symbol"] == "BTC/USDT"
+        assert data["funding_rate"] == 0.0001
+        assert data["mark_price"] == 65010.0
+        assert data["index_price"] == 65005.0
+
+
+def test_get_market_candles_with_start_end(client: TestClient, auth_headers: dict[str, str]) -> None:
+    mock_candles = [
+        OHLCVCandle(
+            symbol="BTC/USDT",
+            timeframe="1h",
+            timestamp=datetime(2026, 9, 8, 10, 0, 0, tzinfo=UTC),
+            open=Decimal("64000.0"),
+            high=Decimal("64500.0"),
+            low=Decimal("63900.0"),
+            close=Decimal("64200.0"),
+            volume=Decimal("100.0"),
+            is_closed=True,
+        )
+    ]
+    with patch("apps.api.routers.tools.get_binance_adapter") as mock_get_adapter:
+        mock_adapter = MagicMock()
+        mock_adapter.get_candles = AsyncMock(return_value=mock_candles)
+        mock_get_adapter.return_value = mock_adapter
+
+        start_ts = "2026-09-08T09:00:00Z"
+        end_ts = "2026-09-08T11:00:00Z"
+        response = client.get(
+            f"/api/v1/tools/market/candles?symbol=BTC/USDT&timeframe=1h&start={start_ts}&end={end_ts}",
+            headers=auth_headers,
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["candles"]) == 1
+        assert data["candles"][0]["close"] == 64200.0
+
+
+def test_hermes_tools_client_retrieval_and_execution(client: TestClient) -> None:
+    """Test HermesToolsClient against the FastAPI backend for all 6 market tools."""
+    hermes_client = HermesToolsClient(
+        base_url="http://testserver",
+        token="test-hermes-token",
+    )
+    client.headers.update(hermes_client.headers)
+    hermes_client.client = client
+
+    mock_candles_1h = [
+        OHLCVCandle(
+            symbol="BTC/USDT",
+            timeframe="1h",
+            timestamp=datetime(2026, 9, 8, 10, 0, 0, tzinfo=UTC),
+            open=Decimal("64000.0"),
+            high=Decimal("64500.0"),
+            low=Decimal("63900.0"),
+            close=Decimal("64200.0"),
+            volume=Decimal("100.0"),
+            is_closed=True,
+        )
+    ]
+    mock_candles_15m = [
+        OHLCVCandle(
+            symbol="BTC/USDT",
+            timeframe="15m",
+            timestamp=datetime(2026, 9, 8, 10, 45, 0, tzinfo=UTC),
+            open=Decimal("64100.0"),
+            high=Decimal("64250.0"),
+            low=Decimal("64050.0"),
+            close=Decimal("64200.0"),
+            volume=Decimal("25.0"),
+            is_closed=True,
+        )
+    ]
+    mock_ticker = Ticker(
+        symbol="BTC/USDT",
+        bid=Decimal("64990.0"),
+        ask=Decimal("65010.0"),
+        last=Decimal("65000.0"),
+        volume=Decimal("1234.56"),
+        timestamp=datetime(2026, 9, 8, 12, 0, 0, tzinfo=UTC),
+    )
+    mock_ob = OrderBook(
+        symbol="BTC/USDT",
+        timestamp=datetime(2026, 9, 8, 12, 0, 0, tzinfo=UTC),
+        bids=[(Decimal("64990.0"), Decimal("1.5"))],
+        asks=[(Decimal("65010.0"), Decimal("1.2"))],
+    )
+    mock_trades = [
+        MarketTrade(
+            symbol="BTC/USDT",
+            timestamp=datetime(2026, 9, 8, 12, 0, 1, tzinfo=UTC),
+            price=Decimal("65000.0"),
+            amount=Decimal("0.5"),
+            side="buy",
+            exchange_trade_id="trade_123",
+        )
+    ]
+    mock_vol = MarketVolume(
+        symbol="BTC/USDT",
+        base_volume=Decimal("15000.50"),
+        quote_volume=Decimal("975000000.0"),
+        timestamp=datetime(2026, 9, 8, 12, 0, 0, tzinfo=UTC),
+    )
+    mock_fr = FundingRate(
+        symbol="BTC/USDT",
+        funding_rate=Decimal("0.000100"),
+        mark_price=Decimal("65010.0"),
+        index_price=Decimal("65005.0"),
+        next_funding_time=datetime(2026, 9, 8, 16, 0, 0, tzinfo=UTC),
+        timestamp=datetime(2026, 9, 8, 12, 0, 0, tzinfo=UTC),
+    )
+
+    with patch("apps.api.routers.tools.get_binance_adapter") as mock_get_adapter:
+        mock_adapter = MagicMock()
+        mock_adapter.get_candles = AsyncMock(
+            side_effect=lambda s, tf, *args, **kwargs: mock_candles_1h
+            if tf == "1h"
+            else mock_candles_15m
+        )
+        mock_adapter.get_ticker = AsyncMock(return_value=mock_ticker)
+        mock_adapter.get_order_book = AsyncMock(return_value=mock_ob)
+        mock_adapter.get_recent_trades = AsyncMock(return_value=mock_trades)
+        mock_adapter.get_volume = AsyncMock(return_value=mock_vol)
+        mock_adapter.get_funding_rate = AsyncMock(return_value=mock_fr)
+        mock_get_adapter.return_value = mock_adapter
+
+        # 1. Retrieve 1H and 15m candle sets for BTCUSDT (Definition of Done)
+        c_1h = hermes_client.get_candles("BTC/USDT", timeframe="1h")
+        assert c_1h["timeframe"] == "1h"
+        assert len(c_1h["candles"]) == 1
+
+        c_15m = hermes_client.market.get_candles("BTC/USDT", timeframe="15m")
+        assert c_15m["timeframe"] == "15m"
+        assert len(c_15m["candles"]) == 1
+
+        # 2. Test ticker
+        ticker_res = hermes_client.get_ticker("BTC/USDT")
+        assert ticker_res["last"] == 65000.0
+
+        # 3. Test order book
+        ob_res = hermes_client.market.get_order_book("BTC/USDT", depth=5)
+        assert len(ob_res["bids"]) == 1
+
+        # 4. Test trades
+        trades_res = hermes_client.get_trades("BTC/USDT")
+        assert len(trades_res["trades"]) == 1
+
+        # 5. Test volume
+        vol_res = hermes_client.market.get_volume("BTC/USDT")
+        assert vol_res["base_volume"] == 15000.50
+
+        # 6. Test funding rate
+        fr_res = hermes_client.get_funding_rate("BTC/USDT")
+        assert fr_res["funding_rate"] == 0.0001
+
+        # 7. Test execute_tool dynamic dispatcher with dot-notation
+        dispatched_candles = hermes_client.execute_tool(
+            "market.get_candles", symbol="BTC/USDT", timeframe="1h"
+        )
+        assert dispatched_candles["timeframe"] == "1h"
+
+        dispatched_fr = hermes_client.call_tool("market.get_funding_rate", symbol="BTC/USDT")
+        assert dispatched_fr["funding_rate"] == 0.0001

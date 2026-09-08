@@ -3,7 +3,7 @@
 import React from "react";
 import { Surface } from "@/components/ui/Surface";
 import { Badge } from "@/components/ui/Badge";
-import { ConfidenceIndicator } from "@/components/trading/ConfidenceIndicator";
+import { ConfidenceIndicator } from "@/features/trading/components/ConfidenceIndicator";
 import { InvestigationDetail } from "@/lib/mockHermesData";
 import { Brain, Activity, Gauge, TrendingUp, BarChart2, Compass } from "lucide-react";
 

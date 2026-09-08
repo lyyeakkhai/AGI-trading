@@ -16,6 +16,8 @@ from apps.api.routers.tools import router as tools_router
 from apps.api.routers.auth import router as auth_router
 from apps.api.routers.websocket import router as websocket_router
 from apps.api.routers.owner import router as owner_router
+from apps.api.routers.execution_tools import router as execution_tools_router
+
 from packages.config import get_settings
 from packages.database import get_engine
 from packages.logging import configure_logging, get_logger
@@ -74,6 +76,8 @@ def create_app() -> FastAPI:
     app.include_router(trading_router)
     app.include_router(exchange_router)
     app.include_router(live_router)
+    app.include_router(execution_tools_router)
+
     return app
 
 

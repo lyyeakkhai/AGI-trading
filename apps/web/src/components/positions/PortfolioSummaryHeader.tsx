@@ -3,7 +3,7 @@
 import React from "react";
 import { Surface } from "@/components/ui/Surface";
 import { Badge } from "@/components/ui/Badge";
-import { PnLDisplay } from "@/components/trading/PnLDisplay";
+import { PnLDisplay } from "@/features/trading/components/PnLDisplay";
 import { PortfolioSummaryMetrics } from "@/lib/mockPositionsData";
 import { DollarSign, PieChart, ShieldCheck, Activity } from "lucide-react";
 

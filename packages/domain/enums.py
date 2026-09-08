@@ -70,3 +70,61 @@ class Timeframe(str, Enum):
     M15 = "15m"
     H1 = "1h"
     H4 = "4h"
+
+
+# ── Research Experiment System ──────────────────────────────────────────────
+
+
+class ExperimentStatus(str, Enum):
+    DRAFT = "DRAFT"
+    READY = "READY"
+    RUNNING = "RUNNING"
+    COMPLETED = "COMPLETED"
+    VALIDATED = "VALIDATED"
+    REJECTED = "REJECTED"
+    ARCHIVED = "ARCHIVED"
+
+
+class ExperimentCategory(str, Enum):
+    TREND_FOLLOWING = "trend_following"
+    BREAKOUT = "breakout"
+    MOMENTUM = "momentum"
+    MEAN_REVERSION = "mean_reversion"
+    VOLATILITY = "volatility"
+    VOLUME = "volume"
+    MARKET_STRUCTURE = "market_structure"
+    MULTI_FACTOR = "multi_factor"
+    OTHER = "other"
+
+
+class ValidationRunType(str, Enum):
+    BACKTEST = "BACKTEST"
+    OUT_OF_SAMPLE = "OUT_OF_SAMPLE"
+    WALK_FORWARD = "WALK_FORWARD"
+    REGIME_ANALYSIS = "REGIME_ANALYSIS"
+
+
+class ConclusionOutcome(str, Enum):
+    SUPPORTED = "SUPPORTED"
+    PARTIALLY_SUPPORTED = "PARTIALLY_SUPPORTED"
+    REJECTED = "REJECTED"
+    INCONCLUSIVE = "INCONCLUSIVE"
+
+
+class ExperimentLinkType(str, Enum):
+    FOLLOW_UP = "FOLLOW_UP"
+    VARIANT = "VARIANT"
+    REFINEMENT = "REFINEMENT"
+    REPLICATION = "REPLICATION"
+    CHALLENGE = "CHALLENGE"
+
+
+class ResearchNoteType(str, Enum):
+    OBSERVATION = "OBSERVATION"
+    HYPOTHESIS = "HYPOTHESIS"
+    ASSUMPTION = "ASSUMPTION"
+    FINDING = "FINDING"
+    FAILURE = "FAILURE"
+    INTERPRETATION = "INTERPRETATION"
+    DECISION = "DECISION"
+    NEXT_STEP = "NEXT_STEP"

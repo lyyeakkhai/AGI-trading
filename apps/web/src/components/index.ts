@@ -24,15 +24,6 @@ export * from "./ui/CryptoIcon";
 export * from "./ui/BrandLogo";
 
 // Trading Primitives
-export * from "./trading/PriceDisplay";
-export * from "./trading/PnLDisplay";
-export * from "./trading/PositionSide";
-export * from "./trading/RiskBadge";
-export * from "./trading/ConfidenceIndicator";
-export * from "./trading/TradingMode";
-export * from "./trading/OrderStatus";
-export * from "./trading/ChartContainer";
-export * from "./trading/MarketChart";
 
 // AI & Hermes Primitives
 export * from "./ai/AIStatusIndicator";
@@ -216,7 +207,6 @@ export * from "./live/EmergencyStopModal";
 export * from "./live/LiveTradingWorkspace";
 
 // Shell Components
-export * from "./shell/AppShell";
-export * from "./shell/Header";
-export * from "./shell/Sidebar";
-export * from "./shell/Breadcrumbs";
+
+// Research Components
+export * from "./research";

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Surface } from "@/components/ui/Surface";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { RiskBadge } from "@/components/trading/RiskBadge";
+import { RiskBadge } from "@/features/trading/components/RiskBadge";
 import { ProgressIndicator } from "@/components/ui/ProgressIndicator";
 import { RiskStatusSummary } from "@/lib/mockOverviewData";
 import { Shield, ArrowRight, CheckCircle2, Lock } from "lucide-react";

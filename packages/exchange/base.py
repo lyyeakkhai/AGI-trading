@@ -10,8 +10,10 @@ from datetime import datetime
 
 from packages.exchange.models import (
     AdapterHealth,
-    OHLCVCandle,
+    FundingRate,
     MarketTrade,
+    MarketVolume,
+    OHLCVCandle,
     OrderBook,
     RateLimitState,
     SymbolInfo,
@@ -33,7 +35,12 @@ class ExchangeAdapter(ABC):
 
     @abstractmethod
     async def get_candles(
-        self, symbol: str, timeframe: str, since: datetime, limit: int
+        self,
+        symbol: str,
+        timeframe: str,
+        since: datetime,
+        limit: int,
+        until: datetime | None = None,
     ) -> list[OHLCVCandle]: ...
 
     @abstractmethod
@@ -43,6 +50,12 @@ class ExchangeAdapter(ABC):
     async def get_recent_trades(
         self, symbol: str, since: datetime, limit: int
     ) -> list[MarketTrade]: ...
+
+    @abstractmethod
+    async def get_volume(self, symbol: str) -> MarketVolume: ...
+
+    @abstractmethod
+    async def get_funding_rate(self, symbol: str) -> FundingRate: ...
 
     @abstractmethod
     async def get_symbol_info(self, symbol: str) -> SymbolInfo: ...

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { marketApi } from "@/lib/marketApi";
+import { marketApi } from "@/features/markets/api/marketApi";
 import {
   mockPortfolioMetrics,
   mockMarketContexts,

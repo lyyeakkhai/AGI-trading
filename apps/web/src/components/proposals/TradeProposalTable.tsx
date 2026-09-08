@@ -4,7 +4,7 @@ import React from "react";
 import { Surface } from "@/components/ui/Surface";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
-import { PositionSide } from "@/components/trading/PositionSide";
+import { PositionSide } from "@/features/trading/components/PositionSide";
 import { OpportunityConfidence } from "@/components/opportunities/OpportunityConfidence";
 import { ProposalStatusBadge } from "./ProposalStatusBadge";
 import { TradeProposalItem } from "@/lib/mockTradeProposalsData";

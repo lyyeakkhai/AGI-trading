@@ -1,4 +1,7 @@
+
 "use client";
+import { TradingMode, PriceDisplay, PnLDisplay, PositionSide, RiskBadge, ConfidenceIndicator, OrderStatus, ChartContainer } from "@/features/trading/components";
+
 
 import React, { useState } from "react";
 import {
@@ -33,14 +36,14 @@ import {
   Modal,
   useToast,
   ProgressIndicator,
-  PriceDisplay,
-  PnLDisplay,
-  PositionSide,
-  RiskBadge,
-  ConfidenceIndicator,
-  TradingMode,
-  OrderStatus,
-  ChartContainer,
+  // PriceDisplay,
+  // PnLDisplay,
+  // PositionSide,
+  // RiskBadge,
+  // ConfidenceIndicator,
+  // TradingMode,
+  // OrderStatus,
+  // ChartContainer,
   AIStatusIndicator,
   AIActivityBadge,
   AIInsightLabel,

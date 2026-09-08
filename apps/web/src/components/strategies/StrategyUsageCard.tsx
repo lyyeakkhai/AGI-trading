@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Surface } from "@/components/ui/Surface";
-import { PositionSide } from "@/components/trading/PositionSide";
+import { PositionSide } from "@/features/trading/components/PositionSide";
 import { StrategyUsage } from "@/lib/mockStrategiesData";
 import { Zap, FileText, Briefcase, History, ArrowRight } from "lucide-react";
 

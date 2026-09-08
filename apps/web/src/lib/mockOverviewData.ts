@@ -4,8 +4,8 @@
  */
 
 import { HermesStateType } from "@/components/ai/AIStatusIndicator";
-import { RiskLevel } from "@/components/trading/RiskBadge";
-import { PositionSideType } from "@/components/trading/PositionSide";
+import { RiskLevel } from "@/features/trading/components/RiskBadge";
+import { PositionSideType } from "@/features/trading/components/PositionSide";
 
 export interface PortfolioMetrics {
   totalEquity: number;

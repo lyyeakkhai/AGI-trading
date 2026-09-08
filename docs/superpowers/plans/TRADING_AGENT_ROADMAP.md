@@ -48,15 +48,15 @@ This roadmap breaks the Master Goal into 9 strictly sequential phases. **Do not 
 
 ### 🤖 Parallel Tasks
 - **Agent A (Backend API):**
-  - [ ] Implement `chart.get_state`, `chart.get_visible_range`, and `chart.get_drawings`.
-  - [ ] Implement `chart.draw_line`, `chart.draw_zone`, and `chart.draw_marker`.
+  - [x] Implement `chart.get_state`, `chart.get_visible_range`, and `chart.get_drawings`.
+  - [x] Implement `chart.draw_line`, `chart.draw_zone`, and `chart.draw_marker`.
 - **Agent B (Backend API):**
-  - [ ] Implement `chart.add_annotation`.
-  - [ ] Implement `chart.update_drawing`, `chart.delete_drawing`, and `chart.clear_drawings`.
+  - [x] Implement `chart.add_annotation`.
+  - [x] Implement `chart.update_drawing`, `chart.delete_drawing`, and `chart.clear_drawings`.
 
 ### ✅ Definition of Done
-- [ ] All 10 chart tools are exposed and tested.
-- [ ] Calling `chart.draw_zone` successfully persists a `ChartDrawingModel` in the database.
+- [x] All 10 chart tools are exposed and tested.
+- [x] Calling `chart.draw_zone` successfully persists a `ChartDrawingModel` in the database.
 
 ---
 
@@ -66,13 +66,13 @@ This roadmap breaks the Master Goal into 9 strictly sequential phases. **Do not 
 
 ### 🤖 Parallel Tasks
 - **Agent A (Frontend React):**
-  - [ ] Build a WebSocket or Polling hook `useChartDrawings` in `apps/web/src/hooks`.
-  - [ ] Build an SVG `ChartOverlay` component layered over `MarketChart.tsx`.
-  - [ ] Implement `timeScale().timeToCoordinate()` and `priceScale().priceToCoordinate()` mappings to correctly render the backend drawings onto the canvas.
+  - [x] Build a WebSocket or Polling hook `useChartDrawings` in `apps/web/src/hooks`.
+  - [x] Build an SVG `ChartOverlay` component layered over `MarketChart.tsx`.
+  - [x] Implement `timeScale().timeToCoordinate()` and `priceScale().priceToCoordinate()` mappings to correctly render the backend drawings onto the canvas.
 
 ### ✅ Definition of Done
-- [ ] Database drawing records automatically appear on the React frontend.
-- [ ] Zooming or panning the chart dynamically updates the SVG overlay positions.
+- [x] Database drawing records automatically appear on the React frontend.
+- [x] Zooming or panning the chart dynamically updates the SVG overlay positions.
 
 ---
 
@@ -82,14 +82,14 @@ This roadmap breaks the Master Goal into 9 strictly sequential phases. **Do not 
 
 ### 🤖 Parallel Tasks
 - **Agent A (Quant Engineer):**
-  - [ ] Implement `analysis.detect_swings` and `analysis.detect_market_structure`.
-  - [ ] Implement `analysis.detect_trend` and `analysis.detect_support_resistance`.
+  - [x] Implement `analysis.detect_swings` and `analysis.detect_market_structure`.
+  - [x] Implement `analysis.detect_trend` and `analysis.detect_support_resistance`.
 - **Agent B (Quant Engineer):**
-  - [ ] Implement `analysis.calculate_indicator` (wrapping a library like `pandas-ta` to support RSI, EMA, SMA, MACD, ATR, VWAP, Bollinger Bands, Volume).
+  - [x] Implement `analysis.calculate_indicator` (wrapping a library like `pandas-ta` to support RSI, EMA, SMA, MACD, ATR, VWAP, Bollinger Bands, Volume).
 
 ### ✅ Definition of Done
-- [ ] All 5 analysis tools are exposed.
-- [ ] Swings are calculated deterministically (e.g., using a strict 5-bar fractal logic, no LLM guessing).
+- [x] All 5 analysis tools are exposed.
+- [x] Swings are calculated deterministically (e.g., using a strict 5-bar fractal logic, no LLM guessing).
 
 ---
 
@@ -99,13 +99,14 @@ This roadmap breaks the Master Goal into 9 strictly sequential phases. **Do not 
 
 ### 🤖 Parallel Tasks
 - **Agent A (Trading Planner):**
-  - [ ] Implement `plan.create`, `plan.get`, `plan.update`, `plan.validate`, and `plan.cancel`.
+  - [x] Implement `plan.create`, `plan.get`, `plan.update`, `plan.validate`, and `plan.cancel`.
 - **Agent B (Risk API):**
-  - [ ] Wrap the existing `packages/risk/core.py` functions into tools: `risk.calculate_position_size`, `risk.calculate_exposure`, `risk.validate_plan`, `risk.check_portfolio_risk`.
+  - [x] Wrap the existing `packages/risk/core.py` functions into tools: `risk.calculate_position_size`, `risk.calculate_exposure`, `risk.validate_plan`, `risk.check_portfolio_risk`.
 
 ### ✅ Definition of Done
-- [ ] Hermes can output a structured Trading Plan JSON.
-- [ ] Submitting an oversized plan to `risk.validate_plan` correctly returns a `REJECTED` status.
+- [x] Hermes can output a structured Trading Plan JSON.
+- [x] Submitting an oversized plan to `risk.validate_plan` correctly returns a `REJECTED` status.
+
 
 ---
 
@@ -115,14 +116,14 @@ This roadmap breaks the Master Goal into 9 strictly sequential phases. **Do not 
 
 ### 🤖 Parallel Tasks
 - **Agent A (Execution Adapter):**
-  - [ ] Implement exchange-agnostic execution tools: `execution.get_balance`, `execution.get_positions`, `execution.get_open_orders`.
-  - [ ] Implement `execution.place_order`, `execution.cancel_order`, and `execution.get_order`. (Routing to the Binance Adapter/Agent OS).
+  - [x] Implement exchange-agnostic execution tools: `execution.get_balance`, `execution.get_positions`, `execution.get_open_orders`.
+  - [x] Implement `execution.place_order`, `execution.cancel_order`, and `execution.get_order`. (Routing to the Binance Adapter/Agent OS).
 - **Agent B (Position Manager):**
-  - [ ] Implement `position.get`, `position.monitor`, and `position.close`.
+  - [x] Implement `position.get`, `position.monitor`, and `position.close`.
 
 ### ✅ Definition of Done
-- [ ] `execution.place_order` successfully executes a testnet limit order on Binance.
-- [ ] The `position.monitor` tool accurately reflects the open testnet position.
+- [x] `execution.place_order` successfully executes a testnet limit order on Binance.
+- [x] The `position.monitor` tool accurately reflects the open testnet position.
 
 ---
 
@@ -132,10 +133,10 @@ This roadmap breaks the Master Goal into 9 strictly sequential phases. **Do not 
 
 ### 🤖 Parallel Tasks
 - **Agent A (Audit Engineer):**
-  - [ ] Implement `decision.create_log`, `decision.get_history`, and `trade.get_history`.
+  - [x] Implement `decision.create_log`, `decision.get_history`, and `trade.get_history`.
 
 ### ✅ Definition of Done
-- [ ] A complete trace (Market Data -> Reasoning -> Plan -> Risk -> Execution) can be queried and displayed.
+- [x] A complete trace (Market Data -> Reasoning -> Plan -> Risk -> Execution) can be queried and displayed.
 
 ---
 
@@ -144,14 +145,14 @@ This roadmap breaks the Master Goal into 9 strictly sequential phases. **Do not 
 **Dependencies:** Phases 1-8.
 
 ### 🤖 Sequential Task (Single Coordinator)
-- [ ] Pass the prompt *"Analyze BTCUSDT"* to Hermes.
-- [ ] Monitor Hermes as it uses `market.*` and `analysis.*` to read the market.
-- [ ] Verify Hermes uses `chart.*` tools and that the frontend updates in real-time.
-- [ ] Verify Hermes calls `plan.create` and passes it to `risk.validate_plan`.
-- [ ] Verify Hermes calls `execution.place_order` (in Testnet).
-- [ ] Verify Hermes loops into `position.monitor` and logs via `decision.create_log`.
+- [x] Pass the prompt *"Analyze BTCUSDT"* to Hermes.
+- [x] Monitor Hermes as it uses `market.*` and `analysis.*` to read the market.
+- [x] Verify Hermes uses `chart.*` tools and that the frontend updates in real-time.
+- [x] Verify Hermes calls `plan.create` and passes it to `risk.validate_plan`.
+- [x] Verify Hermes calls `execution.place_order` (in Testnet).
+- [x] Verify Hermes loops into `position.monitor` and logs via `decision.create_log`.
 
 ### ✅ Definition of Done (Master Goal Achieved)
-- [ ] Hermes successfully executed the entire autonomous trading loop with zero human intervention.
-- [ ] Risk parameters were strictly honored.
-- [ ] A visual artifact exists on the TradingView chart explaining the trade.
+- [x] Hermes successfully executed the entire autonomous trading loop with zero human intervention.
+- [x] Risk parameters were strictly honored.
+- [x] A visual artifact exists on the TradingView chart explaining the trade.

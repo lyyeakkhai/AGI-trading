@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Surface } from "@/components/ui/Surface";
-import { PositionSide } from "@/components/trading/PositionSide";
+import { PositionSide } from "@/features/trading/components/PositionSide";
 import { OpportunityConfidence } from "./OpportunityConfidence";
 import { OpportunityStatusBadge } from "./OpportunityStatusBadge";
 import { OpportunityItem } from "@/lib/mockOpportunitiesData";

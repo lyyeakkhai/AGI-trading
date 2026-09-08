@@ -85,8 +85,9 @@ class BinanceCCXTAdapter(ExchangeAdapter):
         api_key: str | None = None,
         api_secret: str | None = None,
         sandbox: bool = False,
+        market_type: str = "spot",
     ) -> None:
-        config: dict[str, Any] = {"options": {"defaultType": "spot"}}
+        config: dict[str, Any] = {"options": {"defaultType": market_type}}
         if api_key:
             config["apiKey"] = api_key
         if api_secret:
@@ -130,6 +131,45 @@ class BinanceCCXTAdapter(ExchangeAdapter):
             if self._sandbox:
                 self._ws.set_sandbox_mode(True)
         return self._ws
+
+    
+    async def set_leverage(self, symbol: str, leverage: int) -> dict[str, Any]:
+        try:
+            return await asyncio.to_thread(
+                self._rest.set_leverage, leverage, symbol
+            )
+        except Exception as e:
+            raise normalize_ccxt_error(e) from e
+
+    async def create_order(
+        self,
+        symbol: str,
+        order_type: str,
+        side: str,
+        amount: Decimal,
+        price: Decimal | None = None,
+        reduce_only: bool = False,
+    ) -> dict[str, Any]:
+        try:
+            params: dict[str, Any] = {}
+            if reduce_only:
+                params["reduceOnly"] = True
+            
+            # Convert Decimal to float for CCXT
+            amount_f = float(amount)
+            price_f = float(price) if price is not None else None
+            
+            return await asyncio.to_thread(
+                self._rest.create_order,
+                symbol,
+                order_type,
+                side,
+                amount_f,
+                price_f,
+                params,
+            )
+        except Exception as e:
+            raise normalize_ccxt_error(e) from e
 
     async def get_ticker(self, symbol: str) -> Ticker:
         try:

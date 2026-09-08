@@ -3,7 +3,7 @@
  * AGI Trading System Source of Truth for Proposals & Risk Decision Matrix
  */
 
-import { PositionSideType } from "@/components/trading/PositionSide";
+import { PositionSideType } from "@/features/trading/components/PositionSide";
 
 export type ProposalStatus =
   | "Awaiting Approval"
