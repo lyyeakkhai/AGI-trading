@@ -1,173 +1,217 @@
 # Autonomous Trading Platform — Architecture & Scope
 
-## 1. Executive Summary
+## 1. Master Goal — Autonomous First Trade
 
-We are building an AI-native trading intelligence, chart-planning, risk, and execution orchestration layer. The core premise is that the AI agent (Hermes) orchestrates trading by interacting with semantic objects (Trading Plans, Support/Resistance lines, Market Structure annotations) rather than interacting with a browser UI. 
+**Build Hermes into a controlled autonomous trading system capable of completing its first end-to-end trade using Binance: observe real market data → analyze market structure → visualize its reasoning on the TradingView chart → create a structured trading plan → calculate and validate risk → execute an approved order → verify the resulting position → monitor it → record the complete decision and execution history.**
 
-Crucially, with the discovery of **Binance Agent OS**, we will pivot our exchange integration strategy. Rather than independently re-building exchange connectivity, wallets, and native order translation, we will utilize the Binance Agent OS / MCP / API infrastructure. Our proprietary system will focus purely on market intelligence, risk validation, and AI orchestration.
+Binance is V1 only. The system must use an exchange-agnostic execution interface so additional exchanges (e.g., OKX, Bybit) can be added later without modifying the AI, analysis, chart, strategy, or risk architecture. 
+
+The system must prioritize correctness, deterministic risk controls, auditability, and safe execution over feature count. **No order may bypass the risk engine.** The first autonomous execution should run in paper/testnet/simulation mode before live capital is enabled.
+
+The first milestone is complete when Hermes can perform the entire lifecycle autonomously in a controlled environment:
+
+```text
+MARKET DATA
+    ↓
+MARKET ANALYSIS
+    ↓
+CHART VISUALIZATION
+    ↓
+TRADING PLAN
+    ↓
+RISK VALIDATION
+    ↓
+EXECUTION APPROVAL
+    ↓
+ORDER
+    ↓
+POSITION
+    ↓
+MONITORING
+    ↓
+AUDIT LOG
+```
 
 ## 2. Current Repository State
 
 After deep inspection of the repository (`/Users/lyyeakkhai/workspace/dockified/agi-trading`), the current state is:
 
 - **Market Data**: Handled via `packages/exchange/binance.py` using CCXT (REST) and CCXT Pro (WebSockets). `services/market_data` provides persistence and a worker process.
-- **Frontend Charting**: `apps/web/src/components/trading/MarketChart.tsx` successfully integrates `lightweight-charts` to display real-time OHLCV, volume, basic price lines, and `aiMarkers`.
-- **Hermes Tools**: A REST-based tool contract exists in `packages/hermes_tools/client.py` routing to FastAPI services (e.g., `services/intelligence`).
-- **Risk Engine**: `packages/risk/core.py` implements a pure, deterministic, fail-closed risk evaluation engine independent of the AI.
+- **Frontend Charting**: `apps/web/src/components/trading/MarketChart.tsx` integrates `lightweight-charts`. Currently supports basic marker rendering, but lacks the SVG overlays needed for semantic coordinate-based drawing (rectangles, trendlines).
+- **Hermes Tools**: A REST-based tool contract exists in `packages/hermes_tools/client.py` routing to FastAPI services. It lacks the required drawing endpoints, deterministic quant endpoints, and a fully structured trading plan endpoint.
+- **Risk Engine**: `packages/risk/core.py` implements a pure, deterministic, fail-closed risk evaluation engine independent of the AI. This perfectly supports the architectural requirement that Hermes cannot bypass risk limits.
 - **Execution**: `services/execution/live.py` currently uses standard CCXT with raw API keys to place market/limit orders.
 - **Database**: Comprehensive SQLAlchemy domain models exist in `packages/database/models/`, managed by Alembic.
 
-## 3. Existing Infrastructure
+## 3. The 6 Core Systems Architecture
 
-* **Re-usable**:
-  - `lightweight-charts` frontend wrapper (needs overlay extensions).
-  - The pure `packages/risk` engine (completely agnostic to Binance).
-  - SQLAlchemy persistence layer (`packages/database`).
-  - `packages/exchange/binance.py` (specifically the CCXT Pro WebSocket streams, assuming Agent OS MCP doesn't completely replace high-throughput streaming).
-  - The `hermes_tools` client/server routing pattern.
-
-* **Missing / Needs Refactoring**:
-  - **Binance Agent OS**: No MCP or Agent OS integration exists. `services/execution/live.py` relies on standard API keys.
-  - **Chart Tools**: Missing semantic drawing state, endpoints, and frontend SVG overlay synchronized to chart coordinates.
-  - **Quant Engine**: Missing deterministic market structure and indicator algorithms.
-  - **Trading Plan Domain**: `create_trade_proposal` exists but lacks full structure (Invalidation, R:R, Strategy ID).
-
-## 4. Binance Agent OS Integration Strategy
-
-We will treat Binance Agent OS as an external infrastructure capability. 
-1. **Execution Adapter**: We will deprecate or wrap the CCXT-based `live.py` order placement with an Agent OS adapter if the MCP provides trading scopes. 
-2. **Account Balances/Positions**: We will rely on the Agentic sub-account provided by Binance Agent OS.
-3. **Investigation Required**: Before writing execution code, we must verify the exact capabilities of the Binance MCP endpoint (`https://agent.binance.com/mcp/agentic`), specifically regarding WebSocket streaming latency vs REST API limits, and supported order types for USDⓈ-M Futures.
-
-## 5. Goal
-
-Build an AI-native trading intelligence and orchestration layer that uses deterministic market structure and risk engines, allowing Hermes to visually plan and execute trades seamlessly, backed by Binance Agent OS infrastructure.
-
-## 6. Scope
-
-- **Market Intelligence**: Deterministic swing detection, trend analysis, indicators.
-- **Chart Intelligence**: Tools for Hermes to read chart state and visible ranges.
-- **AI Drawing Engine**: Semantic creation of trendlines, zones, and annotations stored in DB and rendered over `lightweight-charts`.
-- **Trading Plan Engine**: Structured plan creation, validation, and persistence.
-- **Risk Engine Validation**: Enforcing limits (drawdown, R:R, position size) strictly independent of the LLM.
-- **Binance Agent OS Adapter**: Routing execution through Binance's official agent infrastructure.
-
-## 7. Out of Scope
-
-- A full TradingView clone.
-- Social trading, copy trading, or community feeds.
-- Complex Option/P2P/Convert integrations in Phase 1 (Spot & Futures only).
-- Non-Binance exchange integrations for the MVP.
-- LLM-driven deterministic math (the LLM will not calculate RSI).
-
-## 8. System Architecture
+The project is strictly divided into these six systems, ensuring modularity and exchange-agnosticism.
 
 ```text
-                    HERMES
-                      |
-                      v
-             AI ORCHESTRATION
-                      |
-          +-----------+-----------+
-          |           |           |
-          v           v           v
-       MARKET       CHART       TRADING
-     INTELLIGENCE  INTELLIGENCE    PLAN
-          |           |           |
-          +-----------+-----------+
-                      |
-                      v
-                 RISK ENGINE (Pure Python)
-                      |
-                      v
-             EXECUTION GATEWAY
-                      |
-                      v
-            BINANCE AGENT OS ADAPTER
-                      |
-                      v
-                   BINANCE
+┌───────────────────────────────────────────────┐
+│                    HERMES                     │
+│              AI ORCHESTRATOR                  │
+└──────────────────────┬────────────────────────┘
+                       │
+       ┌───────────────┼────────────────┐
+       ▼               ▼                ▼
+   MARKET DATA      ANALYSIS          CHART
+       │               │                │
+       └───────────────┼────────────────┘
+                       ▼
+                TRADING PLAN
+                       │
+                       ▼
+                  RISK ENGINE
+                       │
+                       ▼
+              EXECUTION ENGINE
+                       │
+                       ▼
+                    BINANCE
 ```
 
-## 9. Domain Model
+## 4. Required Tool Architecture
 
-We maintain strict separation of concerns:
-- **Trading Product**: Asset definitions and multipliers.
-- **Order Type**: Exchange-specific execution mechanics (Limit, Market).
-- **Position / Risk Management**: Portfolio state, margin, exposure.
-- **Trading Plan**: The AI's intent (Setup, Entry, SL, TP, Confidence).
-- **Semantic Drawing**: X/Y translated as Time/Price (`ChartDrawingModel`).
+The AI-facing tool set must be smaller and more semantic than the internal API surface. We will build approximately 42 tools mapped across the functional domains for the first autonomous loop.
 
-## 10. AI Tool Architecture
+### A. Market Data Tools (6)
+These are the first tools Hermes needs to observe the market. Hermes must be able to request multiple timeframes (e.g., `1m`, `5m`, `15m`, `1H`, `4H`, `1D`).
+- `market.get_candles` (Supports symbol, timeframe, limit, start/end)
+- `market.get_ticker`
+- `market.get_order_book`
+- `market.get_trades`
+- `market.get_volume`
+- `market.get_funding_rate`
 
-Hermes will interact with deterministic Python tools exposed via an API (e.g., `packages/hermes_tools`).
-Example signatures:
-- `chart.get_state(symbol, timeframe)`
-- `chart.draw_zone(type, start_time, end_time, top_price, bottom_price)`
-- `quant.find_swings(symbol, timeframe)`
-- `trading_plan.propose(intent_schema)`
+### B. Chart Tools (10)
+Hermes will not generate frontend code. It will produce semantic commands (e.g., `{"type": "support_zone", "price_low": 77000, "price_high": 77500, "reason": "Previous demand area"}`). The backend persists these and the chart engine converts them to visual objects.
+- `chart.get_state`
+- `chart.get_visible_range`
+- `chart.get_drawings`
+- `chart.draw_line`
+- `chart.draw_zone`
+- `chart.draw_marker`
+- `chart.add_annotation`
+- `chart.update_drawing`
+- `chart.delete_drawing`
+- `chart.clear_drawings`
 
-## 11. Chart / Drawing Architecture
+### C. Analysis Tools (5)
+The LLM will not calculate indicator values. It will request them from a deterministic Python backend (e.g., `pandas-ta`).
+- `analysis.detect_swings`
+- `analysis.detect_trend`
+- `analysis.detect_support_resistance`
+- `analysis.detect_market_structure`
+- `analysis.calculate_indicator` (Supports RSI, EMA, SMA, MACD, ATR, VWAP, Bollinger Bands, Volume)
 
-**AI** -> `chart.draw_line()` -> **Backend DB** (`ChartDrawingModel`) -> **WebSocket Sync** -> **React Frontend**.
-The React frontend uses `lightweight-charts` time/price coordinate APIs to render SVG overlays deterministically, completely decoupling the AI from browser pixels.
+### D. Trading Plan Tools (5)
+The AI never jumps directly from "BTC looks bullish" to "BUY BTC". There must be an intermediate **TradingPlan object** representing the contract between intelligence and execution.
+- `plan.create`
+- `plan.get`
+- `plan.update`
+- `plan.validate`
+- `plan.cancel`
 
-## 12. Market Intelligence Architecture
+*Example internal structure:*
+```json
+{
+  "symbol": "BTCUSDT",
+  "market": "spot",
+  "direction": "LONG",
+  "entry": { "price": 78000 },
+  "stop_loss": { "price": 77000 },
+  "take_profit": [
+    { "price": 79500 },
+    { "price": 81000 }
+  ],
+  "risk": { "risk_percent": 0.5 },
+  "thesis": "...",
+  "invalidation": "...",
+  "evidence": ["...", "..."]
+}
+```
 
-Located in `packages/quant` and `services/intelligence`. Powered by deterministic libraries (e.g., `pandas-ta`). The AI calls a tool, the tool fetches the latest CCXT OHLCV data from the DB, calculates the indicators/structure, and returns structured JSON to the AI.
+### E. Risk Engine Tools (4)
+Mandatory safety gates before autonomous execution. The AI cannot bypass this.
+- `risk.calculate_position_size`
+- `risk.calculate_exposure`
+- `risk.validate_plan`
+- `risk.check_portfolio_risk`
 
-## 13. Trading Plan Architecture
+### F. Execution Tools (6)
+Keep the AI-facing interface exchange-neutral. The execution engine wraps an underlying Binance Adapter (which may utilize Binance Agent OS MCP).
+- `execution.get_balance`
+- `execution.get_positions`
+- `execution.get_open_orders`
+- `execution.place_order`
+- `execution.cancel_order`
+- `execution.get_order`
+*(Later additions: `modify_order`, `close_position`)*
 
-A pipeline spanning intent to execution. 
-`Hermes (Intent)` -> `Trading Plan Engine (Validation)` -> `Risk Engine (Sizing)` -> `Execution Gateway`.
+### G. Position Monitoring (3)
+After the first order, Hermes must manage the trade lifecycle.
+- `position.get`
+- `position.monitor`
+- `position.close`
 
-## 14. Risk Architecture
+### H. Audit & Memory (3)
+Every autonomous decision must be recorded so a human can ask, *"Why did Hermes take this trade?"* and reconstruct the entire decision.
+- `decision.create_log`
+- `decision.get_history`
+- `trade.get_history`
 
-Implemented in `packages/risk/core.py`. Pure functional evaluation taking `RiskState`, `RiskConfig`, and `TradeIntent`. Fails closed. Cannot be bypassed by the AI.
+## 5. The First-Trade Workflow (Integration Test)
 
-## 15. Execution Architecture
+When Hermes receives the prompt: *"Analyze BTCUSDT"*, the expected autonomous loop is:
 
-An abstract `ExecutionAdapter` interface. Currently implemented as `LiveExecutionAdapter` (CCXT). Will be extended to support `BinanceAgentOSAdapter`.
+1. **Observe**: `market.get_candles()`, `market.get_ticker()`, `market.get_order_book()`
+2. **Analyze**: `analysis.detect_swings()`, `analysis.detect_trend()`, `analysis.detect_support_resistance()`, `analysis.detect_market_structure()`
+3. **Visualize**: `chart.draw_line()`, `chart.draw_zone()`, `chart.add_annotation()` (TradingView updates in real-time)
+4. **Create plan**: `plan.create()` (Structured object with Entry, Stop, Targets, Thesis)
+5. **Risk**: `risk.calculate_position_size()`, `risk.validate_plan()`, `risk.check_portfolio_risk()`
+6. **Execution**: ONLY if RISK = APPROVED, `execution.place_order()`
+7. **Verify**: `execution.get_order()`, `position.get()`
+8. **Monitor**: `position.monitor()`
+9. **Record**: `decision.create_log()`
 
-## 16. Binance Adapter Architecture
+## 6. Definition of Done (First Trade Acceptance Test)
 
-Wraps the Binance Agent OS / MCP provided by `agent.binance.com`. If MCP lacks high-frequency data streams, we fall back to our existing CCXT WebSocket implementation (`packages/exchange/binance.py`) for data, but use Agent OS for execution and wallet management.
+**Given:** BTCUSDT, real Binance market data, configured account, configured TradingView chart.
+**Hermes must autonomously:**
+- [ ] Retrieve market data
+- [ ] Retrieve multiple timeframes
+- [ ] Analyze market structure
+- [ ] Identify swing points
+- [ ] Identify support/resistance
+- [ ] Create a market thesis
+- [ ] Draw analysis on TradingView
+- [ ] Create a structured TradingPlan
+- [ ] Calculate position size
+- [ ] Calculate exposure
+- [ ] Validate risk
+- [ ] Reject invalid plans
+- [ ] Approve valid plans
+- [ ] Create an execution request
+- [ ] Submit the order in test/paper environment
+- [ ] Verify the order
+- [ ] Detect resulting position
+- [ ] Monitor position
+- [ ] Record complete audit trail
+*(No manual intervention should be required inside the approved autonomous workflow)*
 
-## 17. Project Phases
+## 7. Explicitly Out of Scope for Milestone 1
 
-- **PHASE 0**: Architecture & Contracts (Agent OS Verification).
-- **PHASE 1**: Chart State & AI Drawing Domain.
-- **PHASE 2**: Deterministic Indicator & Structure Engine.
-- **PHASE 3**: Trading Plan Domain & Tool Integration.
-- **PHASE 4**: Binance Agent OS Execution Adapter.
-- **PHASE 5**: Integration, Safety Testing, & UI Overlay.
+Do not build these yet. Prove ONE AI → ONE MARKET → ONE EXCHANGE → ONE STRATEGY → ONE POSITION first, then scale.
+- ❌ OKX / Multi-exchange arbitrage
+- ❌ Options / DEX
+- ❌ Copy trading / Social trading / Trading bots
+- ❌ AI marketplace / Strategy marketplace
+- ❌ 100+ indicators
+- ❌ Multiple simultaneous agents trading independently
 
-## 18. Dependency Map
+## 8. Binance Agent OS Integration Strategy
 
-`Binance Agent OS Capabilities` -> `Execution Adapter`
-`Domain Models` -> `Database` -> `Quant Engine`
-`Quant Engine` -> `Hermes Tools API` -> `Hermes AI`
-`Hermes Tools API` -> `Frontend Chart Overlays`
-
-## 19. MVP Definition
-
-**The Chart Control MVP**:
-Hermes successfully receives a prompt to analyze a chart, fetches deterministic market structure via tools, decides on a support/resistance level, and calls `chart.draw_zone()`. The frontend successfully renders this zone on the TradingView chart without execution.
-
-## 20. Acceptance Criteria
-
-- AI tools strictly enforce semantic time/price coordinates.
-- Risk engine strictly overrides or rejects oversized AI plans.
-- Binance Agent OS is utilized for account/execution (subject to Phase 0 verification).
-- Market structure (swing points) matches deterministic math, not AI hallucination.
-
-## 21. Risks and Unknowns
-
-- **UNKNOWN — NEEDS REPOSITORY VERIFICATION**: Does the Binance Agent OS MCP support WebSocket streaming, or is it REST only? If REST only, we must retain our CCXT WebSocket streams for market data.
-- **UNKNOWN — NEEDS REPOSITORY VERIFICATION**: Does the Binance Agent OS support all required order types (e.g., Post-Only, Stop-Limit) natively, or do we need to emulate them?
-- **UNKNOWN — NEEDS REPOSITORY VERIFICATION**: The exact geographical/account restrictions of the Agentic Wallet sub-accounts.
-
-## 22. Recommended Next Step
-
-Before writing any execution or chart overlay code, we must execute **PHASE 0**.
-I recommend running an exploratory test script against the `https://agent.binance.com/mcp/agentic` endpoint to document its exact schema, supported scopes, and latency profile. Once we know the shape of the Agent OS, we can implement the domain models.
+We will treat Binance Agent OS as an external infrastructure capability for Phase 1.
+1. **Execution Adapter**: We will wrap the existing execution mechanics with an Agent OS adapter if the MCP provides the required trading scopes securely via Agentic sub-accounts.
+2. **Investigation Required**: Before writing execution code, we must verify the exact capabilities of the Binance MCP endpoint (`https://agent.binance.com/mcp/agentic`), specifically regarding WebSocket streaming latency vs REST API limits, and supported order types. If the MCP lacks high-frequency data streams, we fall back to our existing CCXT WebSocket implementation (`packages/exchange/binance.py`) for data, but use Agent OS for execution.
