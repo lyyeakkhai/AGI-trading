@@ -138,6 +138,8 @@ The system will provide the AI with structured chart information:
 * Price range
 * Chart session state
 
+> **Implementation Deep Dive**: Currently, `MarketChart.tsx` tracks chart state but it isn't seamlessly exposed backward to the Hermes agent context. We will expose a `chart.get_state()` endpoint in `hermes_tools` (FastAPI backend) that queries the active session state or reads from the same DB context the frontend subscribes to. 
+
 #### 4.2 Drawing Engine
 The system will support structured drawing objects.
 Initial drawing primitives:
@@ -152,14 +154,20 @@ Initial drawing primitives:
 
 Later versions may add Fibonacci, Channels, Measured moves, Advanced geometric tools, and other technical-analysis drawings.
 
+> **Implementation Deep Dive**: `MarketChart.tsx` uses `lightweight-charts`, which natively supports markers (`setMarkers`) and horizontal price lines (`createPriceLine`). Advanced drawings like trend lines and rectangles require a plugin system (like `lightweight-charts` primitives) or a canvas overlay synchronized with the chart's time/price coordinate system (`timeScale().timeToCoordinate()` and `priceScale().priceToCoordinate()`).
+
 #### 4.3 AI-Controlled Drawing
 The AI must be able to Create, Read, Update, Delete, and Clear chart drawings through tools.
 The AI should operate using **market coordinates** (`time + price`) not browser coordinates (`x + y pixels`).
+
+> **Implementation Deep Dive**: Drawing state will live in the database (e.g. `ChartDrawingModel`) mapped to a session/user and broadcast to the frontend via WebSockets or polling. The Hermes agent will interact with drawings via tools like `chart_draw_zone(min_price, max_price, start_time, end_time)` which inserts records into the DB. The frontend consumes this state to render the overlay.
 
 #### 4.4 Indicator Engine
 The system will provide deterministic indicator calculations.
 Initial indicators: SMA, EMA, RSI, MACD, ATR, VWAP, Bollinger Bands, Volume analysis.
 The LLM should **not independently calculate financial values** when a deterministic engine can calculate them.
+
+> **Implementation Deep Dive**: We have `get_analytics_indicators` in `client.py` and an `analytics` service. We will use a fast math library (like `pandas-ta`, `ta-lib`, or custom numpy) in the Python backend. The AI will call `indicator_get("MACD", {"fast": 12, "slow": 26, "signal": 9})`, which executes deterministically and returns the values or signals.
 
 #### 4.5 Market Structure
 The system will eventually detect:
@@ -171,17 +179,25 @@ The system will eventually detect:
 * Equal highs/lows
 * Liquidity levels
 
+> **Implementation Deep Dive**: Market structure logic will be codified as deterministic Python algorithms (e.g. fractal swing detection using a 5-bar window) inside `packages/quant` or `packages/analytics`. The agent uses `structure_find_swings()` which runs the algorithm and returns structured points `[{type: "swing_high", time: X, price: Y, confirmed: true}]`.
+
 #### 4.6 Chart Annotation
 The system will connect analysis to visualization. The chart becomes a **visual representation of the agent's analysis**.
+
+> **Implementation Deep Dive**: Combined with the Drawing Engine (4.2), text annotations will map to coordinate points with specific anchor points. The agent can supply `rationale` metadata when drawing an object, which the frontend renders in a tooltip or legend when the user hovers over the drawing.
 
 #### 4.7 Trading Plan
 The system will support structured trading plans containing:
 Symbol, Timeframe, Direction, Setup, Entry, Stop Loss, Take Profit, Invalidation, Risk, Reward, Risk/Reward Ratio, Evidence, Confidence.
 
+> **Implementation Deep Dive**: The current `create_trade_proposal` endpoint accepts an intent. We will formalize a `TradingPlanModel` in `packages/domain/models` containing these specific fields. The plan is passed down to `packages/risk` to calculate position sizing before moving to `packages/execution`.
+
 #### 4.8 Persistence
 The system will eventually preserve:
 Chart state, Drawings, Indicators, Market-structure analysis, Trading plans, Analysis timestamps, Agent-generated annotations, Analysis version.
 This allows previous AI decisions to be reproduced and audited.
+
+> **Implementation Deep Dive**: We will create a new bounded context in the database (e.g. `AnalysisSessionModel`, `AnalysisDrawingModel`) that snapshots the AI's view of the market at the exact timestamp the plan was generated.
 
 ---
 
