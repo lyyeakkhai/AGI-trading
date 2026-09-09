@@ -18,97 +18,103 @@ export function PortfolioHealthCard({
   const isHealthy = health.status === "NORMAL";
 
   return (
-    <Surface variant="default" padded="md" className={`space-y-3 ${className}`}>
+    <div className={`bg-black border border-zinc-800 p-4 h-full flex flex-col justify-center space-y-4 ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
         <div className="flex items-center gap-2">
-          <ShieldCheck
-            size={16}
-            className={isHealthy ? "text-profit" : "text-warning"}
-          />
-          <span className="text-xs font-mono font-bold uppercase text-gray-200">
-            Portfolio Health Snapshot
+          <span className="text-xs font-mono font-black uppercase tracking-widest text-zinc-100">
+            SYS_HEALTH
           </span>
         </div>
-        <Badge variant={isHealthy ? "profit" : "warning"} size="sm">
+        <div className={`px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-widest border ${
+          isHealthy ? "bg-green-950 border-green-900 text-green-500" : "bg-red-950 border-red-900 text-red-500"
+        }`}>
           {health.status}
-        </Badge>
+        </div>
       </div>
 
       {/* Grid of 4 Health Dimensions */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1">
         {/* Exposure vs Limit */}
-        <div className="p-2 rounded bg-bg-950 border border-border-color space-y-0.5">
-          <span className="text-[10px] text-gray-500 uppercase block">
-            Exposure
+        <div className="p-3 bg-zinc-950 border border-zinc-800 flex flex-col justify-between">
+          <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest mb-2">
+            EXPOSURE
           </span>
-          <div className="flex items-baseline justify-between">
-            <span className="font-bold text-gray-100">
-              {health.exposure.value}%
-            </span>
-            <span className="text-[10px] text-gray-500">
-              max {health.exposure.limit}%
-            </span>
-          </div>
-          <div className="text-[10px] text-profit font-semibold">
-            {health.exposure.status}
+          <div>
+            <div className="flex items-baseline justify-between mb-1">
+              <span className="text-sm font-mono font-black text-zinc-100 tracking-tight">
+                {health.exposure.value}%
+              </span>
+              <span className="text-[10px] font-mono font-bold text-zinc-600 tracking-widest">
+                MAX_{health.exposure.limit}%
+              </span>
+            </div>
+            <div className="text-[10px] font-mono font-bold text-green-500 uppercase tracking-widest">
+              {health.exposure.status}
+            </div>
           </div>
         </div>
 
         {/* Daily PnL vs Limit */}
-        <div className="p-2 rounded bg-bg-950 border border-border-color space-y-0.5">
-          <span className="text-[10px] text-gray-500 uppercase block">
-            Daily P&L
+        <div className="p-3 bg-zinc-950 border border-zinc-800 flex flex-col justify-between">
+          <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest mb-2">
+            DLY_PNL
           </span>
-          <div className="flex items-baseline justify-between">
-            <span className="font-bold text-profit">
-              +{health.dailyPnl.value}%
-            </span>
-            <span className="text-[10px] text-gray-500">
-              floor {health.dailyPnl.limit}%
-            </span>
-          </div>
-          <div className="text-[10px] text-profit font-semibold">
-            {health.dailyPnl.status}
+          <div>
+            <div className="flex items-baseline justify-between mb-1">
+              <span className="text-sm font-mono font-black text-green-500 tracking-tight">
+                +{health.dailyPnl.value}%
+              </span>
+              <span className="text-[10px] font-mono font-bold text-zinc-600 tracking-widest">
+                FLR_{health.dailyPnl.limit}%
+              </span>
+            </div>
+            <div className="text-[10px] font-mono font-bold text-green-500 uppercase tracking-widest">
+              {health.dailyPnl.status}
+            </div>
           </div>
         </div>
 
         {/* Drawdown */}
-        <div className="p-2 rounded bg-bg-950 border border-border-color space-y-0.5">
-          <span className="text-[10px] text-gray-500 uppercase block">
-            Max Drawdown
+        <div className="p-3 bg-zinc-950 border border-zinc-800 flex flex-col justify-between">
+          <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest mb-2">
+            MAX_DD
           </span>
-          <div className="flex items-baseline justify-between">
-            <span className="font-bold text-gray-100">
-              {health.drawdown.value}%
-            </span>
-            <span className="text-[10px] text-gray-500">
-              cap {health.drawdown.limit}%
-            </span>
-          </div>
-          <div className="text-[10px] text-profit font-semibold">
-            {health.drawdown.status}
+          <div>
+            <div className="flex items-baseline justify-between mb-1">
+              <span className="text-sm font-mono font-black text-zinc-100 tracking-tight">
+                {health.drawdown.value}%
+              </span>
+              <span className="text-[10px] font-mono font-bold text-zinc-600 tracking-widest">
+                CAP_{health.drawdown.limit}%
+              </span>
+            </div>
+            <div className="text-[10px] font-mono font-bold text-green-500 uppercase tracking-widest">
+              {health.drawdown.status}
+            </div>
           </div>
         </div>
 
         {/* Risk Utilization */}
-        <div className="p-2 rounded bg-bg-950 border border-border-color space-y-0.5">
-          <span className="text-[10px] text-gray-500 uppercase block">
-            Risk Utilization
+        <div className="p-3 bg-zinc-950 border border-zinc-800 flex flex-col justify-between">
+          <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest mb-2">
+            RISK_UTIL
           </span>
-          <div className="flex items-baseline justify-between">
-            <span className="font-bold text-cyan-400">
-              {health.riskUtilization}%
-            </span>
-            <span className="text-[10px] text-gray-500">
-              {health.openPositionsCount} Pos
-            </span>
-          </div>
-          <div className="text-[10px] text-gray-400">
-            Within Guardrails
+          <div>
+            <div className="flex items-baseline justify-between mb-1">
+              <span className="text-sm font-mono font-black text-cyan-500 tracking-tight">
+                {health.riskUtilization}%
+              </span>
+              <span className="text-[10px] font-mono font-bold text-zinc-600 tracking-widest">
+                {health.openPositionsCount}_POS
+              </span>
+            </div>
+            <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest">
+              NOMINAL
+            </div>
           </div>
         </div>
       </div>
-    </Surface>
+    </div>
   );
 }

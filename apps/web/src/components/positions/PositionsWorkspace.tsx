@@ -126,13 +126,11 @@ export function PositionsWorkspace({ initialPositionId }: PositionsWorkspaceProp
   // Find currently selected position object
   const selectedPosition = useMemo(() => {
     if (!selectedPositionId) return null;
-    return (
-      allMockPositions.find((p) => p.id === selectedPositionId) || null
-    );
+    return allMockPositions.find((p) => p.id === selectedPositionId) || null;
   }, [selectedPositionId]);
 
   return (
-    <div className="space-y-4 max-w-[1600px] mx-auto pb-12">
+    <div className="space-y-6 max-w-[1600px] mx-auto p-4 md:p-6 bg-black min-h-screen font-sans">
       {/* 1. Page Header & Financial Metrics */}
       <PortfolioSummaryHeader
         metrics={mockPortfolioSummary}
@@ -140,7 +138,7 @@ export function PositionsWorkspace({ initialPositionId }: PositionsWorkspaceProp
       />
 
       {/* 2. Top Analytical Widgets Grid: Exposure & Health & Alerts */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Exposure Progress Bar */}
         <div className="lg:col-span-6">
           <PortfolioExposureBar
@@ -184,31 +182,28 @@ export function PositionsWorkspace({ initialPositionId }: PositionsWorkspaceProp
         />
       ) : (
         /* Empty State */
-        <Surface
-          variant="default"
-          padded="lg"
-          className="text-center py-16 space-y-3"
-        >
-          <div className="w-12 h-12 rounded-full bg-surface-2 border border-border-color mx-auto flex items-center justify-center text-gray-500">
-            <Briefcase size={22} />
+        <div className="bg-black border border-zinc-800 p-12 text-center space-y-4">
+          <div className="w-14 h-14 bg-zinc-950 border border-zinc-800 mx-auto flex items-center justify-center text-zinc-600">
+            <Briefcase size={24} />
           </div>
-          <h3 className="text-sm font-mono font-bold uppercase text-gray-200">
-            No Open Positions
-          </h3>
-          <p className="text-xs text-gray-400 max-w-md mx-auto font-sans leading-relaxed">
-            Hermes is currently monitoring the market. No simulated paper
-            positions are active under current filter parameters.
-          </p>
-          <div className="pt-2">
+          <div>
+            <h3 className="text-sm font-mono font-black uppercase tracking-widest text-zinc-300">
+              SYS_MSG: 0_OPEN_POSITIONS
+            </h3>
+            <p className="text-[10px] text-zinc-600 font-mono tracking-widest uppercase mt-2 max-w-md mx-auto">
+              HERMES IS SCANNING MARKETS. NO PAPER POSITIONS ACTIVE UNDER CURRENT PARAMS.
+            </p>
+          </div>
+          <div className="pt-4">
             <Link href="/opportunities">
-              <Button variant="primary" size="sm">
-                <Zap size={13} className="mr-1.5" />
-                <span>View Opportunities</span>
-                <ArrowRight size={13} className="ml-1.5" />
+              <Button variant="primary" size="sm" className="font-mono uppercase tracking-widest text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-900 hover:bg-cyan-900">
+                <Zap size={13} className="mr-2" />
+                <span>SCAN_OPPORTUNITIES</span>
+                <ArrowRight size={13} className="ml-2" />
               </Button>
             </Link>
           </div>
-        </Surface>
+        </div>
       )}
 
       {/* 5. Right-side Position Detail Drawer */}

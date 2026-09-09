@@ -32,22 +32,22 @@ export function PositionFilters({
   };
 
   return (
-    <Surface variant="default" padded="md" className="space-y-3">
+    <div className="bg-black border border-zinc-800 p-3 space-y-4">
       {/* Top Row: Tabs & Search */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         {/* Tab Buttons */}
-        <div className="flex items-center p-1 rounded-md bg-bg-950 border border-border-color self-start">
+        <div className="flex items-center p-1 bg-zinc-950 border border-zinc-800 self-start">
           <button
             type="button"
             onClick={() => handleTabChange("open")}
-            className={`px-3 py-1.5 rounded text-xs font-mono transition-all flex items-center gap-1.5 ${
+            className={`px-4 py-2 text-xs font-mono font-bold tracking-widest uppercase transition-all flex items-center gap-2 ${
               filters.tab === "open"
-                ? "bg-surface-2 text-cyan-400 font-bold border border-border-color shadow-[0_0_8px_rgba(0,229,255,0.1)]"
-                : "text-gray-400 hover:text-gray-200"
+                ? "bg-zinc-800 text-cyan-500 shadow-[0_0_10px_rgba(34,211,238,0.15)]"
+                : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            <span>Open Positions</span>
-            <span className="text-[10px] px-1 rounded bg-bg-900 border border-border-color">
+            <span>OPN_POS</span>
+            <span className="text-[10px] px-1.5 py-0.5 bg-black border border-zinc-800 text-zinc-400">
               {openCount}
             </span>
           </button>
@@ -55,14 +55,14 @@ export function PositionFilters({
           <button
             type="button"
             onClick={() => handleTabChange("closed")}
-            className={`px-3 py-1.5 rounded text-xs font-mono transition-all flex items-center gap-1.5 ${
+            className={`px-4 py-2 text-xs font-mono font-bold tracking-widest uppercase transition-all flex items-center gap-2 ${
               filters.tab === "closed"
-                ? "bg-surface-2 text-cyan-400 font-bold border border-border-color shadow-[0_0_8px_rgba(0,229,255,0.1)]"
-                : "text-gray-400 hover:text-gray-200"
+                ? "bg-zinc-800 text-cyan-500 shadow-[0_0_10px_rgba(34,211,238,0.15)]"
+                : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            <span>Closed History</span>
-            <span className="text-[10px] px-1 rounded bg-bg-900 border border-border-color">
+            <span>CLS_HST</span>
+            <span className="text-[10px] px-1.5 py-0.5 bg-black border border-zinc-800 text-zinc-400">
               {closedCount}
             </span>
           </button>
@@ -70,14 +70,14 @@ export function PositionFilters({
           <button
             type="button"
             onClick={() => handleTabChange("all")}
-            className={`px-3 py-1.5 rounded text-xs font-mono transition-all flex items-center gap-1.5 ${
+            className={`px-4 py-2 text-xs font-mono font-bold tracking-widest uppercase transition-all flex items-center gap-2 ${
               filters.tab === "all"
-                ? "bg-surface-2 text-cyan-400 font-bold border border-border-color shadow-[0_0_8px_rgba(0,229,255,0.1)]"
-                : "text-gray-400 hover:text-gray-200"
+                ? "bg-zinc-800 text-cyan-500 shadow-[0_0_10px_rgba(34,211,238,0.15)]"
+                : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            <span>All</span>
-            <span className="text-[10px] px-1 rounded bg-bg-900 border border-border-color">
+            <span>ALL</span>
+            <span className="text-[10px] px-1.5 py-0.5 bg-black border border-zinc-800 text-zinc-400">
               {totalCount}
             </span>
           </button>
@@ -85,34 +85,33 @@ export function PositionFilters({
 
         {/* Search Bar */}
         <div className="flex-1 max-w-md">
-          <Input
-            value={filters.search}
-            onChange={(e) =>
-              onFilterChange({ ...filters, search: e.target.value })
-            }
-            placeholder="Search symbol, strategy, ID, thesis..."
-            leftIcon={<Search size={14} className="text-gray-400" />}
-            className="w-full"
-          />
+          <div className="relative flex items-center w-full">
+            <Search size={14} className="absolute left-3 text-zinc-500" />
+            <input
+              type="text"
+              value={filters.search}
+              onChange={(e) => onFilterChange({ ...filters, search: e.target.value })}
+              placeholder="SEARCH SYMBOL, STRATEGY, ID..."
+              className="w-full bg-zinc-950 border border-zinc-800 text-zinc-100 text-xs font-mono tracking-widest uppercase pl-9 pr-3 py-2.5 focus:outline-none focus:border-cyan-900 focus:bg-black placeholder:text-zinc-700"
+            />
+          </div>
         </div>
       </div>
 
       {/* Bottom Row: Granular Filters & Sorting */}
-      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border-color">
-        <div className="flex items-center gap-1.5 text-xs text-gray-400 font-mono mr-1">
-          <Filter size={13} className="text-cyan-400" />
-          <span>Filters:</span>
+      <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-zinc-800">
+        <div className="flex items-center gap-2 text-xs text-zinc-600 font-mono font-bold tracking-widest mr-2 uppercase">
+          <Filter size={13} className="text-cyan-500" />
+          <span>FLTR_SYS:</span>
         </div>
 
         {/* Asset Filter */}
         <div className="w-28 sm:w-32">
           <Select
             value={filters.asset}
-            onChange={(e) =>
-              onFilterChange({ ...filters, asset: e.target.value })
-            }
+            onChange={(e) => onFilterChange({ ...filters, asset: e.target.value })}
             options={[
-              { value: "All", label: "Asset: All" },
+              { value: "All", label: "AST: ALL" },
               { value: "BTC/USDT", label: "BTC/USDT" },
               { value: "ETH/USDT", label: "ETH/USDT" },
             ]}
@@ -123,13 +122,11 @@ export function PositionFilters({
         <div className="w-28 sm:w-32">
           <Select
             value={filters.direction}
-            onChange={(e) =>
-              onFilterChange({ ...filters, direction: e.target.value })
-            }
+            onChange={(e) => onFilterChange({ ...filters, direction: e.target.value })}
             options={[
-              { value: "All", label: "Side: All" },
-              { value: "LONG", label: "Long" },
-              { value: "SHORT", label: "Short" },
+              { value: "All", label: "DIR: ALL" },
+              { value: "LONG", label: "LONG" },
+              { value: "SHORT", label: "SHORT" },
             ]}
           />
         </div>
@@ -138,16 +135,14 @@ export function PositionFilters({
         <div className="w-36 sm:w-44">
           <Select
             value={filters.strategy}
-            onChange={(e) =>
-              onFilterChange({ ...filters, strategy: e.target.value })
-            }
+            onChange={(e) => onFilterChange({ ...filters, strategy: e.target.value })}
             options={[
-              { value: "All", label: "Strategy: All" },
-              { value: "Breakout Continuation", label: "Breakout Continuation" },
-              { value: "Trend Continuation", label: "Trend Continuation" },
-              { value: "Mean Reversion", label: "Mean Reversion" },
-              { value: "Momentum", label: "Momentum" },
-              { value: "Volatility Breakout", label: "Volatility Breakout" },
+              { value: "All", label: "STRAT: ALL" },
+              { value: "Breakout Continuation", label: "BRK_CONT" },
+              { value: "Trend Continuation", label: "TRND_CONT" },
+              { value: "Mean Reversion", label: "MN_REV" },
+              { value: "Momentum", label: "MOMENTUM" },
+              { value: "Volatility Breakout", label: "VOL_BRK" },
             ]}
           />
         </div>
@@ -156,13 +151,11 @@ export function PositionFilters({
         <div className="w-28 sm:w-36">
           <Select
             value={filters.riskState}
-            onChange={(e) =>
-              onFilterChange({ ...filters, riskState: e.target.value })
-            }
+            onChange={(e) => onFilterChange({ ...filters, riskState: e.target.value })}
             options={[
-              { value: "All", label: "Risk: All" },
-              { value: "NORMAL", label: "Normal" },
-              { value: "ELEVATED", label: "Elevated" },
+              { value: "All", label: "RSK: ALL" },
+              { value: "NORMAL", label: "NORMAL" },
+              { value: "ELEVATED", label: "ELEVATED" },
             ]}
           />
         </div>
@@ -178,30 +171,29 @@ export function PositionFilters({
               })
             }
             options={[
-              { value: "default", label: "Sort: Default Priority" },
-              { value: "pnl-desc", label: "Sort: P&L (High to Low)" },
-              { value: "pnl-asc", label: "Sort: P&L (Low to High)" },
-              { value: "pnl-pct-desc", label: "Sort: P&L %" },
-              { value: "exposure-desc", label: "Sort: Exposure" },
-              { value: "risk-desc", label: "Sort: Risk %" },
-              { value: "newest", label: "Sort: Newest First" },
-              { value: "asset", label: "Sort: Asset Symbol" },
+              { value: "default", label: "SRT: DEFAULT" },
+              { value: "pnl-desc", label: "SRT: PNL_DESC" },
+              { value: "pnl-asc", label: "SRT: PNL_ASC" },
+              { value: "pnl-pct-desc", label: "SRT: PNL_PCT" },
+              { value: "exposure-desc", label: "SRT: EXP_DESC" },
+              { value: "risk-desc", label: "SRT: RSK_DESC" },
+              { value: "newest", label: "SRT: NEWEST" },
+              { value: "asset", label: "SRT: ASSET" },
             ]}
           />
         </div>
 
         {/* Reset Button */}
-        <Button
-          variant="outline"
-          size="sm"
+        <button
+          type="button"
           onClick={handleReset}
-          className="text-xs text-gray-400 hover:text-gray-200"
+          className="flex items-center gap-1 text-xs font-mono font-bold text-zinc-500 hover:text-zinc-300 uppercase tracking-widest p-2 border border-transparent hover:border-zinc-800 transition-colors"
           title="Reset Filters"
         >
-          <RotateCcw size={12} className="mr-1" />
-          Reset
-        </Button>
+          <RotateCcw size={12} />
+          <span>RST</span>
+        </button>
       </div>
-    </Surface>
+    </div>
   );
 }
