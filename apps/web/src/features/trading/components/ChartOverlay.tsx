@@ -12,7 +12,7 @@ export interface ChartOverlayProps {
   visible?: boolean;
 }
 
-export function ChartOverlay({
+export const ChartOverlay = React.memo(function ChartOverlay({
   chart,
   series,
   drawings = [],
@@ -71,7 +71,26 @@ export function ChartOverlay({
       if (typeof t === "number" && t > 1e11) {
         t = Math.floor(t / 1000);
       }
-      return chart.timeScale().timeToCoordinate(t as Time);
+      const coord = chart.timeScale().timeToCoordinate(t as Time);
+      if (coord !== null) return coord;
+      
+      // Extrapolate future/past coordinates
+      const timeScale = chart.timeScale();
+      const logicalRange = timeScale.getVisibleLogicalRange();
+      if (logicalRange && logicalRange.from !== null && logicalRange.to !== null) {
+        const t1 = timeScale.coordinateToTime(timeScale.logicalToCoordinate(logicalRange.from) as number);
+        const t2 = timeScale.coordinateToTime(timeScale.logicalToCoordinate(logicalRange.to) as number);
+        
+        if (t1 && t2 && typeof t1 === "number" && typeof t2 === "number" && t2 !== t1) {
+           const x1 = timeScale.logicalToCoordinate(logicalRange.from);
+           const x2 = timeScale.logicalToCoordinate(logicalRange.to);
+           if (x1 !== null && x2 !== null) {
+              const pixelsPerSec = (x2 - x1) / (t2 - t1);
+              return x2 + (t - t2) * pixelsPerSec;
+           }
+        }
+      }
+      return null;
     } catch {
       return null;
     }
@@ -276,4 +295,4 @@ export function ChartOverlay({
       })}
     </svg>
   );
-}
+});

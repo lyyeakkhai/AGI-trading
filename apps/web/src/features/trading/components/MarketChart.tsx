@@ -31,7 +31,7 @@ export interface MarketChartProps {
   className?: string;
 }
 
-export function MarketChart({
+export const MarketChart = React.memo(function MarketChart({
   candles,
   aiMarkers = [],
   position,
@@ -198,28 +198,57 @@ export function MarketChart({
     };
   }, [height]);
 
+  // Fast tick check ref
+  const lastCandlesLength = useRef(0);
+  const lastCandleTime = useRef<any>(null);
+
   // Update Data & Options when candles change
   useEffect(() => {
     if (!candleSeriesRef.current || !volumeSeriesRef.current || candles.length === 0) return;
 
-    // 1. Set Candle Data
-    candleSeriesRef.current.setData(candles as any);
+    const series = candleSeriesRef.current;
+    const vSeries = volumeSeriesRef.current;
+    const currentLast = candles[candles.length - 1];
 
-    // 2. Set Volume Data
-    if (showVolume) {
-      const volumeData = candles.map((c) => ({
-        time: c.time,
-        value: c.volume,
-        color:
-          c.close >= c.open
-            ? "rgba(0, 230, 118, 0.38)"
-            : "rgba(255, 59, 48, 0.38)",
-      }));
-      volumeSeriesRef.current.setData(volumeData as any);
-      volumeSeriesRef.current.applyOptions({ visible: true });
+    const isUpdate = 
+      lastCandlesLength.current > 0 && 
+      (candles.length === lastCandlesLength.current || candles.length === lastCandlesLength.current + 1) &&
+      lastCandleTime.current !== null && 
+      currentLast.time >= lastCandleTime.current;
+
+    // 1 & 2. Set Candle & Volume Data
+    if (isUpdate) {
+       series.update(currentLast as any);
+       if (showVolume) {
+         vSeries.update({
+           time: currentLast.time,
+           value: currentLast.volume,
+           color: currentLast.close >= currentLast.open ? "rgba(0, 230, 118, 0.38)" : "rgba(255, 59, 48, 0.38)",
+         } as any);
+       }
     } else {
-      volumeSeriesRef.current.applyOptions({ visible: false });
+       series.setData(candles as any);
+       if (showVolume) {
+         const volumeData = candles.map((c) => ({
+           time: c.time,
+           value: c.volume,
+           color:
+             c.close >= c.open
+               ? "rgba(0, 230, 118, 0.38)"
+               : "rgba(255, 59, 48, 0.38)",
+         }));
+         vSeries.setData(volumeData as any);
+       }
     }
+    
+    if (showVolume) {
+       vSeries.applyOptions({ visible: true });
+    } else {
+       vSeries.applyOptions({ visible: false });
+    }
+
+    lastCandlesLength.current = candles.length;
+    lastCandleTime.current = currentLast.time;
 
     // 3. Set AI Markers
     if (showAIMarkers && aiMarkers.length > 0) {
@@ -478,4 +507,4 @@ export function MarketChart({
       </div>
     </div>
   );
-}
+});

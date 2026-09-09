@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { TradingPlan, RiskRewardMetrics } from '../types/trading';
 
 interface TradePanelProps {
@@ -7,19 +7,64 @@ interface TradePanelProps {
   metrics: RiskRewardMetrics;
 }
 
-export function TradePanel({ plan, updatePlan, metrics }: TradePanelProps) {
-  const handleNumberChange = (field: keyof TradingPlan, value: string) => {
-    const parsed = value === '' ? null : parseFloat(value);
-    updatePlan({ [field]: parsed });
-  };
+export const TradePanel = React.memo(function TradePanel({ plan, updatePlan, metrics }: TradePanelProps) {
+  const [executionMode, setExecutionMode] = useState<'paper' | 'live'>('paper');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const handleTpChange = (value: string) => {
+  const handleNumberChange = useCallback((field: keyof TradingPlan, value: string) => {
+    const parsed = value === '' ? null : parseFloat(value);
+    updatePlan({ [field]: parsed as any });
+  }, [updatePlan]);
+
+  const handleTpChange = useCallback((value: string) => {
     const parsed = value === '' ? [] : [parseFloat(value)];
     updatePlan({ takeProfits: parsed });
-  };
+  }, [updatePlan]);
+
+  const handleSubmit = useCallback(async () => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+    setSubmitSuccess(false);
+    try {
+      const response = await fetch('/api/v1/tools/proposal/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan, executionMode }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to submit trading plan');
+      }
+      setSubmitSuccess(true);
+      setTimeout(() => setSubmitSuccess(false), 3000);
+    } catch (err: any) {
+      setSubmitError(err.message || 'An error occurred');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [plan, executionMode]);
+
+
 
   return (
     <div className="flex flex-col bg-[#0E0E0E] text-[#EDEDED] p-4 font-sans h-full overflow-y-auto space-y-4">
+            {/* Execution Mode Toggle */}
+      <div className="flex space-x-2">
+        <button
+          onClick={() => setExecutionMode('paper')}
+          className={`flex-1 py-1.5 px-2 text-xs font-bold rounded-sm border ${executionMode === 'paper' ? 'bg-[#00E5FF]/10 border-[#00E5FF] text-[#00E5FF]' : 'bg-[#000000] border-[#1C1C1C] text-[#8A8A8A]'}`}
+        >
+          PAPER
+        </button>
+        <button
+          onClick={() => setExecutionMode('live')}
+          className={`flex-1 py-1.5 px-2 text-xs font-bold rounded-sm border ${executionMode === 'live' ? 'bg-[#FF3B30]/10 border-[#FF3B30] text-[#FF3B30]' : 'bg-[#000000] border-[#1C1C1C] text-[#8A8A8A]'}`}
+        >
+          LIVE
+        </button>
+      </div>
+
       {/* Toggles */}
       <div className="flex flex-col space-y-2">
         <div className="flex space-x-2">
@@ -130,6 +175,26 @@ export function TradePanel({ plan, updatePlan, metrics }: TradePanelProps) {
         </div>
       </div>
 
+      {/* Submit Section */}
+      <div className="mt-auto pt-4 space-y-2">
+        {submitError && (
+          <div className="text-xs text-[#FF3B30] bg-[#FF3B30]/10 border border-[#FF3B30]/20 p-2 rounded-sm">
+            {submitError}
+          </div>
+        )}
+        {submitSuccess && (
+          <div className="text-xs text-[#00E676] bg-[#00E676]/10 border border-[#00E676]/20 p-2 rounded-sm">
+            Plan submitted successfully!
+          </div>
+        )}
+        <button
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="w-full py-2 bg-[#00E5FF] hover:bg-[#00C2D6] text-[#000000] text-sm font-bold rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? 'SUBMITTING...' : 'SUBMIT PLAN'}
+        </button>
+      </div>
     </div>
   );
-}
+});

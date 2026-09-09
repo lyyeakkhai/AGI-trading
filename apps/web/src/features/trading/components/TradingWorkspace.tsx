@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { MarketChart } from "./MarketChart";
 import { TradePanel } from "./TradePanel";
 import { useSearchParams } from "next/navigation";
@@ -14,6 +14,10 @@ export function TradingWorkspace() {
 
   const { plan, updatePlan, metrics } = useTradingPlan(symbol, marketType);
   const [timeframe, setTimeframe] = useState<string>("1h");
+
+  const handleTimeframeChange = useCallback((newTimeframe: string) => {
+    setTimeframe(newTimeframe);
+  }, []);
 
   const normalizedKey = useMemo(() => {
     if (symbol.includes("-")) return symbol;
@@ -43,7 +47,7 @@ export function TradingWorkspace() {
             symbol={plan.symbol}
             candles={candles} 
             timeframe={timeframe} 
-            onTimeframeChange={setTimeframe}
+            onTimeframeChange={handleTimeframeChange}
             plan={plan}
           />
         </div>
