@@ -86,7 +86,7 @@ export function ActivityTypeBadge({ type, className = "" }: ActivityTypeBadgePro
       case "MARKET":
       case "SYSTEM":
       default:
-        return "bg-surface-2 text-text-muted border-border";
+        return "bg-gray-100 dark:bg-zinc-800/50 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-white/10";
     }
   };
 

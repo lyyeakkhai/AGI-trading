@@ -19,8 +19,8 @@ export function ActivityTimelineView({
 }: ActivityTimelineViewProps) {
   if (events.length === 0) {
     return (
-      <div className="p-8 text-center bg-white dark:bg-zinc-900/50 border border-border/50 rounded-xl shadow-sm">
-        <p className="text-xs font-sans text-text-muted">No activity events found matching criteria.</p>
+      <div className="p-8 text-center bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10 rounded-xl shadow-sm">
+        <p className="text-xs font-sans text-gray-500 dark:text-gray-400">No activity events found matching criteria.</p>
       </div>
     );
   }
@@ -38,11 +38,11 @@ export function ActivityTimelineView({
     <div className="space-y-6 font-sans text-xs">
       {groups.map((grp) => (
         <div key={grp.title} className="space-y-2.5">
-          <div className="flex items-center gap-2 pb-1 border-b border-border/40">
-            <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+          <div className="flex items-center gap-2 pb-1 border-b border-gray-200 dark:border-white/10/40">
+            <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               {grp.title}
             </span>
-            <span className="text-[10px] text-text-muted">
+            <span className="text-[10px] text-gray-500 dark:text-gray-400">
               ({grp.items.length} events)
             </span>
           </div>
@@ -54,7 +54,7 @@ export function ActivityTimelineView({
               return (
                 <div
                   key={ev.id}
-                  className="relative group p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm/60 hover:border-cyan-500/40 hover:bg-surface-1/90 transition-colors"
+                  className="relative group p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10 shadow-sm hover:border-cyan-500/40 hover:bg-gray-50 dark:hover:bg-zinc-800/60 transition-colors"
                 >
                   {/* Timeline dot */}
                   <div
@@ -70,16 +70,16 @@ export function ActivityTimelineView({
                   {/* Event Top Bar */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-1.5">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[11px] text-text-muted font-semibold">
+                      <span className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold">
                         {ev.timeFormatted}
                       </span>
                       <ActivityTypeBadge type={ev.type} />
-                      <span className="text-[11px] text-text-muted">via</span>
-                      <span className="text-[11px] font-medium text-text-primary">
+                      <span className="text-[11px] text-gray-500 dark:text-gray-400">via</span>
+                      <span className="text-[11px] font-medium text-gray-900 dark:text-zinc-50">
                         {ev.source}
                       </span>
-                      <span className="text-text-muted">·</span>
-                      <span className="px-1.5 py-0.2 rounded-xl bg-surface-2 text-[10px] font-bold text-cyan-400 border border-border/40">
+                      <span className="text-gray-500 dark:text-gray-400">·</span>
+                      <span className="px-1.5 py-0.2 rounded-xl bg-gray-100 dark:bg-zinc-800/50 text-[10px] font-bold text-cyan-400 border border-gray-200 dark:border-white/10/40">
                         {ev.objectId}
                       </span>
                     </div>
@@ -103,23 +103,23 @@ export function ActivityTimelineView({
                   </div>
 
                   {/* Summary & Details preview */}
-                  <div className="text-text-primary text-xs leading-relaxed">
+                  <div className="text-gray-900 dark:text-zinc-50 text-xs leading-relaxed">
                     {ev.summary}
                   </div>
 
                   {/* Metadata Chips if present */}
                   {ev.details.beforeState && ev.details.afterState && (
-                    <div className="mt-2 pt-2 border-t border-border/30 flex items-center gap-2 text-[11px] text-text-muted">
+                    <div className="mt-2 pt-2 border-t border-gray-200 dark:border-white/10/30 flex items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400">
                       <span>State:</span>
-                      <span className="text-text-muted">{ev.details.beforeState}</span>
+                      <span className="text-gray-500 dark:text-gray-400">{ev.details.beforeState}</span>
                       <ArrowRight className="w-3 h-3 text-cyan-400" />
                       <span className="text-emerald-400 font-bold">{ev.details.afterState}</span>
                     </div>
                   )}
 
                   {/* Bottom Action Footer */}
-                  <div className="mt-2.5 pt-2 border-t border-border/30 flex items-center justify-between text-[11px]">
-                    <span className="text-[10px] text-text-muted">
+                  <div className="mt-2.5 pt-2 border-t border-gray-200 dark:border-white/10/30 flex items-center justify-between text-[11px]">
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">
                       ID: {ev.id} · Env: {ev.environment}
                     </span>
                     <button

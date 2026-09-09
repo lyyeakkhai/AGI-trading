@@ -43,16 +43,16 @@ export function ActivityFiltersBar({
     envFilter !== "All Time";
 
   return (
-    <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
+    <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10/50 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
       {/* Search Input */}
       <div className="relative w-full md:w-72">
-        <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
+        <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
         <input
           type="text"
           placeholder="Search activity (ID, object, symbol)..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full bg-background border border-border rounded-xl pl-8 pr-3 py-1.5 text-xs text-text-primary placeholder:text-text-muted font-sans focus:outline-none focus:border-cyan-500/50"
+          className="w-full bg-white dark:bg-zinc-800 border border-gray-200 dark:border-white/10 rounded-xl pl-8 pr-3 py-1.5 text-xs text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:text-gray-400 font-sans focus:outline-none focus:border-cyan-500/50"
         />
       </div>
 
@@ -62,7 +62,7 @@ export function ActivityFiltersBar({
         <select
           value={typeFilter}
           onChange={(e) => onTypeChange(e.target.value)}
-          className="bg-background border border-border rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none"
+          className="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:outline-none"
         >
           <option value="All Time">All Types</option>
           <option value="RISK">Risk</option>
@@ -85,7 +85,7 @@ export function ActivityFiltersBar({
         <select
           value={sourceFilter}
           onChange={(e) => onSourceChange(e.target.value)}
-          className="bg-background border border-border rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none"
+          className="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:outline-none"
         >
           <option value="All Time">All Sources</option>
           <option value="Hermes">Hermes</option>
@@ -101,7 +101,7 @@ export function ActivityFiltersBar({
         <select
           value={statusFilter}
           onChange={(e) => onStatusChange(e.target.value)}
-          className="bg-background border border-border rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none"
+          className="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:outline-none"
         >
           <option value="All Time">All Statuses</option>
           <option value="SUCCESS">Success</option>
@@ -116,7 +116,7 @@ export function ActivityFiltersBar({
         <select
           value={envFilter}
           onChange={(e) => onEnvChange(e.target.value)}
-          className="bg-background border border-border rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none"
+          className="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:outline-none"
         >
           <option value="All Time">All Environments</option>
           <option value="PAPER">Paper Mode</option>
@@ -128,14 +128,14 @@ export function ActivityFiltersBar({
           <Button
             variant="ghost"
             onClick={onReset}
-            className="text-xs py-1.5 px-2 text-text-muted hover:text-text-primary flex items-center gap-1"
+            className="text-xs py-1.5 px-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 flex items-center gap-1"
           >
             <RotateCcw className="w-3 h-3" />
             <span>Reset</span>
           </Button>
         )}
 
-        <span className="text-[11px] text-text-muted ml-1">
+        <span className="text-[11px] text-gray-500 dark:text-gray-400 ml-1">
           {filteredCount} of {totalCount}
         </span>
       </div>

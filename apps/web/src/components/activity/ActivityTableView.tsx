@@ -71,17 +71,17 @@ export function ActivityTableView({
 
   if (events.length === 0) {
     return (
-      <div className="p-8 text-center bg-white dark:bg-zinc-900/50 border border-border/50 rounded-xl shadow-sm">
-        <p className="text-xs font-sans text-text-muted">No activity events matching filters.</p>
+      <div className="p-8 text-center bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10 rounded-xl shadow-sm">
+        <p className="text-xs font-sans text-gray-500 dark:text-gray-400">No activity events matching filters.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-border bg-surface-1 font-sans text-xs">
+    <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-zinc-900/50 font-sans text-xs">
       <Table>
         <TableHeader>
-          <TableRow className="border-b border-border bg-surface-2/60 text-[11px] font-sans text-text-muted select-none">
+          <TableRow className="border-b border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-zinc-800/50/60 text-[11px] font-sans text-gray-500 dark:text-gray-400 select-none">
             <TableHead
               onClick={() => handleSort("timestamp")}
               className="py-2.5 px-3 cursor-pointer hover:text-gray-200 group transition-colors"
@@ -144,9 +144,9 @@ export function ActivityTableView({
             <TableRow
               key={ev.id}
               onClick={() => onSelectEvent(ev)}
-              className="border-b border-border/40 hover:bg-surface-2/40 cursor-pointer transition-colors"
+              className="border-b border-gray-200 dark:border-white/10/40 hover:bg-gray-100 dark:bg-zinc-800/50/40 cursor-pointer transition-colors"
             >
-              <TableCell className="py-2.5 px-3 text-text-muted text-[11px] whitespace-nowrap">
+              <TableCell className="py-2.5 px-3 text-gray-500 dark:text-gray-400 text-[11px] whitespace-nowrap">
                 {ev.timeFormatted}
               </TableCell>
 
@@ -161,7 +161,7 @@ export function ActivityTableView({
                 />
               </TableCell>
 
-              <TableCell className="py-2.5 px-3 font-medium text-text-primary">
+              <TableCell className="py-2.5 px-3 font-medium text-gray-900 dark:text-zinc-50">
                 {ev.source}
               </TableCell>
 
@@ -186,11 +186,11 @@ export function ActivityTableView({
                     <span>{ev.correlationId}</span>
                   </button>
                 ) : (
-                  <span className="text-text-muted text-[10px]">—</span>
+                  <span className="text-gray-500 dark:text-gray-400 text-[10px]">—</span>
                 )}
               </TableCell>
 
-              <TableCell className="py-2.5 px-3 text-text-primary max-w-md truncate" title={ev.summary}>
+              <TableCell className="py-2.5 px-3 text-gray-900 dark:text-zinc-50 max-w-md truncate" title={ev.summary}>
                 {ev.summary}
               </TableCell>
 

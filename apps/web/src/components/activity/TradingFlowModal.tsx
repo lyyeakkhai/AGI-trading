@@ -28,16 +28,16 @@ export function TradingFlowModal({
     >
       <div className="space-y-4 font-sans text-xs">
         {/* Flow Header */}
-        <div className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10 shadow-sm">
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-text-primary text-sm">{flow.symbol}</span>
-              <span className="text-text-muted">{flow.side}</span>
-              <span className="text-text-muted">·</span>
+              <span className="font-bold text-gray-900 dark:text-zinc-50 text-sm">{flow.symbol}</span>
+              <span className="text-gray-500 dark:text-gray-400">{flow.side}</span>
+              <span className="text-gray-500 dark:text-gray-400">·</span>
               <span className="text-cyan-400">{flow.strategy}</span>
             </div>
-            <span className="text-[11px] text-text-muted block mt-0.5">
-              Current Stage: <strong className="text-text-primary">{flow.currentStage}</strong>
+            <span className="text-[11px] text-gray-500 dark:text-gray-400 block mt-0.5">
+              Current Stage: <strong className="text-gray-900 dark:text-zinc-50">{flow.currentStage}</strong>
             </span>
           </div>
 
@@ -58,34 +58,34 @@ export function TradingFlowModal({
           {flow.steps.map((step, idx) => (
             <div
               key={step.stage}
-              className="relative p-3 rounded-xl bg-surface-2/60 border border-border/40 space-y-1"
+              className="relative p-3 rounded-xl bg-gray-100 dark:bg-zinc-800/50/60 border border-gray-200 dark:border-white/10/40 space-y-1"
             >
               {/* Step indicator dot */}
               <div className="absolute -left-[18px] top-3.5 w-2 h-2 rounded-full bg-cyan-400 border border-cyan-300" />
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-bold text-text-primary">
+                  <span className="text-[11px] font-bold text-gray-900 dark:text-zinc-50">
                     {idx + 1}. {step.stage}
                   </span>
-                  <span className="px-1.5 py-0.2 rounded-xl bg-surface-1 text-[10px] text-cyan-400 font-bold">
+                  <span className="px-1.5 py-0.2 rounded-xl bg-white dark:bg-zinc-900/50 text-[10px] text-cyan-400 font-bold">
                     {step.objectId}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-text-muted">{step.timestamp}</span>
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400">{step.timestamp}</span>
                   <ActivityStatusBadge status={step.status} />
                 </div>
               </div>
 
-              <p className="text-[11px] text-text-muted leading-relaxed">
+              <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
                 {step.summary}
               </p>
             </div>
           ))}
         </div>
 
-        <div className="flex justify-end pt-2 border-t border-border">
+        <div className="flex justify-end pt-2 border-t border-gray-200 dark:border-white/10">
           <Button variant="secondary" onClick={onClose} className="text-xs">
             Close Trace
           </Button>
