@@ -46,24 +46,24 @@ export function EquityBenchmarkChart({
   const activePoint = hoverIndex !== null ? points[hoverIndex] : points[points.length - 1];
 
   return (
-    <div className="p-4 rounded-lg bg-surface-1 border border-border flex flex-col">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3 pb-2.5 border-b border-border/60">
+    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3 pb-2.5 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+          <div className="p-1.5 rounded bg-cyan-500/10 border border-zinc-200 dark:border-cyan-900/30 text-cyan-400">
             <TrendingUp className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-primary">
+            <h3 className="text-xs font-sans font-semibold font-medium text-text-primary">
               Equity Curve vs Benchmark Alpha
             </h3>
-            <p className="text-[11px] font-mono text-text-muted">
+            <p className="text-xs font-sans text-text-muted">
               Compounded portfolio performance compared against passive BTC & ETH buy-and-hold baselines
             </p>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-3 font-mono text-[11px]">
+        <div className="flex items-center gap-3 font-sans text-xs">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-1 bg-cyan-400 rounded-full" />
             <span className="text-text-primary font-bold">AGI Trading (+24.8%)</span>
@@ -210,7 +210,7 @@ export function EquityBenchmarkChart({
       </div>
 
       {/* Hover Info Footer */}
-      <div className="flex items-center justify-between pt-2 border-t border-border/40 font-mono text-[11px] text-text-muted">
+      <div className="flex items-center justify-between pt-2 border-t border-zinc-200 dark:border-zinc-200 dark:border-white/10 font-sans text-xs text-text-muted">
         <span>Date: <strong className="text-text-primary">{activePoint.data.time}</strong></span>
         <div className="flex items-center gap-3">
           <span>Portfolio: <strong className="text-cyan-400">${activePoint.data.equity.toLocaleString()}</strong></span>

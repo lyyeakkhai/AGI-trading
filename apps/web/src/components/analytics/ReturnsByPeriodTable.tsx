@@ -24,24 +24,24 @@ export function ReturnsByPeriodTable({ periods }: ReturnsByPeriodTableProps) {
   const activePeriods = periodMode === "monthly" ? periods : weeklyData;
 
   return (
-    <div className="p-4 rounded-lg bg-surface-1 border border-border flex flex-col gap-3">
-      <div className="flex items-center justify-between pb-2.5 border-b border-border/60">
+    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col gap-3">
+      <div className="flex items-center justify-between pb-2.5 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+          <div className="p-1.5 rounded bg-cyan-500/10 border border-zinc-200 dark:border-cyan-900/30 text-cyan-400">
             <Calendar className="w-3.5 h-3.5" />
           </div>
           <div>
-            <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-primary">
+            <h3 className="text-xs font-sans font-semibold font-medium text-text-primary">
               {periodMode === "monthly" ? "Monthly" : "Weekly"} Yield Consistency
             </h3>
-            <p className="text-[11px] font-mono text-text-muted">
+            <p className="text-xs font-sans text-text-muted">
               Realized yield after fees and execution friction
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex rounded bg-surface-2 p-0.5 border border-border text-[10px] font-mono">
+          <div className="flex rounded bg-white dark:bg-zinc-900/50 p-0.5 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 text-xs font-sans">
             <button
               type="button"
               onClick={() => setPeriodMode("monthly")}
@@ -68,10 +68,10 @@ export function ReturnsByPeriodTable({ periods }: ReturnsByPeriodTableProps) {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded border border-border/60 bg-surface-2/20">
+      <div className="overflow-x-auto rounded border border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50/20">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-border bg-surface-2/60 text-[11px] font-mono text-text-muted">
+            <TableRow className="border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50/60 text-xs font-sans text-text-muted">
               <TableHead className="py-2 px-3">PERIOD</TableHead>
               <TableHead className="py-2 px-3 text-right">RETURN</TableHead>
               <TableHead className="py-2 px-3 text-right">NET P&L</TableHead>
@@ -85,7 +85,7 @@ export function ReturnsByPeriodTable({ periods }: ReturnsByPeriodTableProps) {
               return (
                 <TableRow
                   key={p.period}
-                  className="border-b border-border/30 hover:bg-surface-2/40 text-xs font-mono transition-colors"
+                  className="border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10 hover:bg-white dark:bg-zinc-900/50/40 text-xs font-sans transition-colors"
                 >
                   <TableCell className="py-2 px-3 font-semibold text-text-primary">
                     {p.period}

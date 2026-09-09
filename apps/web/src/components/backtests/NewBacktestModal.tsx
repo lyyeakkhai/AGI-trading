@@ -179,8 +179,8 @@ export function NewBacktestModal({
       title="Configure Quantitative Backtest"
       size="lg"
     >
-      <div className="space-y-4 font-mono text-xs">
-        <p className="text-text-muted">
+      <div className="space-y-4 font-sans text-xs">
+        <p className="text-gray-500 dark:text-zinc-400">
           Define reproducible market parameters, timeframe, date boundaries, and realistic friction assumptions.
         </p>
 
@@ -188,13 +188,13 @@ export function NewBacktestModal({
           <div className="space-y-3">
             {/* Strategy Selection */}
             <div>
-              <label className="block text-[11px] text-text-muted uppercase mb-1">
+              <label className="block text-[11px] text-gray-500 dark:text-zinc-400 uppercase mb-1">
                 Strategy
               </label>
               <select
                 value={strategyId}
                 onChange={(e) => setStrategyId(e.target.value)}
-                className="w-full bg-surface-1 border border-border rounded p-2 text-text-primary focus:outline-none focus:border-cyan-500/50"
+                className="w-full bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 rounded-xl p-2 text-gray-900 dark:text-zinc-50 focus:outline-none focus:border-cyan-500/50"
               >
                 {strategies.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -207,26 +207,26 @@ export function NewBacktestModal({
             {/* Market & Timeframe */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] text-text-muted uppercase mb-1">
+                <label className="block text-[11px] text-gray-500 dark:text-zinc-400 uppercase mb-1">
                   Market
                 </label>
                 <select
                   value={market}
                   onChange={(e) => setMarket(e.target.value)}
-                  className="w-full bg-surface-1 border border-border rounded p-2 text-text-primary focus:outline-none focus:border-cyan-500/50"
+                  className="w-full bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 rounded-xl p-2 text-gray-900 dark:text-zinc-50 focus:outline-none focus:border-cyan-500/50"
                 >
                   <option value="BTC/USDT">BTC/USDT</option>
                   <option value="ETH/USDT">ETH/USDT</option>
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] text-text-muted uppercase mb-1">
+                <label className="block text-[11px] text-gray-500 dark:text-zinc-400 uppercase mb-1">
                   Timeframe
                 </label>
                 <select
                   value={timeframe}
                   onChange={(e) => setTimeframe(e.target.value)}
-                  className="w-full bg-surface-1 border border-border rounded p-2 text-text-primary focus:outline-none focus:border-cyan-500/50"
+                  className="w-full bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 rounded-xl p-2 text-gray-900 dark:text-zinc-50 focus:outline-none focus:border-cyan-500/50"
                 >
                   <option value="5M">5M</option>
                   <option value="15M">15M</option>
@@ -240,25 +240,25 @@ export function NewBacktestModal({
             {/* Date Range */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] text-text-muted uppercase mb-1">
+                <label className="block text-[11px] text-gray-500 dark:text-zinc-400 uppercase mb-1">
                   Start Date
                 </label>
                 <input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full bg-surface-1 border border-border rounded p-2 text-text-primary focus:outline-none focus:border-cyan-500/50"
+                  className="w-full bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 rounded-xl p-2 text-gray-900 dark:text-zinc-50 focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-text-muted uppercase mb-1">
+                <label className="block text-[11px] text-gray-500 dark:text-zinc-400 uppercase mb-1">
                   End Date
                 </label>
                 <input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full bg-surface-1 border border-border rounded p-2 text-text-primary focus:outline-none focus:border-cyan-500/50"
+                  className="w-full bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 rounded-xl p-2 text-gray-900 dark:text-zinc-50 focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
             </div>
@@ -266,45 +266,45 @@ export function NewBacktestModal({
             {/* Capital & Fees */}
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-[11px] text-text-muted uppercase mb-1">
+                <label className="block text-[11px] text-gray-500 dark:text-zinc-400 uppercase mb-1">
                   Initial Capital ($)
                 </label>
                 <input
                   type="number"
                   value={initialCapital}
                   onChange={(e) => setInitialCapital(e.target.value)}
-                  className="w-full bg-surface-1 border border-border rounded p-2 text-text-primary focus:outline-none focus:border-cyan-500/50"
+                  className="w-full bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 rounded-xl p-2 text-gray-900 dark:text-zinc-50 focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-text-muted uppercase mb-1">
+                <label className="block text-[11px] text-gray-500 dark:text-zinc-400 uppercase mb-1">
                   Fee Model
                 </label>
                 <input
                   type="text"
                   value={feeModel}
                   onChange={(e) => setFeeModel(e.target.value)}
-                  className="w-full bg-surface-1 border border-border rounded p-2 text-text-primary focus:outline-none focus:border-cyan-500/50"
+                  className="w-full bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 rounded-xl p-2 text-gray-900 dark:text-zinc-50 focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-text-muted uppercase mb-1">
+                <label className="block text-[11px] text-gray-500 dark:text-zinc-400 uppercase mb-1">
                   Slippage Model
                 </label>
                 <input
                   type="text"
                   value={slippage}
                   onChange={(e) => setSlippage(e.target.value)}
-                  className="w-full bg-surface-1 border border-border rounded p-2 text-text-primary focus:outline-none focus:border-cyan-500/50"
+                  className="w-full bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 rounded-xl p-2 text-gray-900 dark:text-zinc-50 focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
             </div>
 
-            <div className="p-2.5 rounded bg-cyan-950/20 border border-cyan-500/20 text-text-muted text-[11px]">
+            <div className="p-2.5 rounded-xl bg-cyan-950/20 border border-cyan-500/20 text-gray-500 dark:text-zinc-400 text-[11px]">
               Note: Simulation executes across historical local tick datasets. Results are deterministic and subject to multi-stage out-of-sample and walk-forward verification.
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-200 dark:border-white/5">
               <Button variant="secondary" onClick={handleClose} className="text-xs">
                 Cancel
               </Button>
@@ -324,17 +324,17 @@ export function NewBacktestModal({
             )}
 
             <div>
-              <h4 className="text-sm font-bold text-text-primary uppercase tracking-wider">
+              <h4 className="text-sm font-bold text-gray-900 dark:text-zinc-50 uppercase tracking-wide">
                 {executionState === "configuring" && "Configuring Simulation Engine..."}
                 {executionState === "running" && "Executing Tick-Level Simulation..."}
                 {executionState === "completed" && "Simulation Complete & Validated!"}
               </h4>
-              <p className="text-xs text-text-muted mt-1">
+              <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
                 Processing {market} ({timeframe}) dataset across {startDate} → {endDate}
               </p>
             </div>
 
-            <div className="w-full max-w-sm bg-surface-2 h-2 rounded-full overflow-hidden">
+            <div className="w-full max-w-sm bg-gray-50 dark:bg-zinc-800/50 h-2 rounded-full overflow-hidden">
               <div
                 className="bg-cyan-400 h-full transition-all duration-500"
                 style={{ width: `${progressPct}%` }}

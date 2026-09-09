@@ -29,15 +29,15 @@ export function AnalyticsSummaryHeader({
   };
 
   return (
-    <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-border bg-background/50 backdrop-blur-sm pb-5 pt-1">
+    <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-background/50 backdrop-blur-sm pb-5 pt-1">
       <div>
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+          <div className="p-2 rounded-xl bg-cyan-500/10 border border-zinc-200 dark:border-cyan-900/30 text-cyan-400">
             <LineChart className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-xl font-bold tracking-tight text-text-primary font-mono">
+              <h1 className="text-xl font-bold tracking-tight text-text-primary font-sans">
                 Analytics
               </h1>
               <EnvironmentBadge mode="PAPER" />
@@ -49,9 +49,9 @@ export function AnalyticsSummaryHeader({
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2.5 font-mono text-xs">
+      <div className="flex flex-wrap items-center gap-2.5 font-sans text-xs">
         {/* Timeframe Range Selector */}
-        <div className="flex items-center gap-1 bg-surface-1 border border-border rounded p-0.5">
+        <div className="flex items-center gap-1 bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 rounded p-0.5">
           {["7D", "30D", "90D", "YTD", "ALL"].map((range) => (
             <button
               key={range}
@@ -72,7 +72,7 @@ export function AnalyticsSummaryHeader({
           <Button
             variant="secondary"
             onClick={onOpenCompare}
-            className="text-xs py-1.5 px-3 flex items-center gap-1.5 border-border hover:border-cyan-500/40"
+            className="text-xs py-1.5 px-3 flex items-center gap-1.5 border-zinc-200 dark:border-zinc-200 dark:border-white/10 hover:border-cyan-500/40"
           >
             <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
             <span>Compare</span>
@@ -83,7 +83,7 @@ export function AnalyticsSummaryHeader({
         <Button
           variant="secondary"
           onClick={handleExport}
-          className="text-xs py-1.5 px-3 flex items-center gap-1.5 border-border hover:border-cyan-500/40"
+          className="text-xs py-1.5 px-3 flex items-center gap-1.5 border-zinc-200 dark:border-zinc-200 dark:border-white/10 hover:border-cyan-500/40"
         >
           <Download className="w-3.5 h-3.5 text-text-muted" />
           <span>Export</span>
@@ -92,7 +92,7 @@ export function AnalyticsSummaryHeader({
 
       {/* Export Toast Notification */}
       {showExportToast && (
-        <div className="absolute top-16 right-0 z-30 p-2.5 rounded bg-surface-1 border border-cyan-500/40 shadow-xl text-xs font-mono text-cyan-300 flex items-center gap-2 animate-in fade-in">
+        <div className="absolute top-16 right-0 z-30 p-2.5 rounded bg-white dark:bg-zinc-900/50 border border-cyan-500/40 shadow-xl text-xs font-sans text-cyan-300 flex items-center gap-2 animate-in fade-in">
           <Info className="w-3.5 h-3.5 text-cyan-400" />
           <span>Export will be available when the analytics backend is connected.</span>
         </div>

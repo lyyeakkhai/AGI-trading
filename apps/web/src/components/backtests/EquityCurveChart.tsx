@@ -22,7 +22,7 @@ export function EquityCurveChart({
 
   if (!data || data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center bg-surface-1 border border-border rounded-lg text-text-muted font-mono text-xs">
+      <div className="h-64 flex items-center justify-center bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 rounded-xl text-gray-500 dark:text-zinc-400 font-sans text-xs">
         No equity curve data available.
       </div>
     );
@@ -57,34 +57,34 @@ export function EquityCurveChart({
   const isGain = activePoint.data.value >= initialCapital;
 
   return (
-    <div className="p-4 rounded-lg bg-surface-1 border border-border flex flex-col">
+    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 flex flex-col">
       {/* Header with legend & hover stats */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3 pb-2.5 border-b border-border/60">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3 pb-2.5 border-b border-gray-200 dark:border-white/5">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+          <div className="p-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
             <TrendingUp className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-primary">
+            <h3 className="text-xs font-sans font-semibold uppercase tracking-wide text-gray-900 dark:text-zinc-50">
               Equity Curve (Continuous Simulation)
             </h3>
-            <p className="text-[11px] font-mono text-text-muted">
+            <p className="text-[11px] font-sans text-gray-500 dark:text-zinc-400">
               Compounded account balance across all executed signals after fees and modeled slippage.
             </p>
           </div>
         </div>
 
         {/* Dynamic Hover / Final Indicator */}
-        <div className="flex items-center gap-3 font-mono text-xs">
+        <div className="flex items-center gap-3 font-sans text-xs">
           <div className="flex flex-col items-end">
-            <span className="text-[10px] text-text-muted">
+            <span className="text-[10px] text-gray-500 dark:text-zinc-400">
               {hoverIndex !== null ? `Point on ${activePoint.data.time}` : "Latest Position"}
             </span>
             <div className="flex items-center gap-2">
               <span className={`font-bold ${isGain ? "text-emerald-400" : "text-red-400"}`}>
                 ${activePoint.data.value.toLocaleString()}
               </span>
-              <span className={`text-[11px] px-1.5 py-0.2 rounded ${isGain ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>
+              <span className={`text-[11px] px-1.5 py-0.2 rounded-xl ${isGain ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>
                 {isGain ? `+${activeReturn.toFixed(1)}%` : `${activeReturn.toFixed(1)}%`}
               </span>
             </div>

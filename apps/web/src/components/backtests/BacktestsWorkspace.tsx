@@ -120,7 +120,7 @@ export function BacktestsWorkspace() {
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 max-w-[1600px] mx-auto p-4 md:p-6 bg-gray-50 dark:bg-[#0a0a0a] min-h-screen font-sans pb-12">
       {/* 1. Header */}
       <BacktestSummaryHeader
         strategies={strategyOptions}
@@ -151,10 +151,10 @@ export function BacktestsWorkspace() {
       {/* 3. Backtest Registry Table */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-primary">
+          <h2 className="text-xs font-sans font-semibold uppercase tracking-wide text-gray-900 dark:text-zinc-50">
             Backtest Registry
           </h2>
-          <span className="text-[11px] font-mono text-text-muted">
+          <span className="text-[11px] font-sans text-gray-500 dark:text-zinc-400">
             Click row to inspect deep analytical breakdown below
           </span>
         </div>
@@ -169,8 +169,8 @@ export function BacktestsWorkspace() {
 
       {/* Comparison Floating Action Bar if items selected */}
       {comparedIds.length > 0 && (
-        <div className="fixed bottom-6 right-6 z-30 p-3 rounded-lg bg-surface-1/95 border border-cyan-500/40 shadow-2xl backdrop-blur-md flex items-center gap-3 font-mono text-xs animate-in slide-in-from-bottom-3">
-          <span className="text-text-primary">
+        <div className="fixed bottom-6 right-6 z-30 p-3 rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-cyan-500/40 shadow-2xl backdrop-blur-md flex items-center gap-3 font-sans text-xs animate-in slide-in-from-bottom-3">
+          <span className="text-gray-900 dark:text-zinc-50">
             <strong className="text-cyan-400">{comparedIds.length}</strong> backtests selected for comparison
           </span>
           <Button
@@ -184,7 +184,7 @@ export function BacktestsWorkspace() {
           <Button
             variant="ghost"
             onClick={() => setComparedIds([])}
-            className="text-xs py-1.5 px-2 text-text-muted hover:text-text-primary"
+            className="text-xs py-1.5 px-2 text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:text-zinc-50"
           >
             Clear
           </Button>
@@ -193,29 +193,29 @@ export function BacktestsWorkspace() {
 
       {/* 4. Selected Backtest Detailed Analysis Workspace */}
       {selectedBacktest && (
-        <div className="space-y-6 pt-4 border-t border-border/80">
+        <div className="space-y-6 pt-4 border-t border-gray-200/80 dark:border-white/5">
           {/* Detailed View Title & Navigation */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-lg bg-surface-1 border border-border">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono font-bold text-sm">
+              <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-sans font-bold text-sm">
                 {selectedBacktest.id}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-text-primary font-mono">
+                  <h3 className="text-base font-bold text-gray-900 dark:text-zinc-50 font-sans">
                     {selectedBacktest.strategyName}
                   </h3>
-                  <span className="text-xs text-text-muted font-mono">
+                  <span className="text-xs text-gray-500 dark:text-zinc-400 font-sans">
                     ({selectedBacktest.strategyVersion})
                   </span>
                   <BacktestStatusBadge status={selectedBacktest.status} />
                 </div>
-                <div className="flex items-center gap-2 text-xs font-mono text-text-muted mt-0.5">
-                  <span>Market: <strong className="text-text-primary">{selectedBacktest.market}</strong></span>
+                <div className="flex items-center gap-2 text-xs font-sans text-gray-500 dark:text-zinc-400 mt-0.5">
+                  <span>Market: <strong className="text-gray-900 dark:text-zinc-50">{selectedBacktest.market}</strong></span>
                   <span>·</span>
-                  <span>Timeframe: <strong className="text-text-primary">{selectedBacktest.timeframe}</strong></span>
+                  <span>Timeframe: <strong className="text-gray-900 dark:text-zinc-50">{selectedBacktest.timeframe}</strong></span>
                   <span>·</span>
-                  <span>Window: <strong className="text-text-primary">{selectedBacktest.startDate} → {selectedBacktest.endDate}</strong></span>
+                  <span>Window: <strong className="text-gray-900 dark:text-zinc-50">{selectedBacktest.startDate} → {selectedBacktest.endDate}</strong></span>
                 </div>
               </div>
             </div>
@@ -223,7 +223,7 @@ export function BacktestsWorkspace() {
             <div className="flex items-center gap-2">
               <Link
                 href="/strategies"
-                className="inline-flex items-center gap-1 text-xs font-mono text-cyan-400 hover:text-cyan-300 px-3 py-1.5 rounded bg-surface-2 border border-border hover:border-cyan-500/30 transition-colors"
+                className="inline-flex items-center gap-1 text-xs font-sans text-cyan-400 hover:text-cyan-300 px-3 py-1.5 rounded-xl bg-gray-50 dark:bg-zinc-800/50 border border-gray-200 dark:border-white/5 hover:border-cyan-500/30 transition-colors"
               >
                 <span>View Strategy in Registry</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />

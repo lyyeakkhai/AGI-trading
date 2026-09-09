@@ -109,37 +109,37 @@ export function RiskWorkspace() {
         title="Institutional Trading Safety Controls"
         size="md"
       >
-        <div className="space-y-4 font-mono text-xs">
-          <div className="p-3 rounded bg-emerald-950/20 border border-emerald-500/30 flex items-start gap-2.5">
+        <div className="space-y-4 font-sans tracking-tight text-xs">
+          <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30 flex items-start gap-2.5">
             <ShieldCheck className="w-5 h-5 text-emerald-400 mt-0.5" />
             <div>
               <span className="font-bold text-emerald-300 block">Paper Trading Mode Active</span>
-              <p className="text-text-muted text-[11px] mt-0.5">
+              <p className="text-gray-500 dark:text-zinc-400 text-xs mt-0.5">
                 All order executions are routed strictly to the local paper simulation engine. Live exchange order routing is locked.
               </p>
             </div>
           </div>
 
           <div className="space-y-2">
-            <div className="flex justify-between p-2 rounded bg-surface-1 border border-border">
-              <span className="text-text-muted">Trading Lock:</span>
+            <div className="flex justify-between p-2 rounded-lg bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/5">
+              <span className="text-gray-500 dark:text-zinc-400">Trading Lock:</span>
               <span className="font-bold text-emerald-400">OFF (Paper Active)</span>
             </div>
-            <div className="flex justify-between p-2 rounded bg-surface-1 border border-border">
-              <span className="text-text-muted">Live Trading:</span>
-              <span className="font-bold text-text-muted">DISABLED</span>
+            <div className="flex justify-between p-2 rounded-lg bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/5">
+              <span className="text-gray-500 dark:text-zinc-400">Live Trading:</span>
+              <span className="font-bold text-gray-500 dark:text-zinc-400">Disabled</span>
             </div>
-            <div className="flex justify-between p-2 rounded bg-surface-1 border border-border">
-              <span className="text-text-muted">Emergency Kill-Switch:</span>
+            <div className="flex justify-between p-2 rounded-lg bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/5">
+              <span className="text-gray-500 dark:text-zinc-400">Emergency Kill-Switch:</span>
               <span className="font-bold text-emerald-400">STANDBY / INACTIVE</span>
             </div>
           </div>
 
-          <p className="text-[11px] text-text-muted leading-relaxed">
+          <p className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
             Note: Live trading controls, physical API credentials, and hardware kill switches will be managed in Task 18 (Live Trading Controls).
           </p>
 
-          <div className="flex justify-end pt-2 border-t border-border">
+          <div className="flex justify-end pt-2 border-t border-gray-200 dark:border-white/5">
             <Button variant="secondary" onClick={() => setIsSafetyModalOpen(false)} className="text-xs">
               Dismiss
             </Button>

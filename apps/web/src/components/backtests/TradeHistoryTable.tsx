@@ -20,29 +20,29 @@ export function TradeHistoryTable({ trades }: TradeHistoryTableProps) {
   });
 
   return (
-    <div className="p-4 rounded-lg bg-surface-1 border border-border flex flex-col gap-3">
+    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 flex flex-col gap-3">
       {/* Table Header Controls */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2.5 border-b border-border/60">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2.5 border-b border-gray-200 dark:border-white/5">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+          <div className="p-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
             <History className="w-3.5 h-3.5" />
           </div>
           <div>
-            <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-primary">
+            <h3 className="text-xs font-sans font-semibold uppercase tracking-wide text-gray-900 dark:text-zinc-50">
               Simulated Trade History
             </h3>
-            <p className="text-[11px] font-mono text-text-muted">
+            <p className="text-[11px] font-sans text-gray-500 dark:text-zinc-400">
               Granular tick/candle level executions with exact entry, stop/target exits, and R-multiples.
             </p>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-2 text-xs font-mono">
+        <div className="flex items-center gap-2 text-xs font-sans">
           <select
             value={filterSide}
             onChange={(e) => setFilterSide(e.target.value as any)}
-            className="bg-background border border-border rounded px-2 py-1 text-text-primary focus:outline-none"
+            className="bg-background border border-gray-200 dark:border-white/5 rounded-xl px-2 py-1 text-gray-900 dark:text-zinc-50 focus:outline-none"
           >
             <option value="ALL">All Sides</option>
             <option value="LONG">Longs Only</option>
@@ -52,7 +52,7 @@ export function TradeHistoryTable({ trades }: TradeHistoryTableProps) {
           <select
             value={filterReason}
             onChange={(e) => setFilterReason(e.target.value)}
-            className="bg-background border border-border rounded px-2 py-1 text-text-primary focus:outline-none"
+            className="bg-background border border-gray-200 dark:border-white/5 rounded-xl px-2 py-1 text-gray-900 dark:text-zinc-50 focus:outline-none"
           >
             <option value="ALL">All Exit Reasons</option>
             <option value="Target">Target</option>
@@ -61,17 +61,17 @@ export function TradeHistoryTable({ trades }: TradeHistoryTableProps) {
             <option value="Time Limit">Time Limit</option>
           </select>
 
-          <span className="text-[11px] text-text-muted">
+          <span className="text-[11px] text-gray-500 dark:text-zinc-400">
             {filteredTrades.length} of {trades.length}
           </span>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded border border-border/60 bg-surface-2/20 max-h-80 overflow-y-auto">
+      <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-zinc-800/50 max-h-80 overflow-y-auto">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-border bg-surface-2/60 text-[11px] font-mono text-text-muted sticky top-0 z-10">
+            <TableRow className="border-b border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-zinc-800/50 text-[11px] font-sans text-gray-500 dark:text-zinc-400 sticky top-0 z-10">
               <TableHead className="py-2 px-3">#</TableHead>
               <TableHead className="py-2 px-3">DATE / TIME</TableHead>
               <TableHead className="py-2 px-3">SYMBOL</TableHead>
@@ -90,14 +90,14 @@ export function TradeHistoryTable({ trades }: TradeHistoryTableProps) {
               return (
                 <TableRow
                   key={t.id}
-                  className="border-b border-border/30 hover:bg-surface-2/40 text-xs font-mono transition-colors"
+                  className="border-b border-gray-200 dark:border-white/5 hover:bg-gray-50 dark:bg-zinc-800/50 text-xs font-sans transition-colors"
                 >
-                  <TableCell className="py-2 px-3 text-text-muted text-[11px]">{t.id}</TableCell>
-                  <TableCell className="py-2 px-3 text-text-primary whitespace-nowrap">{t.date}</TableCell>
-                  <TableCell className="py-2 px-3 font-semibold text-text-primary">{t.symbol}</TableCell>
+                  <TableCell className="py-2 px-3 text-gray-500 dark:text-zinc-400 text-[11px]">{t.id}</TableCell>
+                  <TableCell className="py-2 px-3 text-gray-900 dark:text-zinc-50 whitespace-nowrap">{t.date}</TableCell>
+                  <TableCell className="py-2 px-3 font-semibold text-gray-900 dark:text-zinc-50">{t.symbol}</TableCell>
                   <TableCell className="py-2 px-3">
                     <span
-                      className={`inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                      className={`inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-xl text-[10px] font-bold ${
                         t.side === "LONG"
                           ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                           : "bg-red-500/10 text-red-400 border border-red-500/20"
@@ -111,10 +111,10 @@ export function TradeHistoryTable({ trades }: TradeHistoryTableProps) {
                       {t.side}
                     </span>
                   </TableCell>
-                  <TableCell className="py-2 px-3 text-right text-text-primary">
+                  <TableCell className="py-2 px-3 text-right text-gray-900 dark:text-zinc-50">
                     ${t.entryPrice.toLocaleString()}
                   </TableCell>
-                  <TableCell className="py-2 px-3 text-right text-text-primary">
+                  <TableCell className="py-2 px-3 text-right text-gray-900 dark:text-zinc-50">
                     ${t.exitPrice.toLocaleString()}
                   </TableCell>
                   <TableCell className="py-2 px-3 text-right font-bold">
@@ -127,17 +127,17 @@ export function TradeHistoryTable({ trades }: TradeHistoryTableProps) {
                       {t.rMultiple >= 0 ? `+${t.rMultiple.toFixed(1)}R` : `${t.rMultiple.toFixed(1)}R`}
                     </span>
                   </TableCell>
-                  <TableCell className="py-2 px-3 text-right text-text-muted text-[11px]">
+                  <TableCell className="py-2 px-3 text-right text-gray-500 dark:text-zinc-400 text-[11px]">
                     {t.duration}
                   </TableCell>
                   <TableCell className="py-2 px-3">
                     <span
-                      className={`px-1.5 py-0.5 rounded text-[10px] ${
+                      className={`px-1.5 py-0.5 rounded-xl text-[10px] ${
                         t.exitReason === "Target"
                           ? "bg-emerald-950/40 text-emerald-300 border border-emerald-500/20"
                           : t.exitReason === "Stop"
                           ? "bg-red-950/40 text-red-300 border border-red-500/20"
-                          : "bg-surface-2 text-text-muted border border-border"
+                          : "bg-gray-50 dark:bg-zinc-800/50 text-gray-500 dark:text-zinc-400 border border-gray-200 dark:border-white/5"
                       }`}
                     >
                       {t.exitReason}

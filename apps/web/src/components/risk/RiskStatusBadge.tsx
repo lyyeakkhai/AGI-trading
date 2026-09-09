@@ -19,7 +19,7 @@ export function RiskStatusBadge({
     case "HEALTHY":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 ${className}`}
+          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-sans tracking-tight font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 ${className}`}
         >
           {showIcon && <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />}
           HEALTHY
@@ -28,7 +28,7 @@ export function RiskStatusBadge({
     case "WARNING":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 ${className}`}
+          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-sans tracking-tight font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 ${className}`}
         >
           {showIcon && <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />}
           WARNING
@@ -37,7 +37,7 @@ export function RiskStatusBadge({
     case "CRITICAL":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-red-500/10 text-red-400 border border-red-500/20 animate-pulse ${className}`}
+          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-sans tracking-tight font-bold bg-red-500/10 text-red-400 border border-red-500/20 animate-pulse ${className}`}
         >
           {showIcon && <AlertOctagon className="w-3.5 h-3.5 text-red-400" />}
           CRITICAL
@@ -46,7 +46,7 @@ export function RiskStatusBadge({
     case "LOCKED":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-red-950/40 text-red-400 border border-red-500/40 ${className}`}
+          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-sans tracking-tight font-bold bg-red-950/40 text-red-400 border border-red-500/40 ${className}`}
         >
           {showIcon && <Lock className="w-3.5 h-3.5 text-red-400" />}
           LOCKED

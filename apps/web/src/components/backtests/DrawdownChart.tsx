@@ -24,7 +24,7 @@ export function DrawdownChart({
 
   if (!data || data.length === 0) {
     return (
-      <div className="h-44 flex items-center justify-center bg-surface-1 border border-border rounded-lg text-text-muted font-mono text-xs">
+      <div className="h-44 flex items-center justify-center bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 rounded-xl text-gray-500 dark:text-zinc-400 font-sans text-xs">
         No drawdown data available.
       </div>
     );
@@ -54,35 +54,35 @@ export function DrawdownChart({
   const activePoint = hoverIndex !== null ? points[hoverIndex] : points[points.length - 1];
 
   return (
-    <div className="p-4 rounded-lg bg-surface-1 border border-border flex flex-col h-full">
+    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 flex flex-col h-full">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 pb-2 border-b border-border/60">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 pb-2 border-b border-gray-200 dark:border-white/5">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded bg-red-500/10 border border-red-500/20 text-red-400">
+          <div className="p-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400">
             <ShieldAlert className="w-3.5 h-3.5" />
           </div>
           <div>
-            <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-primary">
+            <h3 className="text-xs font-sans font-semibold uppercase tracking-wide text-gray-900 dark:text-zinc-50">
               Underwater Drawdown Profile
             </h3>
-            <p className="text-[11px] font-mono text-text-muted">
+            <p className="text-[11px] font-sans text-gray-500 dark:text-zinc-400">
               Peak-to-trough equity degradation and recovery cycles.
             </p>
           </div>
         </div>
 
         {/* Highlight Stats */}
-        <div className="flex items-center gap-3 font-mono text-xs">
+        <div className="flex items-center gap-3 font-sans text-xs">
           <div className="text-right">
-            <span className="text-[10px] text-text-muted">Worst Dip</span>
+            <span className="text-[10px] text-gray-500 dark:text-zinc-400">Worst Dip</span>
             <span className="block text-red-400 font-bold">{maxDrawdown.toFixed(1)}%</span>
           </div>
           <div className="text-right">
-            <span className="text-[10px] text-text-muted">Avg Dip</span>
-            <span className="block text-text-primary font-bold">{averageDrawdown.toFixed(1)}%</span>
+            <span className="text-[10px] text-gray-500 dark:text-zinc-400">Avg Dip</span>
+            <span className="block text-gray-900 dark:text-zinc-50 font-bold">{averageDrawdown.toFixed(1)}%</span>
           </div>
           <div className="text-right">
-            <span className="text-[10px] text-text-muted">Max Duration</span>
+            <span className="text-[10px] text-gray-500 dark:text-zinc-400">Max Duration</span>
             <span className="block text-amber-400 font-bold">{longestDrawdown}</span>
           </div>
         </div>

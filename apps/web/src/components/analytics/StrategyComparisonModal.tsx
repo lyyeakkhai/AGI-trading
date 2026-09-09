@@ -39,7 +39,7 @@ export function StrategyComparisonModal({
       title="Quantitative Strategy Comparison"
       size="xl"
     >
-      <div className="space-y-4 font-mono text-xs">
+      <div className="space-y-4 font-sans text-xs">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-1">
           <p className="text-text-muted">
             Multi-strategy side-by-side performance comparison across risk, drawdowns, Sharpe, and expectancy metrics.
@@ -54,10 +54,10 @@ export function StrategyComparisonModal({
                   key={s.id}
                   type="button"
                   onClick={() => toggleStrategy(s.id)}
-                  className={`px-2 py-1 rounded text-[10px] font-mono border transition-colors ${
+                  className={`px-2 py-1 rounded text-xs font-sans border transition-colors ${
                     isSelected
                       ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40 font-semibold"
-                      : "bg-surface-2 text-gray-400 border-border hover:text-gray-200"
+                      : "bg-white dark:bg-zinc-900/50 text-gray-400 border-zinc-200 dark:border-zinc-200 dark:border-white/10 hover:text-gray-200"
                   }`}
                 >
                   {s.name.split(" ")[0]}
@@ -67,15 +67,15 @@ export function StrategyComparisonModal({
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded border border-border bg-surface-1">
+        <div className="overflow-x-auto rounded border border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-border bg-surface-2/60">
+              <tr className="border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50/60">
                 <th className="p-3 text-text-muted font-normal text-xs w-44">METRIC</th>
                 {comparedStrategies.map((s) => (
                   <th key={s.id} className="p-3 text-text-primary font-bold text-xs">
                     <span className="text-cyan-400">{s.name}</span>
-                    <span className="block text-[11px] text-text-muted font-normal">
+                    <span className="block text-xs text-text-muted font-normal">
                       {s.version} · {s.status}
                     </span>
                   </th>
@@ -83,7 +83,7 @@ export function StrategyComparisonModal({
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
-              <tr className="bg-surface-2/20">
+              <tr className="bg-white dark:bg-zinc-900/50/20">
                 <td className="p-3 text-text-muted font-medium">Net Return</td>
                 {comparedStrategies.map((s) => (
                   <td key={s.id} className="p-3 font-bold text-emerald-400 text-sm">
@@ -101,7 +101,7 @@ export function StrategyComparisonModal({
                 ))}
               </tr>
 
-              <tr className="bg-surface-2/20">
+              <tr className="bg-white dark:bg-zinc-900/50/20">
                 <td className="p-3 text-text-muted font-medium">Profit Factor</td>
                 {comparedStrategies.map((s) => (
                   <td key={s.id} className="p-3 font-bold text-text-primary">
@@ -119,7 +119,7 @@ export function StrategyComparisonModal({
                 ))}
               </tr>
 
-              <tr className="bg-surface-2/20">
+              <tr className="bg-white dark:bg-zinc-900/50/20">
                 <td className="p-3 text-text-muted font-medium">Max Drawdown</td>
                 {comparedStrategies.map((s) => (
                   <td key={s.id} className="p-3 font-bold text-red-400">
@@ -140,7 +140,7 @@ export function StrategyComparisonModal({
                 })}
               </tr>
 
-              <tr className="bg-surface-2/20">
+              <tr className="bg-white dark:bg-zinc-900/50/20">
                 <td className="p-3 text-text-muted font-medium">Sortino Ratio</td>
                 {comparedStrategies.map((s) => {
                   const sortino = s.expectancy > 0.4 ? 3.12 : s.expectancy > 0.2 ? 2.20 : 1.65;
@@ -161,7 +161,7 @@ export function StrategyComparisonModal({
                 ))}
               </tr>
 
-              <tr className="bg-surface-2/20">
+              <tr className="bg-white dark:bg-zinc-900/50/20">
                 <td className="p-3 text-text-muted">Trade Count</td>
                 {comparedStrategies.map((s) => (
                   <td key={s.id} className="p-3 text-text-primary">

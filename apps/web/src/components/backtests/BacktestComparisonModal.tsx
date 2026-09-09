@@ -27,29 +27,29 @@ export function BacktestComparisonModal({
       title="Quantitative Backtest Comparison"
       size="xl"
     >
-      <div className="space-y-4 font-mono text-xs">
-        <p className="text-text-muted text-xs">
+      <div className="space-y-4 font-sans text-xs">
+        <p className="text-gray-500 dark:text-zinc-400 text-xs">
           Side-by-side metric comparison across {backtests.length} candidate strategies and parameter runs.
         </p>
 
         {/* Matrix Table */}
-        <div className="overflow-x-auto rounded border border-border bg-surface-1">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-zinc-900/50 shadow-sm">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-border bg-surface-2/60">
-                <th className="p-3 text-text-muted font-normal text-xs w-44">METRIC</th>
+              <tr className="border-b border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-zinc-800/50">
+                <th className="p-3 text-gray-500 dark:text-zinc-400 font-normal text-xs w-44">METRIC</th>
                 {backtests.map((b) => (
-                  <th key={b.id} className="p-3 text-text-primary font-bold text-xs">
+                  <th key={b.id} className="p-3 text-gray-900 dark:text-zinc-50 font-bold text-xs">
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="text-cyan-400">{b.id}</span>
-                        <span className="block text-[11px] text-text-muted font-normal">
+                        <span className="block text-[11px] text-gray-500 dark:text-zinc-400 font-normal">
                           {b.strategyName} {b.strategyVersion}
                         </span>
                       </div>
                       <button
                         onClick={() => onRemoveFromCompare(b.id)}
-                        className="text-text-muted hover:text-red-400 p-1 rounded hover:bg-surface-2 transition-colors"
+                        className="text-gray-500 dark:text-zinc-400 hover:text-red-400 p-1 rounded-xl hover:bg-gray-50 dark:bg-zinc-800/50 transition-colors"
                         title="Remove"
                       >
                         <X className="w-3.5 h-3.5" />
@@ -62,17 +62,17 @@ export function BacktestComparisonModal({
             <tbody className="divide-y divide-border/40">
               {/* Market / Timeframe */}
               <tr>
-                <td className="p-3 text-text-muted">Market & Timeframe</td>
+                <td className="p-3 text-gray-500 dark:text-zinc-400">Market & Timeframe</td>
                 {backtests.map((b) => (
-                  <td key={b.id} className="p-3 text-text-primary">
+                  <td key={b.id} className="p-3 text-gray-900 dark:text-zinc-50">
                     {b.market} ({b.timeframe})
                   </td>
                 ))}
               </tr>
 
               {/* Net Return */}
-              <tr className="bg-surface-2/20">
-                <td className="p-3 text-text-muted font-medium">Net Return</td>
+              <tr className="bg-gray-50 dark:bg-zinc-800/50">
+                <td className="p-3 text-gray-500 dark:text-zinc-400 font-medium">Net Return</td>
                 {backtests.map((b) => (
                   <td key={b.id} className="p-3 font-bold text-sm">
                     <span className={b.netReturn >= 0 ? "text-emerald-400" : "text-red-400"}>
@@ -84,17 +84,17 @@ export function BacktestComparisonModal({
 
               {/* Realized Net P&L */}
               <tr>
-                <td className="p-3 text-text-muted">Net Realized P&L</td>
+                <td className="p-3 text-gray-500 dark:text-zinc-400">Net Realized P&L</td>
                 {backtests.map((b) => (
-                  <td key={b.id} className="p-3 font-bold text-text-primary">
+                  <td key={b.id} className="p-3 font-bold text-gray-900 dark:text-zinc-50">
                     ${b.netPnl.toLocaleString()}
                   </td>
                 ))}
               </tr>
 
               {/* Max Drawdown */}
-              <tr className="bg-surface-2/20">
-                <td className="p-3 text-text-muted font-medium">Max Drawdown</td>
+              <tr className="bg-gray-50 dark:bg-zinc-800/50">
+                <td className="p-3 text-gray-500 dark:text-zinc-400 font-medium">Max Drawdown</td>
                 {backtests.map((b) => (
                   <td key={b.id} className="p-3 font-bold text-red-400">
                     {b.maxDrawdown.toFixed(1)}%
@@ -104,17 +104,17 @@ export function BacktestComparisonModal({
 
               {/* Profit Factor */}
               <tr>
-                <td className="p-3 text-text-muted">Profit Factor</td>
+                <td className="p-3 text-gray-500 dark:text-zinc-400">Profit Factor</td>
                 {backtests.map((b) => (
-                  <td key={b.id} className="p-3 font-bold text-text-primary">
+                  <td key={b.id} className="p-3 font-bold text-gray-900 dark:text-zinc-50">
                     {b.profitFactor.toFixed(2)}
                   </td>
                 ))}
               </tr>
 
               {/* Expectancy */}
-              <tr className="bg-surface-2/20">
-                <td className="p-3 text-text-muted">Expectancy (R)</td>
+              <tr className="bg-gray-50 dark:bg-zinc-800/50">
+                <td className="p-3 text-gray-500 dark:text-zinc-400">Expectancy (R)</td>
                 {backtests.map((b) => (
                   <td key={b.id} className="p-3 text-cyan-400 font-bold">
                     {b.expectancy >= 0 ? `+${b.expectancy.toFixed(2)}R` : `${b.expectancy.toFixed(2)}R`}
@@ -124,19 +124,19 @@ export function BacktestComparisonModal({
 
               {/* Win Rate */}
               <tr>
-                <td className="p-3 text-text-muted">Win Rate</td>
+                <td className="p-3 text-gray-500 dark:text-zinc-400">Win Rate</td>
                 {backtests.map((b) => (
-                  <td key={b.id} className="p-3 text-text-primary">
+                  <td key={b.id} className="p-3 text-gray-900 dark:text-zinc-50">
                     {b.winRate.toFixed(1)}% ({b.winningTrades}W / {b.losingTrades}L)
                   </td>
                 ))}
               </tr>
 
               {/* Trade Count */}
-              <tr className="bg-surface-2/20">
-                <td className="p-3 text-text-muted">Total Trades</td>
+              <tr className="bg-gray-50 dark:bg-zinc-800/50">
+                <td className="p-3 text-gray-500 dark:text-zinc-400">Total Trades</td>
                 {backtests.map((b) => (
-                  <td key={b.id} className="p-3 text-text-primary">
+                  <td key={b.id} className="p-3 text-gray-900 dark:text-zinc-50">
                     {b.tradeCount} trades
                   </td>
                 ))}
@@ -144,7 +144,7 @@ export function BacktestComparisonModal({
 
               {/* Friction (Fees + Slip) */}
               <tr>
-                <td className="p-3 text-text-muted">Friction Drag</td>
+                <td className="p-3 text-gray-500 dark:text-zinc-400">Friction Drag</td>
                 {backtests.map((b) => (
                   <td key={b.id} className="p-3 text-amber-400">
                     ${b.fees + b.slippage} (${b.fees} fees, ${b.slippage} slip)
@@ -153,12 +153,12 @@ export function BacktestComparisonModal({
               </tr>
 
               {/* Validation Gate */}
-              <tr className="bg-surface-2/20">
-                <td className="p-3 text-text-muted font-medium">Validation Gate</td>
+              <tr className="bg-gray-50 dark:bg-zinc-800/50">
+                <td className="p-3 text-gray-500 dark:text-zinc-400 font-medium">Validation Gate</td>
                 {backtests.map((b) => (
                   <td key={b.id} className="p-3">
                     <span
-                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold ${
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-xl text-[11px] font-bold ${
                         b.validationAssessment.readiness === "READY FOR PAPER TRADING"
                           ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                           : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
@@ -174,7 +174,7 @@ export function BacktestComparisonModal({
         </div>
 
         <div className="flex justify-end pt-2">
-          <Button variant="secondary" onClick={onClose} className="text-xs font-mono">
+          <Button variant="secondary" onClick={onClose} className="text-xs font-sans">
             Close Comparison
           </Button>
         </div>

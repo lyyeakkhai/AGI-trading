@@ -14,23 +14,23 @@ export function RiskBudgetCard({ overview }: RiskBudgetCardProps) {
   const isWarning = utilizationPct >= 70 && utilizationPct < 100;
 
   return (
-    <div className="p-4 rounded-lg bg-surface-1 border border-border flex flex-col justify-between h-full">
-      <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-border/60">
+    <div className="p-4 rounded-xl shadow-sm bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/5 flex flex-col justify-between h-full">
+      <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-gray-200 dark:border-white/5">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+          <div className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
             <PieChart className="w-3.5 h-3.5" />
           </div>
           <div>
-            <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-primary">
+            <h3 className="text-xs font-sans font-semibold tracking-normal text-gray-900 dark:text-zinc-50">
               Portfolio Risk Budget
             </h3>
-            <p className="text-[11px] font-mono text-text-muted">
+            <p className="text-xs font-sans tracking-tight text-gray-500 dark:text-zinc-400">
               Aggregate capital at risk across all concurrent stop levels
             </p>
           </div>
         </div>
         <span
-          className={`px-2 py-0.5 rounded text-[11px] font-mono font-bold ${
+          className={`px-2 py-0.5 rounded-lg text-xs font-sans tracking-tight font-bold ${
             isHealthy
               ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
               : isWarning
@@ -43,43 +43,43 @@ export function RiskBudgetCard({ overview }: RiskBudgetCardProps) {
       </div>
 
       {/* Numerical Metrics */}
-      <div className="grid grid-cols-3 gap-2.5 mb-3 text-xs font-mono">
-        <div className="p-2.5 rounded bg-surface-2/60 border border-border/40">
-          <span className="text-[10px] text-text-muted block">Current Risk</span>
+      <div className="grid grid-cols-3 gap-2.5 mb-3 text-xs font-sans tracking-tight">
+        <div className="p-2.5 rounded-lg bg-gray-50 dark:bg-zinc-800/50 border border-gray-200 dark:border-white/5">
+          <span className="text-xs text-gray-500 dark:text-zinc-400 block">Current Risk</span>
           <span className="text-base font-bold text-emerald-400">
             {overview.portfolioRisk.toFixed(1)}%
           </span>
-          <span className="text-[10px] text-text-muted block mt-0.5">
+          <span className="text-xs text-gray-500 dark:text-zinc-400 block mt-0.5">
             ${((overview.portfolioEquity * overview.portfolioRisk) / 100).toFixed(0)} exposed
           </span>
         </div>
 
-        <div className="p-2.5 rounded bg-surface-2/60 border border-border/40">
-          <span className="text-[10px] text-text-muted block">Available Risk</span>
+        <div className="p-2.5 rounded-lg bg-gray-50 dark:bg-zinc-800/50 border border-gray-200 dark:border-white/5">
+          <span className="text-xs text-gray-500 dark:text-zinc-400 block">Available Risk</span>
           <span className="text-base font-bold text-cyan-400">
             {overview.availableRisk.toFixed(1)}%
           </span>
-          <span className="text-[10px] text-text-muted block mt-0.5">
+          <span className="text-xs text-gray-500 dark:text-zinc-400 block mt-0.5">
             ${((overview.portfolioEquity * overview.availableRisk) / 100).toFixed(0)} headroom
           </span>
         </div>
 
-        <div className="p-2.5 rounded bg-surface-2/60 border border-border/40">
-          <span className="text-[10px] text-text-muted block">Maximum Limit</span>
-          <span className="text-base font-bold text-text-primary">
+        <div className="p-2.5 rounded-lg bg-gray-50 dark:bg-zinc-800/50 border border-gray-200 dark:border-white/5">
+          <span className="text-xs text-gray-500 dark:text-zinc-400 block">Maximum Limit</span>
+          <span className="text-base font-bold text-gray-900 dark:text-zinc-50">
             {overview.maxPortfolioRisk.toFixed(1)}%
           </span>
-          <span className="text-[10px] text-text-muted block mt-0.5">Hard ceiling</span>
+          <span className="text-xs text-gray-500 dark:text-zinc-400 block mt-0.5">Hard ceiling</span>
         </div>
       </div>
 
       {/* Progress Bar */}
       <div className="space-y-1.5">
-        <div className="flex justify-between text-[11px] font-mono text-text-muted">
+        <div className="flex justify-between text-xs font-sans tracking-tight text-gray-500 dark:text-zinc-400">
           <span>{overview.portfolioRisk.toFixed(1)}% of {overview.maxPortfolioRisk.toFixed(1)}% Allocated</span>
           <span>{utilizationPct.toFixed(0)}% budget consumed</span>
         </div>
-        <div className="h-2 w-full bg-surface-2 rounded-full overflow-hidden flex">
+        <div className="h-2 w-full bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden flex">
           <div
             style={{ width: `${utilizationPct}%` }}
             className={`transition-all duration-300 ${

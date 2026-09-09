@@ -45,17 +45,17 @@ export function BacktestFilters({
     sortBy !== "recent";
 
   return (
-    <div className="flex flex-col gap-2.5 p-3 rounded-lg bg-surface-1 border border-border">
+    <div className="flex flex-col gap-2.5 p-3 rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5">
       <div className="flex flex-col md:flex-row items-center justify-between gap-3">
         {/* Search input */}
         <div className="relative w-full md:w-72">
-          <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
+          <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 dark:text-zinc-400" />
           <input
             type="text"
             placeholder="Search backtests (ID, strategy, market)..."
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full bg-background border border-border rounded pl-8 pr-3 py-1.5 text-xs text-text-primary placeholder:text-text-muted font-mono focus:outline-none focus:border-cyan-500/50"
+            className="w-full bg-background border border-gray-200 dark:border-white/5 rounded-xl pl-8 pr-3 py-1.5 text-xs text-gray-900 dark:text-zinc-50 placeholder:text-gray-500 dark:text-zinc-400 font-sans focus:outline-none focus:border-cyan-500/50"
           />
         </div>
 
@@ -65,7 +65,7 @@ export function BacktestFilters({
           <select
             value={marketFilter}
             onChange={(e) => onMarketChange(e.target.value)}
-            className="bg-background border border-border rounded px-2.5 py-1.5 text-xs text-text-primary font-mono focus:outline-none focus:border-cyan-500/50"
+            className="bg-background border border-gray-200 dark:border-white/5 rounded-xl px-2.5 py-1.5 text-xs text-gray-900 dark:text-zinc-50 font-sans focus:outline-none focus:border-cyan-500/50"
           >
             <option value="ALL">All Markets</option>
             <option value="BTC/USDT">BTC/USDT</option>
@@ -76,7 +76,7 @@ export function BacktestFilters({
           <select
             value={timeframeFilter}
             onChange={(e) => onTimeframeChange(e.target.value)}
-            className="bg-background border border-border rounded px-2.5 py-1.5 text-xs text-text-primary font-mono focus:outline-none focus:border-cyan-500/50"
+            className="bg-background border border-gray-200 dark:border-white/5 rounded-xl px-2.5 py-1.5 text-xs text-gray-900 dark:text-zinc-50 font-sans focus:outline-none focus:border-cyan-500/50"
           >
             <option value="ALL">All Timeframes</option>
             <option value="5M">5M</option>
@@ -90,7 +90,7 @@ export function BacktestFilters({
           <select
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value)}
-            className="bg-background border border-border rounded px-2.5 py-1.5 text-xs text-text-primary font-mono focus:outline-none focus:border-cyan-500/50"
+            className="bg-background border border-gray-200 dark:border-white/5 rounded-xl px-2.5 py-1.5 text-xs text-gray-900 dark:text-zinc-50 font-sans focus:outline-none focus:border-cyan-500/50"
           >
             <option value="ALL">All Statuses</option>
             <option value="completed">Completed</option>
@@ -104,7 +104,7 @@ export function BacktestFilters({
           <select
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value as BacktestSortOption)}
-            className="bg-background border border-border rounded px-2.5 py-1.5 text-xs text-text-primary font-mono focus:outline-none focus:border-cyan-500/50"
+            className="bg-background border border-gray-200 dark:border-white/5 rounded-xl px-2.5 py-1.5 text-xs text-gray-900 dark:text-zinc-50 font-sans focus:outline-none focus:border-cyan-500/50"
           >
             <option value="recent">Sort: Most Recent</option>
             <option value="netReturn">Sort: Net Return</option>
@@ -118,7 +118,7 @@ export function BacktestFilters({
             <Button
               variant="ghost"
               onClick={onReset}
-              className="text-xs font-mono py-1.5 px-2 text-text-muted hover:text-text-primary flex items-center gap-1"
+              className="text-xs font-sans py-1.5 px-2 text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:text-zinc-50 flex items-center gap-1"
             >
               <RotateCcw className="w-3 h-3" />
               <span>Reset</span>
@@ -126,7 +126,7 @@ export function BacktestFilters({
           )}
 
           {/* Result Count Indicator */}
-          <span className="text-[11px] font-mono text-text-muted ml-1">
+          <span className="text-[11px] font-sans text-gray-500 dark:text-zinc-400 ml-1">
             {filteredCount} of {totalCount} backtests
           </span>
         </div>

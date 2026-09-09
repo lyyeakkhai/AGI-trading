@@ -22,7 +22,7 @@ export function ValidationAssessmentCard({ assessment }: ValidationAssessmentCar
 
   return (
     <div
-      className={`p-4 rounded-lg border flex flex-col justify-between ${
+      className={`p-4 rounded-xl border flex flex-col justify-between ${
         isReady
           ? "bg-emerald-950/10 border-emerald-500/30"
           : isRejected
@@ -30,10 +30,10 @@ export function ValidationAssessmentCard({ assessment }: ValidationAssessmentCar
           : "bg-amber-950/10 border-amber-500/30"
       }`}
     >
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-border/60">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-gray-200 dark:border-white/5">
         <div className="flex items-center gap-2">
           <div
-            className={`p-1.5 rounded border ${
+            className={`p-1.5 rounded-xl border ${
               isReady
                 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
                 : isRejected
@@ -44,10 +44,10 @@ export function ValidationAssessmentCard({ assessment }: ValidationAssessmentCar
             {isReady ? <ShieldCheck className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
           </div>
           <div>
-            <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-primary">
+            <h3 className="text-xs font-sans font-semibold uppercase tracking-wide text-gray-900 dark:text-zinc-50">
               Validation Assessment & Decision Gate
             </h3>
-            <p className="text-[11px] font-mono text-text-muted">
+            <p className="text-[11px] font-sans text-gray-500 dark:text-zinc-400">
               Objective quantitative gate criteria for progression along the strategy validation ladder.
             </p>
           </div>
@@ -55,7 +55,7 @@ export function ValidationAssessmentCard({ assessment }: ValidationAssessmentCar
 
         {/* Readiness Badge */}
         <span
-          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded text-xs font-mono font-bold tracking-wider ${
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-sans font-bold tracking-wide ${
             isReady
               ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm shadow-emerald-500/10"
               : isRejected
@@ -73,9 +73,9 @@ export function ValidationAssessmentCard({ assessment }: ValidationAssessmentCar
         {gates.map((g) => (
           <div
             key={g.name}
-            className="p-2 rounded bg-surface-1/80 border border-border/50 flex flex-col justify-between font-mono text-xs"
+            className="p-2 rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200/50 dark:border-white/5 flex flex-col justify-between font-sans text-xs"
           >
-            <span className="text-[10px] text-text-muted">{g.name}</span>
+            <span className="text-[10px] text-gray-500 dark:text-zinc-400">{g.name}</span>
             <div className="flex items-center gap-1 mt-1">
               {g.status === "PASS" ? (
                 <CheckCircle2 className="w-3 h-3 text-emerald-400" />
@@ -91,8 +91,8 @@ export function ValidationAssessmentCard({ assessment }: ValidationAssessmentCar
       </div>
 
       {/* Summary assessment text */}
-      <div className="p-2.5 rounded bg-surface-1/60 border border-border/40 text-xs font-mono text-text-primary leading-relaxed">
-        <span className="text-text-muted mr-1.5">Decision Note:</span>
+      <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-gray-200 dark:border-white/5 text-xs font-sans text-gray-900 dark:text-zinc-50 leading-relaxed">
+        <span className="text-gray-500 dark:text-zinc-400 mr-1.5">Decision Note:</span>
         {assessment.summary}
       </div>
     </div>
