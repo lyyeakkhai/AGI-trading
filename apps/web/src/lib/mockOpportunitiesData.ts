@@ -3,8 +3,8 @@
  * Provides deterministic, structured opportunity records, lifecycle states, and evidence.
  */
 
-import { PositionSideType } from "@/components/trading/PositionSide";
-import { RiskLevel } from "@/components/trading/RiskBadge";
+import { PositionSideType } from "@/features/trading/components/PositionSide";
+import { RiskLevel } from "@/features/trading/components/RiskBadge";
 
 export type OpportunityStatus =
   | "New"

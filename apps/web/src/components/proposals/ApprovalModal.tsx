@@ -3,7 +3,7 @@
 import React from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
-import { PositionSide } from "@/components/trading/PositionSide";
+import { PositionSide } from "@/features/trading/components/PositionSide";
 import { TradeProposalItem } from "@/lib/mockTradeProposalsData";
 import { ShieldCheck, AlertCircle, CheckCircle2 } from "lucide-react";
 

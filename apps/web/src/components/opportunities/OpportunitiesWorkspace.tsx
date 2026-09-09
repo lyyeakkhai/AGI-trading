@@ -12,7 +12,7 @@ import {
   mockHermesScannerState,
   OpportunityItem,
 } from "@/lib/mockOpportunitiesData";
-import { RiskLevel } from "@/components/trading/RiskBadge";
+import { RiskLevel } from "@/features/trading/components/RiskBadge";
 
 const defaultFilters: OpportunityFilterState = {
   search: "",

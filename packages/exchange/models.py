@@ -105,3 +105,35 @@ class RateLimitState(BaseModel):
     weight_used: int
     weight_limit: int
     reset_at: datetime
+
+
+class MarketVolume(BaseModel):
+    symbol: str
+    base_volume: Decimal
+    quote_volume: Decimal
+    timestamp: datetime
+
+    @field_validator("base_volume", "quote_volume", mode="before")
+    @classmethod
+    def reject_float(cls, v: Any) -> Decimal:
+        if isinstance(v, float):
+            raise ValueError("float not allowed; use Decimal or str")
+        return Decimal(str(v))
+
+
+class FundingRate(BaseModel):
+    symbol: str
+    funding_rate: Decimal
+    mark_price: Decimal | None = None
+    index_price: Decimal | None = None
+    next_funding_time: datetime | None = None
+    timestamp: datetime
+
+    @field_validator("funding_rate", "mark_price", "index_price", mode="before")
+    @classmethod
+    def reject_float(cls, v: Any) -> Decimal | None:
+        if v is None:
+            return None
+        if isinstance(v, float):
+            raise ValueError("float not allowed; use Decimal or str")
+        return Decimal(str(v))

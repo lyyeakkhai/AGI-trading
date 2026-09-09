@@ -3,7 +3,7 @@
 import React from "react";
 import { Metric } from "@/components/ui/Metric";
 import { Badge } from "@/components/ui/Badge";
-import { RiskBadge } from "@/components/trading/RiskBadge";
+import { RiskBadge } from "@/features/trading/components/RiskBadge";
 import { PortfolioMetrics } from "@/lib/mockOverviewData";
 import { Wallet, DollarSign, TrendingUp, BarChart3, PieChart, ShieldAlert } from "lucide-react";
 

@@ -53,6 +53,16 @@ from packages.domain.research import (
     BullBearDebateResult,
     SynthesizedResearchReport,
 )
+from packages.domain.chart import (
+    ChartDrawing,
+    ChartAnnotation,
+    ChartState,
+    VisibleRange,
+    DrawingPoint,
+    LineDrawingParameters,
+    ZoneDrawingParameters,
+    MarkerDrawingParameters,
+)
 
 __all__ = [
     "AgentDecision",
@@ -98,4 +108,12 @@ __all__ = [
     "DeepResearchRequest",
     "BullBearDebateResult",
     "SynthesizedResearchReport",
+    "ChartDrawing",
+    "ChartAnnotation",
+    "ChartState",
+    "VisibleRange",
+    "DrawingPoint",
+    "LineDrawingParameters",
+    "ZoneDrawingParameters",
+    "MarkerDrawingParameters",
 ]

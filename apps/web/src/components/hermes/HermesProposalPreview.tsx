@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Surface } from "@/components/ui/Surface";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { PositionSide } from "@/components/trading/PositionSide";
+import { PositionSide } from "@/features/trading/components/PositionSide";
 import { TradeProposalDraft } from "@/lib/mockHermesData";
 import { FileText, ArrowRight, ShieldCheck, CheckCircle, AlertTriangle, Eye } from "lucide-react";
 

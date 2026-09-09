@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { MarketsWorkspace } from "@/components/markets/MarketsWorkspace";
+import { MarketsWorkspace } from "@/features/markets/components/MarketsWorkspace";
 
 export default function SymbolMarketPage() {
   const params = useParams();

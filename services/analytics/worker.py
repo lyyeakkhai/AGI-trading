@@ -4,12 +4,13 @@ Maintains an in-memory sliding window of candle data per symbol/timeframe,
 calculates technical indicators and market regimes in real-time,
 and coordinates snapshot persistence and opportunity scanning.
 """
+
 from __future__ import annotations
 
 import asyncio
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import numpy as np
@@ -144,7 +145,7 @@ class AnalyticsWorker:
         elif isinstance(ts_raw, datetime):
             ts = ts_raw
         else:
-            ts = datetime.now(timezone.utc)
+            ts = datetime.now(UTC)
 
         open_val = float(candle_data["open"])
         high_val = float(candle_data["high"])
@@ -305,3 +306,41 @@ class AnalyticsWorker:
 
     async def stop(self) -> None:
         self._running = False
+
+
+async def run_worker() -> None:
+    from packages.config.settings import get_settings
+    from packages.database.engine import get_engine, get_session_factory
+    from packages.events.client import RedisClient
+    from packages.events.streams import RedisStreamConsumer, RedisStreamPublisher
+    from services.analytics.scanner import OpportunityScanner
+
+    settings = get_settings()
+    redis_client = RedisClient(
+        settings=settings.redis,
+        app_env=settings.app_env,
+        trading_mode=settings.trading_mode,
+    )
+    consumer = RedisStreamConsumer(
+        redis_client=redis_client,
+        group_name=f"{settings.redis.key_prefix}analytics_workers",
+        consumer_name="analytics_worker_1",
+    )
+    engine = get_engine(settings.database)
+    session_factory = get_session_factory(engine)
+    publisher = RedisStreamPublisher(redis_client)
+    scanner = OpportunityScanner(publisher=publisher, trading_mode=settings.trading_mode)
+    worker = AnalyticsWorker(
+        consumer=consumer,
+        session_factory=session_factory,
+        scanner=scanner,
+        trading_mode=settings.trading_mode,
+    )
+    await worker.run()
+
+
+if __name__ == "__main__":
+    import logging
+
+    logging.basicConfig(level=logging.INFO)
+    asyncio.run(run_worker())

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from decimal import Decimal
+import json
 from typing import Any
 import uuid
 
@@ -15,6 +16,9 @@ from packages.database.models.portfolio import (
     PositionModel,
     TradeModel,
 )
+from packages.logging import get_logger
+
+logger = get_logger("portfolio_engine")
 
 
 class PortfolioEngine:
@@ -22,6 +26,99 @@ class PortfolioEngine:
     
     All updates are atomic within the provided database session transaction.
     """
+
+    def __init__(self, redis_client: Any = None) -> None:
+        self._redis = redis_client
+
+    async def _publish_fill_event(
+        self,
+        fill: FillModel,
+        position: PositionModel,
+        quote_entry: PortfolioEntryModel,
+        account_id: uuid.UUID,
+    ) -> None:
+        """Publish real-time portfolio and position updates to Redis stream & pubsub."""
+        try:
+            r = self._redis
+            if r is None:
+                try:
+                    from packages.config.settings import get_settings
+                    import redis.asyncio as aioredis
+
+                    settings = get_settings()
+                    r = aioredis.from_url(settings.redis.url, decode_responses=True)
+                except Exception as ex:
+                    logger.debug("redis_not_configured_for_portfolio_events", error=str(ex))
+                    return
+
+            from packages.config.settings import get_settings
+            settings = get_settings()
+            stream_key = f"{settings.redis.key_prefix}portfolio.update"
+
+            pos_data = {
+                "id": str(position.id),
+                "account_id": str(position.account_id),
+                "symbol": position.symbol,
+                "side": "long" if position.quantity >= 0 else "short",
+                "quantity": float(position.quantity),
+                "average_entry_price": float(position.average_entry_price),
+                "entryPrice": float(position.average_entry_price),
+                "currentPrice": float(fill.price),
+                "realized_pnl": float(position.realized_pnl),
+                "realizedPnl": float(position.realized_pnl),
+                "trading_mode": position.trading_mode,
+                "updated_at": position.updated_at.isoformat() if position.updated_at else datetime.now(timezone.utc).isoformat(),
+            }
+
+            fill_data = {
+                "id": str(fill.id),
+                "order_id": str(fill.order_id),
+                "exchange_trade_id": fill.exchange_trade_id,
+                "symbol": fill.symbol,
+                "side": fill.side,
+                "quantity": float(fill.quantity),
+                "price": float(fill.price),
+                "fee": float(fill.fee),
+                "fee_asset": fill.fee_asset,
+                "trading_mode": fill.trading_mode,
+                "executed_at": fill.executed_at.isoformat() if fill.executed_at else datetime.now(timezone.utc).isoformat(),
+            }
+
+            balance_data = {
+                "asset": quote_entry.asset,
+                "balance": float(quote_entry.balance),
+                "trading_mode": quote_entry.trading_mode,
+            }
+
+            now_iso = datetime.now(timezone.utc).isoformat()
+
+            stream_fields = {
+                "type": "position_update",
+                "event": "fill",
+                "symbol": fill.symbol,
+                "side": fill.side,
+                "trading_mode": fill.trading_mode,
+                "account_id": str(account_id),
+                "position": json.dumps(pos_data),
+                "fill": json.dumps(fill_data),
+                "balance": json.dumps(balance_data),
+                "timestamp": now_iso,
+            }
+
+            await r.xadd(
+                name=stream_key,
+                fields=stream_fields,
+                maxlen=100_000,
+                approximate=True,
+            )
+
+            # Also publish to PubSub channel
+            await r.publish(
+                stream_key,
+                json.dumps(stream_fields),
+            )
+        except Exception as e:
+            logger.warning(f"Could not publish portfolio event to Redis: {e}")
 
     async def get_or_create_account(
         self,
@@ -242,4 +339,12 @@ class PortfolioEngine:
         session.add(trade)
 
         await session.flush()
+
+        await self._publish_fill_event(
+            fill=fill,
+            position=position,
+            quote_entry=quote_entry,
+            account_id=account_id,
+        )
+
         return fill

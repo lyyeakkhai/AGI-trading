@@ -11,12 +11,13 @@ Runs six concurrent asyncio tasks:
 Reconnection: exponential backoff (1s base, 60s max).
 On reconnect: triggers gap detection + backfill (Task 2.5/2.6).
 """
+
 from __future__ import annotations
 
 import asyncio
+import time
 from collections.abc import Callable, Coroutine
 from dataclasses import dataclass
-import time
 from typing import Any
 
 import structlog
@@ -94,9 +95,7 @@ class IngestionWorker:
                 else:
                     attempts[name] = 0  # reset on clean exit
 
-        await asyncio.gather(*[
-            supervised(name, fn) for name, fn in tasks.items()
-        ])
+        await asyncio.gather(*[supervised(name, fn) for name, fn in tasks.items()])
 
     async def stop(self) -> None:
         self._running = False
@@ -127,3 +126,47 @@ class IngestionWorker:
         while self._running:
             self._health.check_all()
             await asyncio.sleep(10)
+
+
+async def run_worker() -> None:
+    from packages.config.settings import get_settings
+    from packages.events.client import RedisClient
+    from packages.events.streams import RedisStreamPublisher
+    from packages.exchange.binance import BinanceCCXTAdapter
+    from services.market_data.health import FeedConfig, FeedHealthMonitor
+    from services.market_data.publisher import MarketDataPublisher
+
+    settings = get_settings()
+    symbols = ["BTC/USDT", "ETH/USDT"]
+    timeframes = ["1m", "5m", "15m", "1h", "4h", "1d"]
+
+    redis_client = RedisClient(
+        settings=settings.redis,
+        app_env=settings.app_env,
+        trading_mode=settings.trading_mode,
+    )
+    publisher = RedisStreamPublisher(redis_client)
+    market_pub = MarketDataPublisher(publisher)
+    feed_config = FeedConfig(
+        symbols=symbols,
+        timeframes=timeframes,
+        ticker_stale_seconds=30.0,
+        trade_stale_seconds=30.0,
+    )
+    health = FeedHealthMonitor(feed_config)
+    worker_config = WorkerConfig(symbols=symbols, timeframes=timeframes)
+    adapter = BinanceCCXTAdapter()
+    worker = IngestionWorker(
+        adapter=adapter,
+        publisher=market_pub,
+        health=health,
+        config=worker_config,
+    )
+    await worker.run()
+
+
+if __name__ == "__main__":
+    import logging
+
+    logging.basicConfig(level=logging.INFO)
+    asyncio.run(run_worker())

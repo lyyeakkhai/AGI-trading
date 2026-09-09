@@ -2,8 +2,8 @@
 
 import React from "react";
 import { Surface } from "@/components/ui/Surface";
-import { PositionSide } from "@/components/trading/PositionSide";
-import { PnLDisplay } from "@/components/trading/PnLDisplay";
+import { PositionSide } from "@/features/trading/components/PositionSide";
+import { PnLDisplay } from "@/features/trading/components/PnLDisplay";
 import { PositionStatusBadge } from "./PositionStatusBadge";
 import { PositionItem } from "@/lib/mockPositionsData";
 import { ChevronRight, ShieldAlert, AlertTriangle } from "lucide-react";

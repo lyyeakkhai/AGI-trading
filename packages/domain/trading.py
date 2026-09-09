@@ -29,6 +29,8 @@ class TradeProposal(BaseModel):
     side: OrderSide
     order_type: OrderType
     quantity: Quantity
+    leverage: int | None = None
+    reduce_only: bool = False
     limit_price: Price | None = None
     rationale: str
     strategy_id: UUID | None = None
@@ -71,6 +73,8 @@ class ExecutionRequest(BaseModel):
     side: OrderSide
     order_type: OrderType
     quantity: Quantity
+    leverage: int | None = None
+    reduce_only: bool = False
     limit_price: Price | None = None
     status: ExecutionStatus
     trading_mode: TradingMode
@@ -94,6 +98,8 @@ class Order(BaseModel):
     side: OrderSide
     order_type: OrderType
     quantity: Quantity
+    leverage: int | None = None
+    reduce_only: bool = False
     filled_quantity: Quantity
     limit_price: Price | None = None
     status: ExecutionStatus
@@ -110,6 +116,8 @@ class Fill(BaseModel):
     symbol: str
     side: OrderSide
     quantity: Quantity
+    leverage: int | None = None
+    reduce_only: bool = False
     price: Price
     fee: Fee
     fee_asset: str
@@ -123,6 +131,8 @@ class Position(BaseModel):
     account_id: UUID
     symbol: str
     quantity: Quantity
+    leverage: int | None = None
+    reduce_only: bool = False
     average_entry_price: Price
     realized_pnl: PnL
     trading_mode: TradingMode
@@ -151,6 +161,8 @@ class Trade(BaseModel):
     symbol: str
     side: OrderSide
     quantity: Quantity
+    leverage: int | None = None
+    reduce_only: bool = False
     entry_price: Price
     exit_price: Price | None = None
     realized_pnl: PnL | None = None
