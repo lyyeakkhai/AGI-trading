@@ -13,35 +13,35 @@ export function ActivityStatusBadge({ status, className = "" }: ActivityStatusBa
   switch (status) {
     case "SUCCESS":
       return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 ${className}`}>
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-xl text-[10px] font-sans font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 ${className}`}>
           <CheckCircle2 className="w-2.5 h-2.5" />
           SUCCESS
         </span>
       );
     case "WARNING":
       return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 ${className}`}>
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-xl text-[10px] font-sans font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 ${className}`}>
           <AlertTriangle className="w-2.5 h-2.5" />
           WARNING
         </span>
       );
     case "FAILED":
       return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-500/10 text-red-400 border border-red-500/20 ${className}`}>
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-xl text-[10px] font-sans font-bold bg-red-500/10 text-red-400 border border-red-500/20 ${className}`}>
           <XCircle className="w-2.5 h-2.5" />
           FAILED
         </span>
       );
     case "REJECTED":
       return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-500/10 text-red-400 border border-red-500/20 ${className}`}>
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-xl text-[10px] font-sans font-bold bg-red-500/10 text-red-400 border border-red-500/20 ${className}`}>
           <XCircle className="w-2.5 h-2.5" />
           REJECTED
         </span>
       );
     case "CANCELLED":
       return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-gray-500/10 text-gray-400 border border-gray-500/20 ${className}`}>
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-xl text-[10px] font-sans font-medium bg-gray-500/10 text-gray-400 border border-gray-500/20 ${className}`}>
           <Ban className="w-2.5 h-2.5" />
           CANCELLED
         </span>
@@ -49,7 +49,7 @@ export function ActivityStatusBadge({ status, className = "" }: ActivityStatusBa
     case "INFO":
     default:
       return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 ${className}`}>
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-xl text-[10px] font-sans font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 ${className}`}>
           <Info className="w-2.5 h-2.5" />
           INFO
         </span>
@@ -91,7 +91,7 @@ export function ActivityTypeBadge({ type, className = "" }: ActivityTypeBadgePro
   };
 
   return (
-    <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-medium uppercase tracking-wider border ${getStyle()} ${className}`}>
+    <span className={`inline-block px-1.5 py-0.5 rounded-xl text-[10px] font-sans font-medium uppercase tracking-wider border ${getStyle()} ${className}`}>
       {type}
     </span>
   );

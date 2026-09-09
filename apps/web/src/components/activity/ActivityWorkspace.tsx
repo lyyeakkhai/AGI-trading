@@ -17,14 +17,14 @@ import { TradingFlowModal } from "./TradingFlowModal";
 
 export function ActivityWorkspace() {
   const [viewMode, setViewMode] = useState<"timeline" | "table">("timeline");
-  const [dateRange, setDateRange] = useState("TODAY");
+  const [dateRange, setDateRange] = useState("Today");
 
   // Filters
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState("ALL");
-  const [sourceFilter, setSourceFilter] = useState("ALL");
-  const [statusFilter, setStatusFilter] = useState("ALL");
-  const [envFilter, setEnvFilter] = useState("ALL");
+  const [typeFilter, setTypeFilter] = useState("All Time");
+  const [sourceFilter, setSourceFilter] = useState("All Time");
+  const [statusFilter, setStatusFilter] = useState("All Time");
+  const [envFilter, setEnvFilter] = useState("All Time");
 
   // Modals
   const [selectedEvent, setSelectedEvent] = useState<ActivityEvent | null>(null);
@@ -33,11 +33,11 @@ export function ActivityWorkspace() {
   // Filtered Events
   const filteredEvents = useMemo(() => {
     return mockActivityEvents.filter((e) => {
-      if (typeFilter !== "ALL" && e.type !== typeFilter) return false;
-      if (sourceFilter !== "ALL" && e.source !== sourceFilter) return false;
-      if (statusFilter !== "ALL" && e.status !== statusFilter) return false;
-      if (envFilter !== "ALL" && e.environment !== envFilter) return false;
-      if (dateRange === "TODAY" && e.dateGroup !== "TODAY") return false;
+      if (typeFilter !== "All Time" && e.type !== typeFilter) return false;
+      if (sourceFilter !== "All Time" && e.source !== sourceFilter) return false;
+      if (statusFilter !== "All Time" && e.status !== statusFilter) return false;
+      if (envFilter !== "All Time" && e.environment !== envFilter) return false;
+      if (dateRange === "Today" && e.dateGroup !== "Today") return false;
 
       if (search.trim()) {
         const q = search.toLowerCase();
@@ -55,10 +55,10 @@ export function ActivityWorkspace() {
 
   const handleResetFilters = () => {
     setSearch("");
-    setTypeFilter("ALL");
-    setSourceFilter("ALL");
-    setStatusFilter("ALL");
-    setEnvFilter("ALL");
+    setTypeFilter("All Time");
+    setSourceFilter("All Time");
+    setStatusFilter("All Time");
+    setEnvFilter("All Time");
   };
 
   const handleExportCSV = () => {
@@ -99,7 +99,7 @@ export function ActivityWorkspace() {
   const activeFlow = selectedFlowId ? mockFlowTraces[selectedFlowId] || null : null;
 
   return (
-    <div className="space-y-6 pb-12 font-mono">
+    <div className="space-y-6 pb-12 font-sans">
       {/* 1. Page Header */}
       <ActivitySummaryHeader
         viewMode={viewMode}

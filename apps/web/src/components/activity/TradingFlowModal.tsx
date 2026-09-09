@@ -26,9 +26,9 @@ export function TradingFlowModal({
       title={`Trading Pipeline Lifecycle Trace — ${flow.flowId}`}
       size="lg"
     >
-      <div className="space-y-4 font-mono text-xs">
+      <div className="space-y-4 font-sans text-xs">
         {/* Flow Header */}
-        <div className="flex items-center justify-between p-3 rounded bg-surface-1 border border-border">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm">
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-text-primary text-sm">{flow.symbol}</span>
@@ -42,7 +42,7 @@ export function TradingFlowModal({
           </div>
 
           <span
-            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-bold ${
+            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold ${
               flow.overallStatus === "COMPLETED"
                 ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                 : "bg-red-500/10 text-red-400 border border-red-500/20"
@@ -58,7 +58,7 @@ export function TradingFlowModal({
           {flow.steps.map((step, idx) => (
             <div
               key={step.stage}
-              className="relative p-3 rounded bg-surface-2/60 border border-border/40 space-y-1"
+              className="relative p-3 rounded-xl bg-surface-2/60 border border-border/40 space-y-1"
             >
               {/* Step indicator dot */}
               <div className="absolute -left-[18px] top-3.5 w-2 h-2 rounded-full bg-cyan-400 border border-cyan-300" />
@@ -68,7 +68,7 @@ export function TradingFlowModal({
                   <span className="text-[11px] font-bold text-text-primary">
                     {idx + 1}. {step.stage}
                   </span>
-                  <span className="px-1.5 py-0.2 rounded bg-surface-1 text-[10px] text-cyan-400 font-bold">
+                  <span className="px-1.5 py-0.2 rounded-xl bg-surface-1 text-[10px] text-cyan-400 font-bold">
                     {step.objectId}
                   </span>
                 </div>

@@ -71,17 +71,17 @@ export function ActivityTableView({
 
   if (events.length === 0) {
     return (
-      <div className="p-8 text-center bg-surface-1 border border-border rounded-lg">
-        <p className="text-xs font-mono text-text-muted">No activity events matching filters.</p>
+      <div className="p-8 text-center bg-white dark:bg-zinc-900/50 border border-border/50 rounded-xl shadow-sm">
+        <p className="text-xs font-sans text-text-muted">No activity events matching filters.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-border bg-surface-1 font-mono text-xs">
+    <div className="overflow-x-auto rounded-xl border border-border bg-surface-1 font-sans text-xs">
       <Table>
         <TableHeader>
-          <TableRow className="border-b border-border bg-surface-2/60 text-[11px] font-mono text-text-muted select-none">
+          <TableRow className="border-b border-border bg-surface-2/60 text-[11px] font-sans text-text-muted select-none">
             <TableHead
               onClick={() => handleSort("timestamp")}
               className="py-2.5 px-3 cursor-pointer hover:text-gray-200 group transition-colors"
@@ -180,7 +180,7 @@ export function ActivityTableView({
                       e.stopPropagation();
                       onSelectFlow(ev.correlationId!);
                     }}
-                    className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-300 px-1.5 py-0.5 rounded bg-cyan-950/20 border border-cyan-500/20"
+                    className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-300 px-1.5 py-0.5 rounded-xl bg-cyan-950/20 border border-cyan-500/20"
                   >
                     <GitCommit className="w-2.5 h-2.5" />
                     <span>{ev.correlationId}</span>
@@ -200,7 +200,7 @@ export function ActivityTableView({
                     e.stopPropagation();
                     onSelectEvent(ev);
                   }}
-                  className="text-cyan-400 hover:text-cyan-300 p-1 rounded"
+                  className="text-cyan-400 hover:text-cyan-300 p-1 rounded-xl"
                   title="Inspect Event"
                 >
                   <Eye className="w-3.5 h-3.5" />

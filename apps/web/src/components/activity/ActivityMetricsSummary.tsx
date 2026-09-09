@@ -12,8 +12,8 @@ export function ActivityMetricsSummary({
   summary = mockActivitySummary,
 }: ActivityMetricsSummaryProps) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 font-mono text-xs">
-      <div className="p-3 rounded-lg bg-surface-1 border border-border flex flex-col justify-between">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 font-sans text-xs">
+      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm flex flex-col justify-between">
         <span className="text-[10px] text-text-muted uppercase tracking-wider flex items-center gap-1">
           <Activity className="w-3 h-3 text-cyan-400" />
           Events Today
@@ -24,7 +24,7 @@ export function ActivityMetricsSummary({
         <span className="text-[10px] text-text-muted mt-0.5">Recorded actions</span>
       </div>
 
-      <div className="p-3 rounded-lg bg-surface-1 border border-border flex flex-col justify-between">
+      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm flex flex-col justify-between">
         <span className="text-[10px] text-text-muted uppercase tracking-wider flex items-center gap-1">
           <TrendingUp className="w-3 h-3 text-emerald-400" />
           Trading Events
@@ -35,7 +35,7 @@ export function ActivityMetricsSummary({
         <span className="text-[10px] text-text-muted mt-0.5">Orders & fills</span>
       </div>
 
-      <div className="p-3 rounded-lg bg-surface-1 border border-border flex flex-col justify-between">
+      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm flex flex-col justify-between">
         <span className="text-[10px] text-text-muted uppercase tracking-wider flex items-center gap-1">
           <ShieldCheck className="w-3 h-3 text-amber-400" />
           Risk Decisions
@@ -46,7 +46,7 @@ export function ActivityMetricsSummary({
         <span className="text-[10px] text-text-muted mt-0.5">Deterministic gates</span>
       </div>
 
-      <div className="p-3 rounded-lg bg-surface-1 border border-border flex flex-col justify-between">
+      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm flex flex-col justify-between">
         <span className="text-[10px] text-text-muted uppercase tracking-wider flex items-center gap-1">
           <Sparkles className="w-3 h-3 text-cyan-400" />
           Hermes AI Events
@@ -57,7 +57,7 @@ export function ActivityMetricsSummary({
         <span className="text-[10px] text-text-muted mt-0.5">Investigations & scans</span>
       </div>
 
-      <div className="p-3 rounded-lg bg-surface-1 border border-border flex flex-col justify-between">
+      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm flex flex-col justify-between">
         <span className="text-[10px] text-text-muted uppercase tracking-wider flex items-center gap-1">
           <AlertTriangle className="w-3 h-3 text-amber-400" />
           Warnings
@@ -68,7 +68,7 @@ export function ActivityMetricsSummary({
         <span className="text-[10px] text-text-muted mt-0.5">Non-critical retries</span>
       </div>
 
-      <div className="p-3 rounded-lg bg-surface-1 border border-border flex flex-col justify-between">
+      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm flex flex-col justify-between">
         <span className="text-[10px] text-text-muted uppercase tracking-wider flex items-center gap-1">
           <AlertOctagon className="w-3 h-3 text-red-400" />
           Errors

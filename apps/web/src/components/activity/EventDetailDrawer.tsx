@@ -29,9 +29,9 @@ export function EventDetailDrawer({
       title={`Operational Audit Log — ${event.id}`}
       size="lg"
     >
-      <div className="space-y-4 font-mono text-xs">
+      <div className="space-y-4 font-sans text-xs">
         {/* Header Badges */}
-        <div className="flex items-center justify-between p-3 rounded bg-surface-1 border border-border">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm">
           <div className="flex items-center gap-2">
             <ActivityTypeBadge type={event.type} />
             <span className="text-text-muted">·</span>
@@ -45,19 +45,19 @@ export function EventDetailDrawer({
 
         {/* Metadata Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-          <div className="p-2 rounded bg-surface-2/60 border border-border/40">
+          <div className="p-2 rounded-xl bg-surface-2/60 border border-border/40">
             <span className="text-[10px] text-text-muted block">Timestamp</span>
             <span className="font-bold text-text-primary mt-0.5 block">{event.timeFormatted}</span>
           </div>
-          <div className="p-2 rounded bg-surface-2/60 border border-border/40">
+          <div className="p-2 rounded-xl bg-surface-2/60 border border-border/40">
             <span className="text-[10px] text-text-muted block">Environment</span>
             <span className="font-bold text-cyan-400 mt-0.5 block">{event.environment}</span>
           </div>
-          <div className="p-2 rounded bg-surface-2/60 border border-border/40">
+          <div className="p-2 rounded-xl bg-surface-2/60 border border-border/40">
             <span className="text-[10px] text-text-muted block">Object Type</span>
             <span className="font-bold text-text-primary mt-0.5 block">{event.objectType}</span>
           </div>
-          <div className="p-2 rounded bg-surface-2/60 border border-border/40">
+          <div className="p-2 rounded-xl bg-surface-2/60 border border-border/40">
             <span className="text-[10px] text-text-muted block">Correlation ID</span>
             {event.correlationId ? (
               <span className="font-bold text-cyan-400 mt-0.5 block">{event.correlationId}</span>
@@ -68,7 +68,7 @@ export function EventDetailDrawer({
         </div>
 
         {/* Summary & Description */}
-        <div className="p-3 rounded bg-surface-1 border border-border/60 space-y-2">
+        <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm/60 space-y-2">
           <span className="text-[10px] text-text-muted uppercase tracking-wider block">Operational Summary</span>
           <p className="text-text-primary text-xs leading-relaxed font-semibold">
             {event.summary}
@@ -80,7 +80,7 @@ export function EventDetailDrawer({
 
         {/* State Transitions if available */}
         {event.details.beforeState && event.details.afterState && (
-          <div className="p-3 rounded bg-cyan-950/20 border border-cyan-500/30 flex items-center justify-between">
+          <div className="p-3 rounded-xl bg-cyan-950/20 border border-cyan-500/30 flex items-center justify-between">
             <div>
               <span className="text-[10px] text-text-muted block">Previous State</span>
               <span className="font-medium text-text-primary">{event.details.beforeState}</span>
@@ -99,7 +99,7 @@ export function EventDetailDrawer({
             <span className="text-[10px] text-text-muted uppercase tracking-wider block">Attached Telemetry Metrics</span>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {Object.entries(event.details.metrics).map(([k, v]) => (
-                <div key={k} className="p-2 rounded bg-surface-2/40 border border-border/30">
+                <div key={k} className="p-2 rounded-xl bg-surface-2/40 border border-border/30">
                   <span className="text-[10px] text-text-muted block">{k}</span>
                   <span className="font-bold text-text-primary block mt-0.5">{v}</span>
                 </div>
@@ -129,7 +129,7 @@ export function EventDetailDrawer({
               <Link
                 key={link.id}
                 href={link.url}
-                className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-cyan-400 px-2.5 py-1.5 rounded bg-surface-2 border border-border transition-colors"
+                className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-cyan-400 px-2.5 py-1.5 rounded-xl bg-surface-2 border border-border transition-colors"
               >
                 <span>Inspect {link.id}</span>
                 <ArrowUpRight className="w-3 h-3" />

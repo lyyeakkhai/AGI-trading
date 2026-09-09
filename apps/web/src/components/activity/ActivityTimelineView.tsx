@@ -19,15 +19,15 @@ export function ActivityTimelineView({
 }: ActivityTimelineViewProps) {
   if (events.length === 0) {
     return (
-      <div className="p-8 text-center bg-surface-1 border border-border rounded-lg">
-        <p className="text-xs font-mono text-text-muted">No activity events found matching criteria.</p>
+      <div className="p-8 text-center bg-white dark:bg-zinc-900/50 border border-border/50 rounded-xl shadow-sm">
+        <p className="text-xs font-sans text-text-muted">No activity events found matching criteria.</p>
       </div>
     );
   }
 
   // Group events by dateGroup
   const groups: { title: string; items: ActivityEvent[] }[] = [];
-  ["TODAY", "YESTERDAY", "EARLIER"].forEach((grp) => {
+  ["Today", "Yesterday", "Earlier"].forEach((grp) => {
     const matched = events.filter((e) => e.dateGroup === grp);
     if (matched.length > 0) {
       groups.push({ title: grp, items: matched });
@@ -35,7 +35,7 @@ export function ActivityTimelineView({
   });
 
   return (
-    <div className="space-y-6 font-mono text-xs">
+    <div className="space-y-6 font-sans text-xs">
       {groups.map((grp) => (
         <div key={grp.title} className="space-y-2.5">
           <div className="flex items-center gap-2 pb-1 border-b border-border/40">
@@ -54,7 +54,7 @@ export function ActivityTimelineView({
               return (
                 <div
                   key={ev.id}
-                  className="relative group p-3 rounded-lg bg-surface-1 border border-border/60 hover:border-cyan-500/40 hover:bg-surface-1/90 transition-colors"
+                  className="relative group p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-border/50 shadow-sm/60 hover:border-cyan-500/40 hover:bg-surface-1/90 transition-colors"
                 >
                   {/* Timeline dot */}
                   <div
@@ -79,7 +79,7 @@ export function ActivityTimelineView({
                         {ev.source}
                       </span>
                       <span className="text-text-muted">·</span>
-                      <span className="px-1.5 py-0.2 rounded bg-surface-2 text-[10px] font-bold text-cyan-400 border border-border/40">
+                      <span className="px-1.5 py-0.2 rounded-xl bg-surface-2 text-[10px] font-bold text-cyan-400 border border-border/40">
                         {ev.objectId}
                       </span>
                     </div>
@@ -92,7 +92,7 @@ export function ActivityTimelineView({
                             e.stopPropagation();
                             onSelectFlow(ev.correlationId!);
                           }}
-                          className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-300 px-1.5 py-0.5 rounded bg-cyan-950/20 border border-cyan-500/20 transition-colors"
+                          className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-300 px-1.5 py-0.5 rounded-xl bg-cyan-950/20 border border-cyan-500/20 transition-colors"
                           title="View complete trading pipeline flow"
                         >
                           <GitCommit className="w-2.5 h-2.5" />
