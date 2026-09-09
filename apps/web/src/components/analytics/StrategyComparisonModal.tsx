@@ -57,7 +57,7 @@ export function StrategyComparisonModal({
                   className={`px-2 py-1 rounded text-xs font-sans border transition-colors ${
                     isSelected
                       ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40 font-semibold"
-                      : "bg-white dark:bg-zinc-900/50 text-gray-400 border-zinc-200 dark:border-zinc-200 dark:border-white/10 hover:text-gray-200"
+                      : "bg-white dark:bg-zinc-900/50 text-gray-400 border-zinc-200 dark:border-white/10 hover:text-gray-200"
                   }`}
                 >
                   {s.name.split(" ")[0]}
@@ -67,10 +67,10 @@ export function StrategyComparisonModal({
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded border border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50">
+        <div className="overflow-x-auto rounded border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50/60">
+              <tr className="border-b border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50">
                 <th className="p-3 text-text-muted font-normal text-xs w-44">METRIC</th>
                 {comparedStrategies.map((s) => (
                   <th key={s.id} className="p-3 text-text-primary font-bold text-xs">

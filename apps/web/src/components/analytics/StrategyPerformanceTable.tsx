@@ -12,8 +12,8 @@ interface StrategyPerformanceTableProps {
 
 export function StrategyPerformanceTable({ strategies }: StrategyPerformanceTableProps) {
   return (
-    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col gap-3">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2.5 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col gap-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2.5 border-b border-zinc-200 dark:border-white/10">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded bg-cyan-500/10 border border-zinc-200 dark:border-cyan-900/30 text-cyan-400">
             <Layers className="w-3.5 h-3.5" />
@@ -30,17 +30,17 @@ export function StrategyPerformanceTable({ strategies }: StrategyPerformanceTabl
 
         <Link
           href="/strategies"
-          className="inline-flex items-center gap-1 text-xs font-sans text-cyan-400 hover:text-cyan-300 px-2.5 py-1 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 transition-colors"
+          className="inline-flex items-center gap-1 text-xs font-sans text-cyan-400 hover:text-cyan-300 px-2.5 py-1 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 transition-colors"
         >
           <span>View Strategy Registry</span>
           <ArrowUpRight className="w-3 h-3" />
         </Link>
       </div>
 
-      <div className="overflow-x-auto rounded border border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50/20">
+      <div className="overflow-x-auto rounded border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50/20">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50/60 text-xs font-sans text-text-muted">
+            <TableRow className="border-b border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50 text-xs font-sans text-text-muted">
               <TableHead className="py-2.5 px-3">STRATEGY</TableHead>
               <TableHead className="py-2.5 px-3 text-right">TRADES</TableHead>
               <TableHead className="py-2.5 px-3 text-right">NET P&L</TableHead>
@@ -56,7 +56,7 @@ export function StrategyPerformanceTable({ strategies }: StrategyPerformanceTabl
             {strategies.map((s) => (
               <TableRow
                 key={s.id}
-                className="border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10 hover:bg-white dark:bg-zinc-900/50/40 text-xs font-sans transition-colors"
+                className="border-b border-zinc-200 dark:border-white/10 hover:bg-white dark:bg-zinc-900/50 text-xs font-sans transition-colors"
               >
                 <TableCell className="py-2.5 px-3 font-semibold text-text-primary">
                   <Link href="/strategies" className="hover:text-cyan-400 transition-colors flex items-center gap-1">

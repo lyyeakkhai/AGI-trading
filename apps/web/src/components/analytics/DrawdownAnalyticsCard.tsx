@@ -30,8 +30,8 @@ export function DrawdownAnalyticsCard({ data }: DrawdownAnalyticsCardProps) {
   const areaD = `${pathD} L ${points[points.length - 1].x} ${paddingY} L ${points[0].x} ${paddingY} Z`;
 
   return (
-    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col justify-between h-full">
-      <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col justify-between h-full">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-200 dark:border-white/10">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded bg-red-500/10 border border-red-500/20 text-red-400">
             <ShieldAlert className="w-3.5 h-3.5" />
@@ -52,19 +52,19 @@ export function DrawdownAnalyticsCard({ data }: DrawdownAnalyticsCardProps) {
 
       {/* Stats row */}
       <div className="grid grid-cols-4 gap-2 mb-2 text-xs font-sans">
-        <div className="p-2 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+        <div className="p-2 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
           <span className="text-xs text-text-muted block">Current Dip</span>
           <span className="font-bold text-red-400">{data.currentDrawdown.toFixed(1)}%</span>
         </div>
-        <div className="p-2 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+        <div className="p-2 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
           <span className="text-xs text-text-muted block">Average Dip</span>
           <span className="font-bold text-text-primary">{data.averageDrawdown.toFixed(1)}%</span>
         </div>
-        <div className="p-2 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+        <div className="p-2 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
           <span className="text-xs text-text-muted block">Longest Cycle</span>
           <span className="font-bold text-amber-400">{data.longestDrawdown}</span>
         </div>
-        <div className="p-2 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+        <div className="p-2 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
           <span className="text-xs text-text-muted block">Avg Recovery</span>
           <span className="font-bold text-emerald-400">{data.recoveryTime}</span>
         </div>

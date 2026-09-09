@@ -10,8 +10,8 @@ interface ConfidenceCalibrationCardProps {
 
 export function ConfidenceCalibrationCard({ data }: ConfidenceCalibrationCardProps) {
   return (
-    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col justify-between h-full font-sans text-xs">
-      <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col justify-between h-full font-sans text-xs">
+      <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-zinc-200 dark:border-white/10">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded bg-cyan-500/10 border border-zinc-200 dark:border-cyan-900/30 text-cyan-400">
             <Sparkles className="w-3.5 h-3.5" />

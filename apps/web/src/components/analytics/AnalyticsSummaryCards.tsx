@@ -30,7 +30,7 @@ export function AnalyticsSummaryCards({ summary }: AnalyticsSummaryCardsProps) {
       </div>
 
       {/* 2. Profit Factor */}
-      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col justify-between">
+      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col justify-between">
         <span className="text-xs font-sans font-medium text-text-muted flex items-center gap-1">
           <Activity className="w-3 h-3 text-cyan-400" />
           Profit Factor
@@ -46,7 +46,7 @@ export function AnalyticsSummaryCards({ summary }: AnalyticsSummaryCardsProps) {
       </div>
 
       {/* 3. Win Rate */}
-      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col justify-between">
+      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col justify-between">
         <span className="text-xs font-sans font-medium text-text-muted flex items-center gap-1">
           <Target className="w-3 h-3 text-cyan-400" />
           Win Rate
@@ -62,7 +62,7 @@ export function AnalyticsSummaryCards({ summary }: AnalyticsSummaryCardsProps) {
       </div>
 
       {/* 4. Max Drawdown */}
-      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col justify-between">
+      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col justify-between">
         <span className="text-xs font-sans font-medium text-text-muted flex items-center gap-1">
           <ShieldAlert className="w-3 h-3 text-red-400" />
           Max Drawdown
@@ -78,7 +78,7 @@ export function AnalyticsSummaryCards({ summary }: AnalyticsSummaryCardsProps) {
       </div>
 
       {/* 5. Risk-Adjusted Quality */}
-      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col justify-between">
+      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col justify-between">
         <span className="text-xs font-sans font-medium text-text-muted flex items-center gap-1">
           <Award className="w-3 h-3 text-emerald-400" />
           Risk-Adjusted

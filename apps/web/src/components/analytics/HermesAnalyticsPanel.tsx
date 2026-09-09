@@ -11,7 +11,7 @@ interface HermesAnalyticsPanelProps {
 export function HermesAnalyticsPanel({ review }: HermesAnalyticsPanelProps) {
   return (
     <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-cyan-900/30 bg-gradient-to-br from-zinc-100 dark:from-zinc-900 to-cyan-950/10 flex flex-col justify-between font-sans text-xs">
-      <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+      <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-zinc-200 dark:border-white/10">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded bg-cyan-500/10 border border-zinc-200 dark:border-cyan-900/30 text-cyan-400">
             <Sparkles className="w-3.5 h-3.5 animate-pulse" />
@@ -37,7 +37,7 @@ export function HermesAnalyticsPanel({ review }: HermesAnalyticsPanelProps) {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <div className="p-2.5 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex items-start gap-2">
+          <div className="p-2.5 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex items-start gap-2">
             <Trophy className="w-4 h-4 text-emerald-400 mt-0.5" />
             <div>
               <span className="text-xs text-text-muted block">Top Strategy</span>
@@ -47,7 +47,7 @@ export function HermesAnalyticsPanel({ review }: HermesAnalyticsPanelProps) {
             </div>
           </div>
 
-          <div className="p-2.5 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex items-start gap-2">
+          <div className="p-2.5 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex items-start gap-2">
             <Compass className="w-4 h-4 text-cyan-400 mt-0.5" />
             <div>
               <span className="text-xs text-text-muted block">Best Regime</span>
@@ -57,7 +57,7 @@ export function HermesAnalyticsPanel({ review }: HermesAnalyticsPanelProps) {
             </div>
           </div>
 
-          <div className="p-2.5 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex items-start gap-2">
+          <div className="p-2.5 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5" />
             <div>
               <span className="text-xs text-text-muted block">Friction Risk</span>

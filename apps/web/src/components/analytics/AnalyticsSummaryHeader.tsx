@@ -29,7 +29,7 @@ export function AnalyticsSummaryHeader({
   };
 
   return (
-    <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-background/50 backdrop-blur-sm pb-5 pt-1">
+    <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-200 dark:border-white/10 bg-background/50 backdrop-blur-sm pb-5 pt-1">
       <div>
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-cyan-500/10 border border-zinc-200 dark:border-cyan-900/30 text-cyan-400">
@@ -51,7 +51,7 @@ export function AnalyticsSummaryHeader({
 
       <div className="flex flex-wrap items-center gap-2.5 font-sans text-xs">
         {/* Timeframe Range Selector */}
-        <div className="flex items-center gap-1 bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 rounded p-0.5">
+        <div className="flex items-center gap-1 bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 rounded p-0.5">
           {["7D", "30D", "90D", "YTD", "ALL"].map((range) => (
             <button
               key={range}
@@ -72,7 +72,7 @@ export function AnalyticsSummaryHeader({
           <Button
             variant="secondary"
             onClick={onOpenCompare}
-            className="text-xs py-1.5 px-3 flex items-center gap-1.5 border-zinc-200 dark:border-zinc-200 dark:border-white/10 hover:border-cyan-500/40"
+            className="text-xs py-1.5 px-3 flex items-center gap-1.5 border-zinc-200 dark:border-white/10 hover:border-cyan-500/40"
           >
             <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
             <span>Compare</span>
@@ -83,7 +83,7 @@ export function AnalyticsSummaryHeader({
         <Button
           variant="secondary"
           onClick={handleExport}
-          className="text-xs py-1.5 px-3 flex items-center gap-1.5 border-zinc-200 dark:border-zinc-200 dark:border-white/10 hover:border-cyan-500/40"
+          className="text-xs py-1.5 px-3 flex items-center gap-1.5 border-zinc-200 dark:border-white/10 hover:border-cyan-500/40"
         >
           <Download className="w-3.5 h-3.5 text-text-muted" />
           <span>Export</span>

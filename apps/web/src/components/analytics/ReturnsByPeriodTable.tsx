@@ -24,8 +24,8 @@ export function ReturnsByPeriodTable({ periods }: ReturnsByPeriodTableProps) {
   const activePeriods = periodMode === "monthly" ? periods : weeklyData;
 
   return (
-    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col gap-3">
-      <div className="flex items-center justify-between pb-2.5 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col gap-3">
+      <div className="flex items-center justify-between pb-2.5 border-b border-zinc-200 dark:border-white/10">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded bg-cyan-500/10 border border-zinc-200 dark:border-cyan-900/30 text-cyan-400">
             <Calendar className="w-3.5 h-3.5" />
@@ -41,7 +41,7 @@ export function ReturnsByPeriodTable({ periods }: ReturnsByPeriodTableProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex rounded bg-white dark:bg-zinc-900/50 p-0.5 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 text-xs font-sans">
+          <div className="flex rounded bg-white dark:bg-zinc-900/50 p-0.5 border border-zinc-200 dark:border-white/10 text-xs font-sans">
             <button
               type="button"
               onClick={() => setPeriodMode("monthly")}
@@ -68,10 +68,10 @@ export function ReturnsByPeriodTable({ periods }: ReturnsByPeriodTableProps) {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded border border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50/20">
+      <div className="overflow-x-auto rounded border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50/20">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50/60 text-xs font-sans text-text-muted">
+            <TableRow className="border-b border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/50 text-xs font-sans text-text-muted">
               <TableHead className="py-2 px-3">PERIOD</TableHead>
               <TableHead className="py-2 px-3 text-right">RETURN</TableHead>
               <TableHead className="py-2 px-3 text-right">NET P&L</TableHead>
@@ -85,7 +85,7 @@ export function ReturnsByPeriodTable({ periods }: ReturnsByPeriodTableProps) {
               return (
                 <TableRow
                   key={p.period}
-                  className="border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10 hover:bg-white dark:bg-zinc-900/50/40 text-xs font-sans transition-colors"
+                  className="border-b border-zinc-200 dark:border-white/10 hover:bg-white dark:bg-zinc-900/50 text-xs font-sans transition-colors"
                 >
                   <TableCell className="py-2 px-3 font-semibold text-text-primary">
                     {p.period}

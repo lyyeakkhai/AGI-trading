@@ -12,8 +12,8 @@ export function PnlDistributionChart({ distribution }: PnlDistributionChartProps
   const maxCount = Math.max(...distribution.map((d) => d.count), 1);
 
   return (
-    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col justify-between h-full">
-      <div className="flex items-center justify-between pb-2 mb-3 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col justify-between h-full">
+      <div className="flex items-center justify-between pb-2 mb-3 border-b border-zinc-200 dark:border-white/10">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded bg-cyan-500/10 border border-zinc-200 dark:border-cyan-900/30 text-cyan-400">
             <BarChart2 className="w-3.5 h-3.5" />

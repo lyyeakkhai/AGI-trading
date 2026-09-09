@@ -16,8 +16,8 @@ export function TradePerformance({ summary, className = "" }: TradePerformancePr
       : "N/A";
 
   return (
-    <div className={`p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10-color space-y-4 ${className}`}>
-      <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10-color/60 pb-3">
+    <div className={`p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 space-y-4 ${className}`}>
+      <div className="flex items-center justify-between border-b border-zinc-200 dark:border-white/10 pb-3">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded bg-cyan-500/10 border border-zinc-200 dark:border-cyan-900/30 text-cyan-400">
             <Scale className="w-3.5 h-3.5" />
@@ -41,7 +41,7 @@ export function TradePerformance({ summary, className = "" }: TradePerformancePr
       {/* Primary Payoff Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs font-sans">
         {/* Average Winner */}
-        <div className="p-3 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10-color/80">
+        <div className="p-3 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
           <div className="flex items-center gap-1.5 text-profit text-xs font-semibold">
             <TrendingUp size={12} />
             <span>Avg Winner</span>
@@ -55,7 +55,7 @@ export function TradePerformance({ summary, className = "" }: TradePerformancePr
         </div>
 
         {/* Average Loser */}
-        <div className="p-3 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10-color/80">
+        <div className="p-3 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
           <div className="flex items-center gap-1.5 text-loss text-xs font-semibold">
             <TrendingDown size={12} />
             <span>Avg Loser</span>
@@ -69,7 +69,7 @@ export function TradePerformance({ summary, className = "" }: TradePerformancePr
         </div>
 
         {/* Largest Winner */}
-        <div className="p-3 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10-color/80">
+        <div className="p-3 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
           <div className="flex items-center gap-1.5 text-profit text-xs font-semibold">
             <Award size={12} />
             <span>Max Gain</span>
@@ -81,7 +81,7 @@ export function TradePerformance({ summary, className = "" }: TradePerformancePr
         </div>
 
         {/* Largest Loser */}
-        <div className="p-3 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10-color/80">
+        <div className="p-3 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
           <div className="flex items-center gap-1.5 text-loss text-xs font-semibold">
             <AlertCircle size={12} />
             <span>Max Loss</span>
@@ -93,7 +93,7 @@ export function TradePerformance({ summary, className = "" }: TradePerformancePr
         </div>
 
         {/* Average Holding Time */}
-        <div className="p-3 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10-color/80">
+        <div className="p-3 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
           <div className="flex items-center gap-1.5 text-cyan-400 text-xs font-semibold">
             <Clock size={12} />
             <span>Avg Hold Time</span>
@@ -105,7 +105,7 @@ export function TradePerformance({ summary, className = "" }: TradePerformancePr
         </div>
 
         {/* Trade Expectancy */}
-        <div className="p-3 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10-color/80">
+        <div className="p-3 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
           <div className="flex items-center gap-1.5 text-cyan-400 text-xs font-semibold">
             <Scale size={12} />
             <span>Expectancy</span>
@@ -118,7 +118,7 @@ export function TradePerformance({ summary, className = "" }: TradePerformancePr
       </div>
 
       {/* Friction & Cost Footnote */}
-      <div className="flex flex-wrap items-center justify-between gap-2 p-2 rounded bg-white dark:bg-zinc-900/50/40 border border-zinc-200 dark:border-zinc-200 dark:border-white/10-color/40 text-xs font-sans text-gray-400">
+      <div className="flex flex-wrap items-center justify-between gap-2 p-2 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 text-xs font-sans text-gray-400">
         <div>
           Gross Profit: <span className="font-bold text-gray-200">${summary.grossPnl.toLocaleString()}</span>
         </div>

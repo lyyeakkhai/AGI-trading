@@ -16,8 +16,8 @@ export function DirectionalConsistencyCard({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans text-xs">
       {/* Long vs Short Directional Breakdown */}
-      <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col justify-between">
-        <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+      <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col justify-between">
+        <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-zinc-200 dark:border-white/10">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded bg-cyan-500/10 border border-zinc-200 dark:border-cyan-900/30 text-cyan-400">
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -31,7 +31,7 @@ export function DirectionalConsistencyCard({
 
         <div className="grid grid-cols-2 gap-2.5">
           {/* Long */}
-          <div className="p-3 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+          <div className="p-3 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
             <div className="flex items-center gap-1 text-emerald-400 font-bold mb-1.5">
               <ArrowUpRight className="w-3.5 h-3.5" />
               <span>Long Trades ({directional.long.trades})</span>
@@ -50,7 +50,7 @@ export function DirectionalConsistencyCard({
           </div>
 
           {/* Short */}
-          <div className="p-3 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+          <div className="p-3 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
             <div className="flex items-center gap-1 text-cyan-400 font-bold mb-1.5">
               <ArrowDownRight className="w-3.5 h-3.5" />
               <span>Short Trades ({directional.short.trades})</span>
@@ -71,8 +71,8 @@ export function DirectionalConsistencyCard({
       </div>
 
       {/* Performance Consistency Metrics */}
-      <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col justify-between">
-        <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+      <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col justify-between">
+        <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-zinc-200 dark:border-white/10">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
               <ShieldCheck className="w-3.5 h-3.5" />
@@ -87,21 +87,21 @@ export function DirectionalConsistencyCard({
         </div>
 
         <div className="grid grid-cols-3 gap-2 text-center">
-          <div className="p-2 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+          <div className="p-2 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
             <span className="text-xs text-text-muted block">Profitable Days</span>
             <span className="text-xs font-bold text-text-primary block mt-1">
               {consistency.profitableDaysRatio}
             </span>
           </div>
 
-          <div className="p-2 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+          <div className="p-2 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
             <span className="text-xs text-text-muted block">Profitable Weeks</span>
             <span className="text-xs font-bold text-emerald-400 block mt-1">
               {consistency.profitableWeeksRatio}
             </span>
           </div>
 
-          <div className="p-2 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+          <div className="p-2 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
             <span className="text-xs text-text-muted block">Win/Loss Streak</span>
             <span className="text-xs font-bold text-text-primary block mt-1">
               {consistency.winningStreak}W / {consistency.losingStreak}L

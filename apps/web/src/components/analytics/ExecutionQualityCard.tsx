@@ -13,8 +13,8 @@ export function ExecutionQualityCard({ summary }: ExecutionQualityCardProps) {
   const frictionPercent = ((frictionTotal / summary.grossPnl) * 100).toFixed(1);
 
   return (
-    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-200 dark:border-white/10 flex flex-col justify-between h-full font-sans text-xs">
-      <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10 flex flex-col justify-between h-full font-sans text-xs">
+      <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-zinc-200 dark:border-white/10">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400">
             <Sliders className="w-3.5 h-3.5" />
@@ -34,7 +34,7 @@ export function ExecutionQualityCard({ summary }: ExecutionQualityCardProps) {
       </div>
 
       <div className="grid grid-cols-3 gap-2.5 mb-2">
-        <div className="p-2.5 rounded bg-white dark:bg-zinc-900/50/60 border border-zinc-200 dark:border-zinc-200 dark:border-white/10">
+        <div className="p-2.5 rounded bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/10">
           <span className="text-xs text-text-muted block">Theoretical Gross</span>
           <span className="text-base font-bold text-emerald-400">
             +${summary.grossPnl.toLocaleString()}
