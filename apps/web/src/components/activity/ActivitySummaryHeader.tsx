@@ -22,10 +22,10 @@ export function ActivitySummaryHeader({
   onExportJSON,
 }: ActivitySummaryHeaderProps) {
   return (
-    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-gray-200 dark:border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-sm pb-5 pt-1">
+    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-gray-200 border-white/5 bg-white/50 dark:bg-black/50 backdrop-blur-sm pb-5 pt-1">
       <div>
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+          <div className="p-2 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
             <Activity className="w-5 h-5" />
           </div>
           <div>
@@ -34,7 +34,7 @@ export function ActivitySummaryHeader({
                 Activity & Audit
               </h1>
               <EnvironmentBadge mode="PAPER" />
-              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-xl text-[11px] font-sans font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-sans font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <ShieldCheck className="w-3 h-3 text-emerald-400" />
                 SYSTEM OPERATIONAL
               </span>
@@ -48,12 +48,12 @@ export function ActivitySummaryHeader({
 
       <div className="flex flex-wrap items-center gap-2.5 font-sans text-xs">
         {/* Date Range Selector */}
-        <div className="flex items-center gap-1 bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10/50 shadow-sm rounded-xl p-0.5">
+        <div className="flex items-center gap-1 bg-[#0E0E0E] border border-white/5 rounded-md p-0.5">
           {["Today", "7 Days", "30 Days", "All Time"].map((range) => (
             <button
               key={range}
               onClick={() => onDateRangeChange(range)}
-              className={`px-2.5 py-1 rounded-xl text-xs transition-colors ${
+              className={`px-2.5 py-1 rounded-md text-xs transition-colors ${
                 dateRange === range
                   ? "bg-cyan-500/20 text-cyan-300 font-bold"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-zinc-50"
@@ -65,10 +65,10 @@ export function ActivitySummaryHeader({
         </div>
 
         {/* View Switcher: Timeline vs Table */}
-        <div className="flex items-center gap-1 bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10/50 shadow-sm rounded-xl p-0.5">
+        <div className="flex items-center gap-1 bg-[#0E0E0E] border border-white/5 rounded-md p-0.5">
           <button
             onClick={() => onViewModeChange("timeline")}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs transition-colors ${
               viewMode === "timeline"
                 ? "bg-cyan-500/20 text-cyan-300 font-bold"
                 : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-zinc-50"
@@ -79,7 +79,7 @@ export function ActivitySummaryHeader({
           </button>
           <button
             onClick={() => onViewModeChange("table")}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs transition-colors ${
               viewMode === "table"
                 ? "bg-cyan-500/20 text-cyan-300 font-bold"
                 : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:text-zinc-50"
@@ -91,11 +91,11 @@ export function ActivitySummaryHeader({
         </div>
 
         {/* Export Buttons */}
-        <div className="flex items-center gap-1 bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10/50 shadow-sm rounded-xl p-0.5">
+        <div className="flex items-center gap-1 bg-[#0E0E0E] border border-white/5 rounded-md p-0.5">
           <button
             type="button"
             onClick={onExportCSV}
-            className="px-2.5 py-1 rounded-xl text-[11px] text-gray-300 hover:text-white hover:bg-gray-100 dark:bg-zinc-800/50 transition-colors font-semibold"
+            className="px-2.5 py-1 rounded-md text-[11px] text-gray-300 hover:text-white hover:bg-zinc-900/80 transition-colors font-semibold"
             title="Export filtered events as CSV"
           >
             CSV
@@ -103,7 +103,7 @@ export function ActivitySummaryHeader({
           <button
             type="button"
             onClick={onExportJSON}
-            className="px-2.5 py-1 rounded-xl text-[11px] text-gray-300 hover:text-white hover:bg-gray-100 dark:bg-zinc-800/50 transition-colors font-semibold"
+            className="px-2.5 py-1 rounded-md text-[11px] text-gray-300 hover:text-white hover:bg-zinc-900/80 transition-colors font-semibold"
             title="Export filtered events as JSON"
           >
             JSON

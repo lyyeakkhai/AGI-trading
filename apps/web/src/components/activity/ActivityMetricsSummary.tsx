@@ -8,76 +8,79 @@ interface ActivityMetricsSummaryProps {
   summary?: typeof mockActivitySummary;
 }
 
+const MetricCard = ({
+  icon,
+  label,
+  value,
+  valueColor,
+  subLabel,
+  subLabelColor = "text-zinc-500",
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: React.ReactNode;
+  valueColor: string;
+  subLabel: string;
+  subLabelColor?: string;
+}) => (
+  <div className="px-4 py-3 bg-[#0E0E0E] border-r border-white/5 last:border-r-0 flex flex-col gap-1 min-w-0">
+    <span className="text-[10px] text-zinc-500 uppercase tracking-widest flex items-center gap-1.5 font-sans">
+      {icon}
+      {label}
+    </span>
+    <span className={`text-xl font-mono font-bold leading-none ${valueColor}`}>{value}</span>
+    <span className={`text-[10px] font-sans ${subLabelColor}`}>{subLabel}</span>
+  </div>
+);
+
 export function ActivityMetricsSummary({
   summary = mockActivitySummary,
 }: ActivityMetricsSummaryProps) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 font-sans text-xs">
-      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10/50 shadow-sm flex flex-col justify-between">
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1">
-          <Activity className="w-3 h-3 text-cyan-400" />
-          Events Today
-        </span>
-        <span className="text-lg font-bold text-gray-900 dark:text-zinc-50 mt-1">
-          {summary.eventsToday}
-        </span>
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Recorded actions</span>
-      </div>
-
-      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10/50 shadow-sm flex flex-col justify-between">
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1">
-          <TrendingUp className="w-3 h-3 text-emerald-400" />
-          Trading Events
-        </span>
-        <span className="text-lg font-bold text-emerald-400 mt-1">
-          {summary.tradingEvents}
-        </span>
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Orders & fills</span>
-      </div>
-
-      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10/50 shadow-sm flex flex-col justify-between">
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1">
-          <ShieldCheck className="w-3 h-3 text-amber-400" />
-          Risk Decisions
-        </span>
-        <span className="text-lg font-bold text-gray-900 dark:text-zinc-50 mt-1">
-          {summary.riskDecisions}
-        </span>
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Deterministic gates</span>
-      </div>
-
-      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10/50 shadow-sm flex flex-col justify-between">
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1">
-          <Sparkles className="w-3 h-3 text-cyan-400" />
-          Hermes AI Events
-        </span>
-        <span className="text-lg font-bold text-cyan-400 mt-1">
-          {summary.hermesEvents}
-        </span>
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Investigations & scans</span>
-      </div>
-
-      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10/50 shadow-sm flex flex-col justify-between">
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1">
-          <AlertTriangle className="w-3 h-3 text-amber-400" />
-          Warnings
-        </span>
-        <span className="text-lg font-bold text-amber-400 mt-1">
-          {summary.warnings}
-        </span>
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Non-critical retries</span>
-      </div>
-
-      <div className="p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10/50 shadow-sm flex flex-col justify-between">
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1">
-          <AlertOctagon className="w-3 h-3 text-red-400" />
-          Errors
-        </span>
-        <span className="text-lg font-bold text-gray-900 dark:text-zinc-50 mt-1">
-          {summary.errors}
-        </span>
-        <span className="text-[10px] text-emerald-400 mt-0.5">Zero critical halts</span>
-      </div>
+    <div className="flex rounded-md bg-[#0E0E0E] border border-white/5 overflow-hidden">
+      <MetricCard
+        icon={<Activity className="w-3 h-3 text-cyan-400" />}
+        label="Events Today"
+        value={summary.eventsToday}
+        valueColor="text-zinc-100"
+        subLabel="Recorded actions"
+      />
+      <MetricCard
+        icon={<TrendingUp className="w-3 h-3 text-emerald-400" />}
+        label="Trading Events"
+        value={summary.tradingEvents}
+        valueColor="text-emerald-400"
+        subLabel="Orders & fills"
+      />
+      <MetricCard
+        icon={<ShieldCheck className="w-3 h-3 text-amber-400" />}
+        label="Risk Decisions"
+        value={summary.riskDecisions}
+        valueColor="text-zinc-100"
+        subLabel="Deterministic gates"
+      />
+      <MetricCard
+        icon={<Sparkles className="w-3 h-3 text-cyan-400" />}
+        label="Hermes AI Events"
+        value={summary.hermesEvents}
+        valueColor="text-cyan-400"
+        subLabel="Investigations & scans"
+      />
+      <MetricCard
+        icon={<AlertTriangle className="w-3 h-3 text-amber-400" />}
+        label="Warnings"
+        value={summary.warnings}
+        valueColor="text-amber-400"
+        subLabel="Non-critical retries"
+      />
+      <MetricCard
+        icon={<AlertOctagon className="w-3 h-3 text-red-400" />}
+        label="Errors"
+        value={summary.errors}
+        valueColor="text-zinc-100"
+        subLabel="Zero critical halts"
+        subLabelColor="text-emerald-500"
+      />
     </div>
   );
 }

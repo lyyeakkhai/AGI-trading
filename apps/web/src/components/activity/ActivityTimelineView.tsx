@@ -19,7 +19,7 @@ export function ActivityTimelineView({
 }: ActivityTimelineViewProps) {
   if (events.length === 0) {
     return (
-      <div className="p-8 text-center bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10 rounded-xl shadow-sm">
+      <div className="p-8 text-center bg-[#0E0E0E] border border-white/5 rounded-md">
         <p className="text-xs font-sans text-gray-500 dark:text-gray-400">No activity events found matching criteria.</p>
       </div>
     );
@@ -38,7 +38,7 @@ export function ActivityTimelineView({
     <div className="space-y-6 font-sans text-xs">
       {groups.map((grp) => (
         <div key={grp.title} className="space-y-2.5">
-          <div className="flex items-center gap-2 pb-1 border-b border-gray-200 dark:border-white/10/40">
+          <div className="flex items-center gap-2 pb-1 border-b border-gray-200 border-white/5/40">
             <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               {grp.title}
             </span>
@@ -54,7 +54,7 @@ export function ActivityTimelineView({
               return (
                 <div
                   key={ev.id}
-                  className="relative group p-3 rounded-xl bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10 shadow-sm hover:border-cyan-500/40 hover:bg-gray-50 dark:hover:bg-zinc-800/60 transition-colors"
+                  className="relative group p-3 rounded-md bg-[#0E0E0E] border border-white/5 hover:border-cyan-500/40 hover:bg-zinc-800/50 transition-colors"
                 >
                   {/* Timeline dot */}
                   <div
@@ -79,7 +79,7 @@ export function ActivityTimelineView({
                         {ev.source}
                       </span>
                       <span className="text-gray-500 dark:text-gray-400">·</span>
-                      <span className="px-1.5 py-0.2 rounded-xl bg-gray-100 dark:bg-zinc-800/50 text-[10px] font-bold text-cyan-400 border border-gray-200 dark:border-white/10/40">
+                      <span className="px-1.5 py-0.2 rounded-md bg-zinc-900/80 text-[10px] font-bold text-cyan-400 border border-white/5/40">
                         {ev.objectId}
                       </span>
                     </div>
@@ -92,7 +92,7 @@ export function ActivityTimelineView({
                             e.stopPropagation();
                             onSelectFlow(ev.correlationId!);
                           }}
-                          className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-300 px-1.5 py-0.5 rounded-xl bg-cyan-950/20 border border-cyan-500/20 transition-colors"
+                          className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-300 px-1.5 py-0.5 rounded-md bg-cyan-950/20 border border-cyan-500/20 transition-colors"
                           title="View complete trading pipeline flow"
                         >
                           <GitCommit className="w-2.5 h-2.5" />
@@ -109,7 +109,7 @@ export function ActivityTimelineView({
 
                   {/* Metadata Chips if present */}
                   {ev.details.beforeState && ev.details.afterState && (
-                    <div className="mt-2 pt-2 border-t border-gray-200 dark:border-white/10/30 flex items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400">
+                    <div className="mt-2 pt-2 border-t border-gray-200 border-white/5/30 flex items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400">
                       <span>State:</span>
                       <span className="text-gray-500 dark:text-gray-400">{ev.details.beforeState}</span>
                       <ArrowRight className="w-3 h-3 text-cyan-400" />
@@ -118,7 +118,7 @@ export function ActivityTimelineView({
                   )}
 
                   {/* Bottom Action Footer */}
-                  <div className="mt-2.5 pt-2 border-t border-gray-200 dark:border-white/10/30 flex items-center justify-between text-[11px]">
+                  <div className="mt-2.5 pt-2 border-t border-gray-200 border-white/5/30 flex items-center justify-between text-[11px]">
                     <span className="text-[10px] text-gray-500 dark:text-gray-400">
                       ID: {ev.id} · Env: {ev.environment}
                     </span>

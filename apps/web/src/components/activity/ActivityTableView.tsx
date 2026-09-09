@@ -71,17 +71,17 @@ export function ActivityTableView({
 
   if (events.length === 0) {
     return (
-      <div className="p-8 text-center bg-white dark:bg-zinc-900/50 border border-gray-200 dark:border-white/10 rounded-xl shadow-sm">
+      <div className="p-8 text-center bg-[#0E0E0E] border border-white/5 rounded-md">
         <p className="text-xs font-sans text-gray-500 dark:text-gray-400">No activity events matching filters.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-zinc-900/50 font-sans text-xs">
+    <div className="overflow-x-auto rounded-md border border-white/5 bg-[#0E0E0E] font-sans text-xs">
       <Table>
         <TableHeader>
-          <TableRow className="border-b border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-zinc-800/50/60 text-[11px] font-sans text-gray-500 dark:text-gray-400 select-none">
+          <TableRow className="border-b border-gray-200 border-white/5 bg-zinc-900/80/60 text-[11px] font-sans text-gray-500 dark:text-gray-400 select-none">
             <TableHead
               onClick={() => handleSort("timestamp")}
               className="py-2.5 px-3 cursor-pointer hover:text-gray-200 group transition-colors"
@@ -144,7 +144,7 @@ export function ActivityTableView({
             <TableRow
               key={ev.id}
               onClick={() => onSelectEvent(ev)}
-              className="border-b border-gray-200 dark:border-white/10/40 hover:bg-gray-100 dark:bg-zinc-800/50/40 cursor-pointer transition-colors"
+              className="border-b border-gray-200 border-white/5/40 hover:bg-zinc-900/80/40 cursor-pointer transition-colors"
             >
               <TableCell className="py-2.5 px-3 text-gray-500 dark:text-gray-400 text-[11px] whitespace-nowrap">
                 {ev.timeFormatted}
@@ -180,7 +180,7 @@ export function ActivityTableView({
                       e.stopPropagation();
                       onSelectFlow(ev.correlationId!);
                     }}
-                    className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-300 px-1.5 py-0.5 rounded-xl bg-cyan-950/20 border border-cyan-500/20"
+                    className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-300 px-1.5 py-0.5 rounded-md bg-cyan-950/20 border border-cyan-500/20"
                   >
                     <GitCommit className="w-2.5 h-2.5" />
                     <span>{ev.correlationId}</span>
@@ -200,7 +200,7 @@ export function ActivityTableView({
                     e.stopPropagation();
                     onSelectEvent(ev);
                   }}
-                  className="text-cyan-400 hover:text-cyan-300 p-1 rounded-xl"
+                  className="text-cyan-400 hover:text-cyan-300 p-1 rounded-md"
                   title="Inspect Event"
                 >
                   <Eye className="w-3.5 h-3.5" />
