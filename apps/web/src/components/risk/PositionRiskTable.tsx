@@ -60,7 +60,7 @@ export function PositionRiskTable({ positions }: PositionRiskTableProps) {
               return (
                 <TableRow
                   key={p.id}
-                  className="border-b border-gray-200 dark:border-white/5/30 hover:bg-gray-100 dark:bg-zinc-800/40 text-xs font-sans tracking-tight transition-colors"
+                  className="border-b border-gray-200 dark:border-white/5/30 hover:bg-gray-100 dark:hover:bg-zinc-800/40 text-xs font-sans tracking-tight transition-colors"
                 >
                   <TableCell className="py-2.5 px-3 font-semibold text-gray-900 dark:text-zinc-50">
                     {p.symbol}

@@ -147,7 +147,7 @@ export function RecentRiskDecisionsTable({
               <TableRow
                 key={d.id}
                 onClick={() => onSelectDecision(d)}
-                className="border-b border-gray-200 dark:border-white/5/30 hover:bg-gray-100 dark:bg-zinc-800/40 text-xs font-sans tracking-tight cursor-pointer transition-colors"
+                className="border-b border-gray-200 dark:border-white/5/30 hover:bg-gray-100 dark:hover:bg-zinc-800/40 text-xs font-sans tracking-tight cursor-pointer transition-colors"
               >
                 <TableCell className="py-2.5 px-3 font-semibold text-cyan-400">
                   {d.proposalId}
