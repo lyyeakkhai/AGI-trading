@@ -32,7 +32,9 @@ from packages.exchange.errors import (
 )
 from packages.exchange.models import (
     AdapterHealth,
+    FundingRate,
     MarketTrade,
+    MarketVolume,
     OHLCVCandle,
     OrderBook,
     RateLimitState,
@@ -246,6 +248,43 @@ class BinanceCCXTAdapter(ExchangeAdapter):
                 )
                 for r in raw_list
             ]
+        except Exception as e:
+            raise normalize_ccxt_error(e) from e
+
+    async def get_volume(self, symbol: str) -> MarketVolume:
+        try:
+            raw = await asyncio.to_thread(self._rest.fetch_ticker, symbol)
+            base_vol = Decimal(str(raw.get("baseVolume") or 0))
+            quote_vol = Decimal(str(raw.get("quoteVolume") or 0))
+            return MarketVolume(
+                symbol=symbol,
+                base_volume=base_vol,
+                quote_volume=quote_vol,
+                timestamp=_ms_to_dt(raw.get("timestamp")),
+            )
+        except Exception as e:
+            raise normalize_ccxt_error(e) from e
+
+    async def get_funding_rate(self, symbol: str) -> FundingRate:
+        try:
+            raw: dict[str, Any] = {}
+            if hasattr(self._rest, "fetch_funding_rate"):
+                try:
+                    raw = await asyncio.to_thread(self._rest.fetch_funding_rate, symbol)
+                except Exception:
+                    raw = {}
+            rate = Decimal(str(raw.get("fundingRate") or 0))
+            mark = Decimal(str(raw["markPrice"])) if raw.get("markPrice") is not None else None
+            index = Decimal(str(raw["indexPrice"])) if raw.get("indexPrice") is not None else None
+            next_funding = _ms_to_dt(raw.get("nextFundingTimestamp")) if raw.get("nextFundingTimestamp") else None
+            return FundingRate(
+                symbol=symbol,
+                funding_rate=rate,
+                mark_price=mark,
+                index_price=index,
+                next_funding_time=next_funding,
+                timestamp=_ms_to_dt(raw.get("timestamp")),
+            )
         except Exception as e:
             raise normalize_ccxt_error(e) from e
 

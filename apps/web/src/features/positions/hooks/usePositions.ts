@@ -10,7 +10,7 @@ interface UsePositionsResult {
 /**
  * WebSocket hook for real-time positions updates.
  */
-export function usePositions(url: string = "ws://localhost:8000/ws/positions"): UsePositionsResult {
+export function usePositions(url: string = "ws://localhost:8000/api/v1/ws/portfolio"): UsePositionsResult {
   const [positions, setPositions] = useState<PositionItem[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);

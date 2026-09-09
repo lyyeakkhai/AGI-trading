@@ -1,22 +1,32 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-
 from fastapi.middleware.cors import CORSMiddleware
 
 from apps.api.routers.analytics import router as analytics_router
-from apps.api.routers.health import router as health_router
-from apps.api.routers.markets import router as markets_router
-from apps.api.routers.risk import router as risk_router
-from apps.api.routers.intelligence import router as intelligence_router
-from apps.api.routers.portfolio import router as portfolio_router
-from apps.api.routers.reconciliation import router as reconciliation_router
-from apps.api.routers.backtesting import router as backtesting_router
-from apps.api.routers.tools import router as tools_router
+from apps.api.routers.audit_tools import (
+    decision_router as audit_decision_router,
+    trade_router as audit_trade_router,
+)
 from apps.api.routers.auth import router as auth_router
-from apps.api.routers.websocket import router as websocket_router
+from apps.api.routers.backtesting import router as backtesting_router
+from apps.api.routers.chart_tools import router as chart_tools_router
+from apps.api.routers.execution_tools import (
+    legacy_router as execution_tools_legacy_router,
+    position_router,
+    router as execution_tools_router,
+)
+from apps.api.routers.health import router as health_router
+from apps.api.routers.intelligence import router as intelligence_router
+from apps.api.routers.markets import router as markets_router
 from apps.api.routers.owner import router as owner_router
-from apps.api.routers.execution_tools import router as execution_tools_router
+from apps.api.routers.plan_risk_tools import router as plan_risk_tools_router
+from apps.api.routers.portfolio import router as portfolio_router
+from apps.api.routers.quant_tools import router as quant_tools_router
+from apps.api.routers.reconciliation import router as reconciliation_router
+from apps.api.routers.risk import router as risk_router
+from apps.api.routers.tools import router as tools_router
+from apps.api.routers.websocket import router as websocket_router, legacy_ws_router
 
 from packages.config import get_settings
 from packages.database import get_engine
@@ -61,14 +71,20 @@ def create_app() -> FastAPI:
     app.include_router(risk_router)
     app.include_router(intelligence_router)
 
-
     app.include_router(portfolio_router)
     app.include_router(reconciliation_router)
     app.include_router(analytics_router)
     app.include_router(backtesting_router)
     app.include_router(tools_router)
+    app.include_router(plan_risk_tools_router)
+    app.include_router(quant_tools_router)
+    app.include_router(chart_tools_router)
+    app.include_router(audit_decision_router)
+    app.include_router(audit_trade_router)
+    app.include_router(position_router)
     app.include_router(auth_router)
     app.include_router(websocket_router)
+    app.include_router(legacy_ws_router)
     app.include_router(owner_router)
     from apps.api.routers.trading import router as trading_router
     from apps.api.routers.exchange import router as exchange_router
@@ -77,6 +93,7 @@ def create_app() -> FastAPI:
     app.include_router(exchange_router)
     app.include_router(live_router)
     app.include_router(execution_tools_router)
+    app.include_router(execution_tools_legacy_router)
 
     return app
 
