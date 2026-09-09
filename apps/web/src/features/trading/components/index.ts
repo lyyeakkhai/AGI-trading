@@ -9,3 +9,4 @@ export * from "./PositionSide";
 export * from "./RiskBadge";
 export * from "./ConfidenceIndicator";
 export * from "./OrderStatus";
+export * from "./TradePanel";

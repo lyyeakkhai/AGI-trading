@@ -16,11 +16,13 @@ import { CryptoIcon } from "@/components/ui/CryptoIcon";
 import { Maximize2, Eye, EyeOff, Sparkles, BarChart2, Layers } from "lucide-react";
 import { useChartDrawings } from "@/features/trading/hooks/useChartDrawings";
 import { ChartOverlay } from "@/features/trading/components/ChartOverlay";
+import { TradingPlan } from "../types/trading";
 
 export interface MarketChartProps {
   candles: CandleData[];
   aiMarkers?: AIMarketMarker[];
   position?: PositionContext;
+  plan?: TradingPlan;
   timeframe: string;
   onTimeframeChange: (tf: string) => void;
   availableTimeframes?: string[];
@@ -33,6 +35,7 @@ export function MarketChart({
   candles,
   aiMarkers = [],
   position,
+  plan,
   timeframe,
   onTimeframeChange,
   availableTimeframes = ["1m", "5m", "15m", "1h", "4h", "1D"],
@@ -232,37 +235,72 @@ export function MarketChart({
     });
     priceLinesRef.current = [];
 
+    let currentLines: IPriceLine[] = [];
     if (position && position.entryPrice) {
-      const entryLine = candleSeriesRef.current.createPriceLine({
+      const entryLine = candleSeriesRef.current!.createPriceLine({
         price: position.entryPrice,
         color: "#22DFFF",
         lineWidth: 1,
         lineStyle: LineStyle.Dashed,
         axisLabelVisible: true,
-        title: `ENTRY $${position.entryPrice.toLocaleString()}`,
+        title: `ENTRY ${position.entryPrice.toLocaleString()}`,
       });
 
-      const stopLine = candleSeriesRef.current.createPriceLine({
+      const stopLine = candleSeriesRef.current!.createPriceLine({
         price: position.stopPrice,
         color: "#FF3B30",
         lineWidth: 1,
         lineStyle: LineStyle.Dashed,
         axisLabelVisible: true,
-        title: `STOP $${position.stopPrice.toLocaleString()}`,
+        title: `STOP ${position.stopPrice.toLocaleString()}`,
       });
 
-      const targetLine = candleSeriesRef.current.createPriceLine({
+      const targetLine = candleSeriesRef.current!.createPriceLine({
         price: position.targetPrice,
         color: "#00E676",
         lineWidth: 1,
         lineStyle: LineStyle.Dashed,
         axisLabelVisible: true,
-        title: `TARGET $${position.targetPrice.toLocaleString()}`,
+        title: `TARGET ${position.targetPrice.toLocaleString()}`,
       });
 
-      priceLinesRef.current = [entryLine, stopLine, targetLine];
+      currentLines = [entryLine, stopLine, targetLine];
+    } else if (plan) {
+      if (plan.entry) {
+        currentLines.push(candleSeriesRef.current!.createPriceLine({
+          price: plan.entry,
+          color: "#00E5FF",
+          lineWidth: 1,
+          lineStyle: LineStyle.Dashed,
+          axisLabelVisible: true,
+          title: `ENTRY ${plan.entry.toLocaleString()}`,
+        }));
+      }
+      if (plan.stopLoss) {
+        currentLines.push(candleSeriesRef.current!.createPriceLine({
+          price: plan.stopLoss,
+          color: "#FF3B30",
+          lineWidth: 1,
+          lineStyle: LineStyle.Dashed,
+          axisLabelVisible: true,
+          title: `STOP ${plan.stopLoss.toLocaleString()}`,
+        }));
+      }
+      plan.takeProfits.forEach((tp, i) => {
+        if (tp) {
+          currentLines.push(candleSeriesRef.current!.createPriceLine({
+            price: tp,
+            color: "#00E676",
+            lineWidth: 1,
+            lineStyle: LineStyle.Dashed,
+            axisLabelVisible: true,
+            title: `TP${plan.takeProfits.length > 1 ? i + 1 : ''} ${tp.toLocaleString()}`,
+          }));
+        }
+      });
     }
-  }, [candles, aiMarkers, position, showVolume, showAIMarkers]);
+    priceLinesRef.current = currentLines;
+  }, [candles, aiMarkers, position, plan, showVolume, showAIMarkers]);
 
   // Fit content helper
   const handleFitContent = useCallback(() => {
