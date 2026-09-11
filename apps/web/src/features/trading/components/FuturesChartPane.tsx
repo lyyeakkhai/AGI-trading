@@ -247,7 +247,8 @@ function calculateSMA(candles: CandleData[], period: number) {
 }
 
 export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesChartPaneProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const outerContainerRef = useRef<HTMLDivElement>(null);
+  const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
 
   // Series references
@@ -327,9 +328,9 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
 
   // Toggle fullscreen
   const toggleFullscreen = () => {
-    if (!containerRef.current) return;
+    if (!outerContainerRef.current) return;
     if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen().catch(() => {});
+      outerContainerRef.current.requestFullscreen().catch(() => {});
       setIsFullscreen(true);
     } else {
       document.exitFullscreen().catch(() => {});
@@ -339,11 +340,14 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
 
   // Initialize and maintain Lightweight Chart
   useEffect(() => {
-    if (!containerRef.current || viewStyle === "Depth" || activeTab !== "Chart") return;
+    if (!chartContainerRef.current || viewStyle === "Depth" || activeTab !== "Chart") return;
 
-    const chart = createChart(containerRef.current, {
-      width: containerRef.current.clientWidth,
-      height: containerRef.current.clientHeight || 450,
+    const width = chartContainerRef.current.clientWidth || 800;
+    const height = chartContainerRef.current.clientHeight || 400;
+
+    const chart = createChart(chartContainerRef.current, {
+      width,
+      height,
       layout: {
         background: { type: ColorType.Solid, color: "#000000" },
         textColor: "#8A8A8A",
@@ -405,7 +409,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
     });
     areaSeriesRef.current = areaSeries;
 
-    // Moving Averages: MA7 (#F0B90B), MA25 (#E040FB), MA99 (#7C4DFF)
+    // Moving Averages: MA7, MA25, MA99
     const ma7Series = chart.addLineSeries({
       color: "#00E5FF",
       lineWidth: 1,
@@ -446,6 +450,40 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
     });
     volumeSeriesRef.current = volumeSeries;
 
+    // Populate initial data immediately
+    if (timeframe === "Time") {
+      candleSeries.applyOptions({ visible: false });
+      areaSeries.applyOptions({ visible: true });
+      areaSeries.setData(
+        candles.map((c) => ({
+          time: c.time,
+          value: c.close,
+        })) as any
+      );
+    } else {
+      areaSeries.applyOptions({ visible: false });
+      candleSeries.applyOptions({ visible: true });
+      candleSeries.setData(candles as any);
+    }
+
+    if (showMAs && timeframe !== "Time") {
+      ma7Series.setData(ma7Data as any);
+      ma25Series.setData(ma25Data as any);
+      ma99Series.setData(ma99Data as any);
+    }
+
+    if (showVolume) {
+      volumeSeries.setData(
+        candles.map((c) => ({
+          time: c.time,
+          value: c.volume,
+          color: c.close >= c.open ? "rgba(0, 230, 118, 0.45)" : "rgba(255, 59, 48, 0.45)",
+        })) as any
+      );
+    }
+
+    chart.timeScale().fitContent();
+
     // Crosshair hover tracking
     chart.subscribeCrosshairMove((param) => {
       if (!param || !param.time || !param.seriesData) {
@@ -468,15 +506,15 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
       }
     });
 
-    // Resize observer
+    // Resize observer attached directly to the chart container
     const resizeObserver = new ResizeObserver((entries) => {
-      if (!entries || entries.length === 0 || !containerRef.current) return;
-      const { width, height } = entries[0].contentRect;
-      if (width > 0 && height > 0) {
-        chart.applyOptions({ width, height });
+      if (!entries || entries.length === 0 || !chartContainerRef.current) return;
+      const { width: w, height: h } = entries[0].contentRect;
+      if (w > 0 && h > 0) {
+        chart.applyOptions({ width: w, height: h });
       }
     });
-    resizeObserver.observe(containerRef.current);
+    resizeObserver.observe(chartContainerRef.current);
 
     return () => {
       resizeObserver.disconnect();
@@ -540,7 +578,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
 
   return (
     <div
-      ref={containerRef}
+      ref={outerContainerRef}
       className="flex flex-col h-full w-full bg-[#000000] select-none relative overflow-hidden border-r border-[#242D35]"
     >
       {/* 1. Sub-nav tabs & utilities row */}
@@ -914,6 +952,12 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
 
             {/* Center Area */}
             <div className="flex-1 relative w-full h-full min-h-0">
+              {/* Dedicated Lightweight Charts Canvas Mount Point */}
+              <div
+                ref={chartContainerRef}
+                className={`w-full h-full ${viewStyle === "Depth" ? "hidden" : "block"}`}
+              />
+
               {/* Floating Quick Order Pill */}
               {showOrderPill && viewStyle !== "Depth" && (
                 <div className="absolute top-3 left-3 z-20 flex items-center bg-[#0E0E0E]/95 border border-[#242D35] rounded shadow-2xl p-1 gap-1.5 backdrop-blur-md select-none transition-all">
