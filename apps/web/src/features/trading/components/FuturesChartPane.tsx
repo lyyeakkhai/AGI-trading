@@ -35,10 +35,21 @@ interface FuturesChartPaneProps {
   currentPrice: number;
 }
 
+// Deterministic pseudo-random generator to guarantee identical candle output on SSR and Client
+function createPRNG(seed: number) {
+  let s = seed % 2147483647;
+  if (s <= 0) s += 2147483646;
+  return function () {
+    s = (s * 16807) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+
 // Generate realistic chart history tailored to timeframe
 function generateCandlesForTimeframe(timeframe: string, baseLastPrice: number): CandleData[] {
   const result: CandleData[] = [];
   const now = Math.floor(new Date("2026-09-11T14:15:00Z").getTime() / 1000);
+  const random = createPRNG(12345 + (timeframe.charCodeAt(0) || 42) * 100);
 
   if (timeframe === "1D") {
     // 140 daily bars spanning May 1, 2026 to Sept 11, 2026
@@ -52,17 +63,17 @@ function generateCandlesForTimeframe(timeframe: string, baseLastPrice: number): 
       const time = (startTime + i * oneDay) as Time;
       let dailyTrend = 0;
       if (i < 40) {
-        dailyTrend = (Math.sin(i * 0.15) * 400) + (Math.random() - 0.52) * 600;
+        dailyTrend = (Math.sin(i * 0.15) * 400) + (random() - 0.52) * 600;
       } else if (i < 65) {
         // Dip to exactly 57,758
-        dailyTrend = i === 60 ? -1500 : (Math.random() - 0.58) * 800;
+        dailyTrend = i === 60 ? -1500 : (random() - 0.58) * 800;
         if (price < 58000 && i >= 60) dailyTrend = Math.abs(dailyTrend) + 400;
       } else if (i < 100) {
-        dailyTrend = (Math.random() - 0.44) * 650;
+        dailyTrend = (random() - 0.44) * 650;
       } else if (i < 125) {
-        dailyTrend = (Math.random() - 0.35) * 1100; // Breakout rally
+        dailyTrend = (random() - 0.35) * 1100; // Breakout rally
       } else {
-        dailyTrend = (Math.random() - 0.47) * 550;
+        dailyTrend = (random() - 0.47) * 550;
       }
 
       const open = Math.round(price);
@@ -71,10 +82,10 @@ function generateCandlesForTimeframe(timeframe: string, baseLastPrice: number): 
         price = baseLastPrice;
       }
 
-      const high = Math.round(Math.max(open, price) + Math.random() * 850 + 150);
-      const low = Math.round(Math.min(open, price) - Math.random() * 750 - 50);
+      const high = Math.round(Math.max(open, price) + random() * 850 + 150);
+      const low = Math.round(Math.min(open, price) - random() * 750 - 50);
       const close = Math.round(price);
-      const volume = Math.round((Math.random() * 75000 + 25000) * (i > 115 ? 1.7 : 1));
+      const volume = Math.round((random() * 75000 + 25000) * (i > 115 ? 1.7 : 1));
 
       result.push({ time, open, high, low, close, volume });
     }
@@ -89,23 +100,23 @@ function generateCandlesForTimeframe(timeframe: string, baseLastPrice: number): 
       const time = (startTime + i * oneWeek) as Time;
       let weeklyTrend = 0;
       if (i < 35) {
-        weeklyTrend = 450 + (Math.random() - 0.45) * 1200;
+        weeklyTrend = 450 + (random() - 0.45) * 1200;
       } else if (i < 55) {
-        weeklyTrend = 900 + (Math.random() - 0.4) * 1800;
+        weeklyTrend = 900 + (random() - 0.4) * 1800;
       } else if (i < 75) {
-        weeklyTrend = -400 + (Math.random() - 0.55) * 1600;
+        weeklyTrend = -400 + (random() - 0.55) * 1600;
       } else {
-        weeklyTrend = 650 + (Math.random() - 0.42) * 1500;
+        weeklyTrend = 650 + (random() - 0.42) * 1500;
       }
 
       const open = Math.round(price);
       price = Math.max(25000, price + weeklyTrend);
       if (i === weeks - 1) price = baseLastPrice;
 
-      const high = Math.round(Math.max(open, price) + Math.random() * 1800 + 300);
-      const low = Math.round(Math.min(open, price) - Math.random() * 1500 - 100);
+      const high = Math.round(Math.max(open, price) + random() * 1800 + 300);
+      const low = Math.round(Math.min(open, price) - random() * 1500 - 100);
       const close = Math.round(price);
-      const volume = Math.round((Math.random() * 250000 + 100000) * 1.5);
+      const volume = Math.round((random() * 250000 + 100000) * 1.5);
 
       result.push({ time, open, high, low, close, volume });
     }
@@ -118,15 +129,15 @@ function generateCandlesForTimeframe(timeframe: string, baseLastPrice: number): 
 
     for (let i = 0; i < bars; i++) {
       const time = (startTime + i * interval) as Time;
-      const trend = (i / bars) * 60 + (Math.random() - 0.48) * 350;
-      const open = Math.round(price);
+      const trend = (i / bars) * 60 + (random() - 0.48) * 350;
+      const open = Math.round(price * 10) / 10;
       price = open + trend;
       if (i === bars - 1) price = baseLastPrice;
 
-      const high = Math.round(Math.max(open, price) + Math.random() * 400 + 80);
-      const low = Math.round(Math.min(open, price) - Math.random() * 380 - 40);
-      const close = Math.round(price);
-      const volume = Math.round(Math.random() * 22000 + 6000);
+      const high = Math.round((Math.max(open, price) + random() * 400 + 80) * 10) / 10;
+      const low = Math.round((Math.min(open, price) - random() * 380 - 40) * 10) / 10;
+      const close = Math.round(price * 10) / 10;
+      const volume = Math.round(random() * 22000 + 6000);
 
       result.push({ time, open, high, low, close, volume });
     }
@@ -139,15 +150,15 @@ function generateCandlesForTimeframe(timeframe: string, baseLastPrice: number): 
 
     for (let i = 0; i < bars; i++) {
       const time = (startTime + i * interval) as Time;
-      const trend = (i / bars) * 20 + (Math.random() - 0.49) * 220;
+      const trend = (i / bars) * 20 + (random() - 0.49) * 220;
       const open = Math.round(price * 10) / 10;
       price = open + trend;
       if (i === bars - 1) price = baseLastPrice;
 
-      const high = Math.round((Math.max(open, price) + Math.random() * 240 + 50) * 10) / 10;
-      const low = Math.round((Math.min(open, price) - Math.random() * 220 - 30) * 10) / 10;
+      const high = Math.round((Math.max(open, price) + random() * 240 + 50) * 10) / 10;
+      const low = Math.round((Math.min(open, price) - random() * 220 - 30) * 10) / 10;
       const close = Math.round(price * 10) / 10;
-      const volume = Math.round(Math.random() * 9500 + 2500);
+      const volume = Math.round(random() * 9500 + 2500);
 
       result.push({ time, open, high, low, close, volume });
     }
@@ -160,15 +171,15 @@ function generateCandlesForTimeframe(timeframe: string, baseLastPrice: number): 
 
     for (let i = 0; i < bars; i++) {
       const time = (startTime + i * interval) as Time;
-      const trend = (Math.random() - 0.49) * 110;
+      const trend = (random() - 0.49) * 110;
       const open = Math.round(price * 10) / 10;
       price = open + trend;
       if (i === bars - 1) price = baseLastPrice;
 
-      const high = Math.round((Math.max(open, price) + Math.random() * 120 + 25) * 10) / 10;
-      const low = Math.round((Math.min(open, price) - Math.random() * 110 - 15) * 10) / 10;
+      const high = Math.round((Math.max(open, price) + random() * 120 + 25) * 10) / 10;
+      const low = Math.round((Math.min(open, price) - random() * 110 - 15) * 10) / 10;
       const close = Math.round(price * 10) / 10;
-      const volume = Math.round(Math.random() * 3200 + 800);
+      const volume = Math.round(random() * 3200 + 800);
 
       result.push({ time, open, high, low, close, volume });
     }
@@ -181,15 +192,15 @@ function generateCandlesForTimeframe(timeframe: string, baseLastPrice: number): 
 
     for (let i = 0; i < bars; i++) {
       const time = (startTime + i * interval) as Time;
-      const delta = (Math.random() - 0.49) * 0.8;
+      const delta = (random() - 0.49) * 0.8;
       const open = Number(price.toFixed(1));
       price = Math.max(baseLastPrice - 15, Math.min(baseLastPrice + 15, open + delta));
       if (i === bars - 1) price = baseLastPrice;
 
-      const high = Number((Math.max(open, price) + Math.random() * 0.6).toFixed(1));
-      const low = Number((Math.min(open, price) - Math.random() * 0.6).toFixed(1));
+      const high = Number((Math.max(open, price) + random() * 0.6).toFixed(1));
+      const low = Number((Math.min(open, price) - random() * 0.6).toFixed(1));
       const close = Number(price.toFixed(1));
-      const volume = Math.round(Math.random() * 85 + 12);
+      const volume = Math.round(random() * 85 + 12);
 
       result.push({ time, open, high, low, close, volume });
     }
@@ -202,15 +213,15 @@ function generateCandlesForTimeframe(timeframe: string, baseLastPrice: number): 
 
     for (let i = 0; i < bars; i++) {
       const time = (startTime + i * interval) as Time;
-      const delta = (Math.random() - 0.48) * 0.6;
+      const delta = (random() - 0.48) * 0.6;
       const open = Number(price.toFixed(1));
       price = open + delta;
       if (i === bars - 1) price = baseLastPrice;
 
-      const high = Number((Math.max(open, price) + Math.random() * 0.4).toFixed(1));
-      const low = Number((Math.min(open, price) - Math.random() * 0.4).toFixed(1));
+      const high = Number((Math.max(open, price) + random() * 0.4).toFixed(1));
+      const low = Number((Math.min(open, price) - random() * 0.4).toFixed(1));
       const close = Number(price.toFixed(1));
-      const volume = Math.round(Math.random() * 60 + 10);
+      const volume = Math.round(random() * 60 + 10);
 
       result.push({ time, open, high, low, close, volume });
     }
@@ -304,8 +315,8 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
     const actionSide = side === "buy" ? "Buy/Long" : "Sell/Short";
     const priceText =
       side === "buy"
-        ? (currentPrice + 0.1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-        : currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        ? (currentPrice + 0.1).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        : currentPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const sizeText = pillSize.trim() ? `${pillSize} USDT` : "100.00 USDT";
 
     setOrderToast(`${actionSide} ${sizeText} @ ${priceText} Submitted`);
@@ -763,7 +774,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                   <span>
                     O:{" "}
                     <strong className="text-white">
-                      {activeCandle.open.toLocaleString(undefined, {
+                      {activeCandle.open.toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -772,7 +783,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                   <span>
                     H:{" "}
                     <strong className="text-white">
-                      {activeCandle.high.toLocaleString(undefined, {
+                      {activeCandle.high.toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -781,7 +792,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                   <span>
                     L:{" "}
                     <strong className="text-white">
-                      {activeCandle.low.toLocaleString(undefined, {
+                      {activeCandle.low.toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -794,7 +805,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                         activeCandle.close >= activeCandle.open ? "text-[#0ECB81]" : "text-[#F6465D]"
                       }
                     >
-                      {activeCandle.close.toLocaleString(undefined, {
+                      {activeCandle.close.toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -821,7 +832,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                       {activeMa7 !== undefined && (
                         <span className="text-[#F0B90B] font-semibold">
                           MA(7):{" "}
-                          {activeMa7.toLocaleString(undefined, {
+                          {activeMa7.toLocaleString("en-US", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
@@ -830,7 +841,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                       {activeMa25 !== undefined && (
                         <span className="text-[#E040FB] font-semibold">
                           MA(25):{" "}
-                          {activeMa25.toLocaleString(undefined, {
+                          {activeMa25.toLocaleString("en-US", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
@@ -839,7 +850,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                       {activeMa99 !== undefined && (
                         <span className="text-[#7C4DFF] font-semibold">
                           MA(99):{" "}
-                          {activeMa99.toLocaleString(undefined, {
+                          {activeMa99.toLocaleString("en-US", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
@@ -857,7 +868,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                           activeCandle.close >= activeCandle.open ? "text-[#0ECB81]" : "text-[#F6465D]"
                         }
                       >
-                        {activeCandle.volume.toLocaleString()}
+                        {activeCandle.volume.toLocaleString("en-US")}
                       </strong>
                     </span>
                   )}
@@ -916,7 +927,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                       Buy/Long
                     </span>
                     <span className="text-[11px] font-bold leading-tight">
-                      {(currentPrice + 0.1).toLocaleString(undefined, {
+                      {(currentPrice + 0.1).toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -947,7 +958,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                       Sell/Short
                     </span>
                     <span className="text-[11px] font-bold leading-tight">
-                      {currentPrice.toLocaleString(undefined, {
+                      {currentPrice.toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -1019,7 +1030,7 @@ function DepthChartPane({ currentPrice, depthZoom, onZoomChange }: DepthChartPan
     let bidSum = 0;
     for (let i = 0; i < steps; i++) {
       const price = currentPrice - (steps - i) * bidStep;
-      const amount = Math.round((Math.sin(i * 0.2) + 1.2) * 45 + Math.random() * 20);
+      const amount = Math.round((Math.sin(i * 0.2) + 1.2) * 45 + ((i * 17) % 20));
       bidSum += amount;
       generatedBids.push({ price, amount, total: bidSum });
     }
@@ -1028,7 +1039,7 @@ function DepthChartPane({ currentPrice, depthZoom, onZoomChange }: DepthChartPan
     let askSum = 0;
     for (let i = 0; i < steps; i++) {
       const price = currentPrice + (i + 1) * askStep;
-      const amount = Math.round((Math.cos(i * 0.2) + 1.2) * 45 + Math.random() * 20);
+      const amount = Math.round((Math.cos(i * 0.2) + 1.2) * 45 + ((i * 13) % 20));
       askSum += amount;
       generatedAsks.push({ price, amount, total: askSum });
     }
@@ -1049,7 +1060,7 @@ function DepthChartPane({ currentPrice, depthZoom, onZoomChange }: DepthChartPan
           <span className="text-white font-semibold font-sans">Market Depth Curve</span>
           <span className="text-[#848E9C]">Mid Price:</span>
           <span className="text-white font-bold">
-            {currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT
+            {currentPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT
           </span>
         </div>
 
@@ -1085,7 +1096,7 @@ function DepthChartPane({ currentPrice, depthZoom, onZoomChange }: DepthChartPan
               {hoverData.side}
             </span>
             <span>Price: {hoverData.price.toFixed(1)}</span>
-            <span>Cumulative: {hoverData.total.toLocaleString()} BTC</span>
+            <span>Cumulative: {hoverData.total.toLocaleString("en-US")} BTC</span>
           </div>
         )}
 

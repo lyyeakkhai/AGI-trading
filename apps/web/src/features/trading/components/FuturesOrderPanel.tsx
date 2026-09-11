@@ -510,7 +510,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
         <span className="text-[#848E9C] font-sans">Avbl</span>
         <div className="flex items-center gap-1.5">
           <span className="text-[#EAECEF] font-medium tabular-nums">
-            {availableBalance.toLocaleString(undefined, {
+            {availableBalance.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}{" "}
@@ -786,7 +786,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             <span className="font-sans">Liq Price</span>
             <span className="text-[#EAECEF] font-semibold tabular-nums">
               {buyLiqPrice !== null
-                ? `${buyLiqPrice.toLocaleString(undefined, {
+                ? `${buyLiqPrice.toLocaleString("en-US", {
                     minimumFractionDigits: 1,
                     maximumFractionDigits: 1,
                   })} USDT`
@@ -803,7 +803,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             <span className="font-sans">Max</span>
             <span className="text-[#EAECEF] font-semibold tabular-nums">
               {sizeUnit === "USDT"
-                ? `${maxNotional.toLocaleString(undefined, {
+                ? `${maxNotional.toLocaleString("en-US", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })} USDT`
@@ -818,7 +818,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             <span className="font-sans">Liq Price</span>
             <span className="text-[#EAECEF] font-semibold tabular-nums">
               {sellLiqPrice !== null
-                ? `${sellLiqPrice.toLocaleString(undefined, {
+                ? `${sellLiqPrice.toLocaleString("en-US", {
                     minimumFractionDigits: 1,
                     maximumFractionDigits: 1,
                   })} USDT`
@@ -835,7 +835,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             <span className="font-sans">Max</span>
             <span className="text-[#EAECEF] font-semibold tabular-nums">
               {sizeUnit === "USDT"
-                ? `${maxNotional.toLocaleString(undefined, {
+                ? `${maxNotional.toLocaleString("en-US", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })} USDT`

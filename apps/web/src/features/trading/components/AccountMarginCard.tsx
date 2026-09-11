@@ -366,7 +366,7 @@ export function AccountMarginCard() {
           <span className="text-[#EAECEF] font-medium tabular-nums">
             {hideBalance
               ? "****"
-              : `${marginBalance.toLocaleString(undefined, {
+              : `${marginBalance.toLocaleString("en-US", {
                   minimumFractionDigits: 4,
                   maximumFractionDigits: 4,
                 })} USDT`}
@@ -378,7 +378,7 @@ export function AccountMarginCard() {
           <span className="text-[#EAECEF] font-medium tabular-nums">
             {hideBalance
               ? "****"
-              : `${walletBalance.toLocaleString(undefined, {
+              : `${walletBalance.toLocaleString("en-US", {
                   minimumFractionDigits: 4,
                   maximumFractionDigits: 4,
                 })} USDT`}

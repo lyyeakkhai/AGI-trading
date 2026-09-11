@@ -87,8 +87,8 @@ export function OrderBookPanel({
       const extra: OrderBookRow[] = [];
       for (let i = needed; i >= 1; i--) {
         const p = Math.round((topPrice + i * step) * 100) / 100;
-        const s = Math.round((Math.random() * 80 + 20) * 100) / 100;
-        extra.push({ price: p, size: s, sum: s, depthPercent: Math.round(Math.random() * 50 + 20) });
+        const s = Math.round((((i * 17) % 80) + 20) * 100) / 100;
+        extra.push({ price: p, size: s, sum: s, depthPercent: Math.round(((i * 13) % 50) + 20) });
       }
       return [...extra, ...list];
     }
@@ -108,8 +108,8 @@ export function OrderBookPanel({
       const extra: OrderBookRow[] = [];
       for (let i = 1; i <= needed; i++) {
         const p = Math.round((bottomPrice - i * step) * 100) / 100;
-        const s = Math.round((Math.random() * 80 + 20) * 100) / 100;
-        extra.push({ price: p, size: s, sum: s, depthPercent: Math.round(Math.random() * 50 + 20) });
+        const s = Math.round((((i * 19) % 80) + 20) * 100) / 100;
+        extra.push({ price: p, size: s, sum: s, depthPercent: Math.round(((i * 11) % 50) + 20) });
       }
       return [...list, ...extra];
     }

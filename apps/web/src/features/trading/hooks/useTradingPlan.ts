@@ -14,11 +14,16 @@ export function useTradingPlan(initialSymbol: string = 'BTCUSDT', initialMarket:
   });
 
   useEffect(() => {
-    setPlan((prev) => ({
-      ...prev,
-      symbol: initialSymbol,
-      market: initialMarket,
-    }));
+    setPlan((prev) => {
+      if (prev.symbol === initialSymbol && prev.market === initialMarket) {
+        return prev;
+      }
+      return {
+        ...prev,
+        symbol: initialSymbol,
+        market: initialMarket,
+      };
+    });
   }, [initialSymbol, initialMarket]);
 
   const updatePlan = (updates: Partial<TradingPlan>) => {
