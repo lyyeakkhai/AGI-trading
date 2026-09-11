@@ -104,15 +104,15 @@ export function AccountMarginCard() {
 
   // Color mapping based on risk level
   const ratioColor = useMemo(() => {
-    if (marginRatio >= 80) return "text-[#F6465D]";
-    if (marginRatio >= 50) return "text-[#F0B90B]";
-    return "text-[#0ECB81]";
+    if (marginRatio >= 80) return "text-[#FF3B30]";
+    if (marginRatio >= 50) return "text-[#00E5FF]";
+    return "text-[#00E676]";
   }, [marginRatio]);
 
   const strokeColor = useMemo(() => {
-    if (marginRatio >= 80) return "#F6465D";
+    if (marginRatio >= 80) return "#FF3B30";
     if (marginRatio >= 50) return "#F0B90B";
-    return "#0ECB81";
+    return "#00E676";
   }, [marginRatio]);
 
   // Gauge circumference: circle with r=14 -> C = 2 * PI * 14 ≈ 87.96
@@ -234,16 +234,16 @@ export function AccountMarginCard() {
   };
 
   return (
-    <div className="flex flex-col bg-[#181A20] p-3 text-xs select-none space-y-3 font-sans relative">
+    <div className="flex flex-col bg-[#000000] p-3 text-xs select-none space-y-3 font-sans relative">
       {/* Toast Banner */}
       {toast && (
         <div
           className={`absolute top-2 left-2 right-2 z-50 p-2.5 rounded text-xs flex items-center justify-between shadow-lg transition-all ${
             toast.type === "success"
-              ? "bg-[#0ECB81] text-black font-semibold"
+              ? "bg-[#00E676] text-black font-semibold"
               : toast.type === "error"
-              ? "bg-[#F6465D] text-white font-semibold"
-              : "bg-[#2B313A] text-[#EAECEF] border border-[#F0B90B]"
+              ? "bg-[#FF3B30] text-white font-semibold"
+              : "bg-[#1C1C1C] text-[#EDEDED] border border-[#00E5FF]"
           }`}
         >
           <span>{toast.message}</span>
@@ -256,11 +256,11 @@ export function AccountMarginCard() {
       {/* 1. Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-[#EAECEF] text-sm">Account</span>
+          <span className="font-bold text-[#EDEDED] text-sm">Account</span>
           <button
             type="button"
             onClick={() => setHideBalance(!hideBalance)}
-            className="text-[#848E9C] hover:text-white transition-colors cursor-pointer"
+            className="text-[#8A8A8A] hover:text-white transition-colors cursor-pointer"
             title={hideBalance ? "Show balance" : "Hide balance"}
           >
             {hideBalance ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -273,7 +273,7 @@ export function AccountMarginCard() {
             setTempAssetMode(assetMode);
             setShowAssetModeModal(true);
           }}
-          className="flex items-center gap-1 text-[#F0B90B] hover:opacity-80 transition-opacity font-semibold text-xs cursor-pointer"
+          className="flex items-center gap-1 text-[#00E5FF] hover:opacity-80 transition-opacity font-semibold text-xs cursor-pointer"
           title="Switch Asset Mode"
         >
           <ArrowRightLeft size={13} />
@@ -282,13 +282,13 @@ export function AccountMarginCard() {
       </div>
 
       {/* 2. Margin Ratio Gauge Row */}
-      <div className="flex items-center justify-between border-b border-[#23272E] pb-2 relative">
+      <div className="flex items-center justify-between border-b border-[#242D35] pb-2 relative">
         <div className="flex items-center gap-1.5">
-          <span className="text-[#848E9C] text-xs">Margin Ratio</span>
+          <span className="text-[#8A8A8A] text-xs">Margin Ratio</span>
           <button
             type="button"
             onClick={() => setShowRatioInfo(!showRatioInfo)}
-            className="text-[#848E9C] hover:text-white transition-colors cursor-pointer"
+            className="text-[#8A8A8A] hover:text-white transition-colors cursor-pointer"
             title="Margin Ratio Details"
           >
             <HelpCircle size={13} />
@@ -296,22 +296,22 @@ export function AccountMarginCard() {
 
           {/* Ratio Info Popover */}
           {showRatioInfo && (
-            <div className="absolute left-0 top-7 w-64 bg-[#1E2329] border border-[#2B313A] rounded shadow-2xl p-2.5 z-40 text-xs text-[#EAECEF] space-y-1.5 leading-relaxed">
-              <div className="font-bold flex items-center justify-between border-b border-[#2B313A] pb-1">
+            <div className="absolute left-0 top-7 w-64 bg-[#0E0E0E] border border-[#242D35] rounded shadow-2xl p-2.5 z-40 text-xs text-[#EDEDED] space-y-1.5 leading-relaxed">
+              <div className="font-bold flex items-center justify-between border-b border-[#242D35] pb-1">
                 <span>Margin Ratio Explained</span>
                 <button
                   type="button"
                   onClick={() => setShowRatioInfo(false)}
-                  className="text-[#848E9C] hover:text-white"
+                  className="text-[#8A8A8A] hover:text-white"
                 >
                   <X size={12} />
                 </button>
               </div>
-              <p className="text-[#848E9C]">
+              <p className="text-[#8A8A8A]">
                 <strong className="text-white">Margin Ratio</strong> = (Maintenance Margin / Margin Balance) × 100%.
               </p>
-              <p className="text-[#848E9C]">
-                When Margin Ratio reaches <strong className="text-[#F6465D]">100%</strong>, your position will be liquidated. Keep this value as low as possible.
+              <p className="text-[#8A8A8A]">
+                When Margin Ratio reaches <strong className="text-[#FF3B30]">100%</strong>, your position will be liquidated. Keep this value as low as possible.
               </p>
             </div>
           )}
@@ -354,16 +354,16 @@ export function AccountMarginCard() {
 
       {/* 3. Maintenance Margin & Margin Balance */}
       <div className="space-y-1.5 text-xs font-mono">
-        <div className="flex items-center justify-between text-[#848E9C]">
+        <div className="flex items-center justify-between text-[#8A8A8A]">
           <span className="font-sans">Maintenance Margin</span>
-          <span className="text-[#EAECEF] font-medium tabular-nums">
+          <span className="text-[#EDEDED] font-medium tabular-nums">
             {hideBalance ? "****" : `${maintMargin.toFixed(4)} USDT`}
           </span>
         </div>
 
-        <div className="flex items-center justify-between text-[#848E9C]">
+        <div className="flex items-center justify-between text-[#8A8A8A]">
           <span className="font-sans">Margin Balance</span>
-          <span className="text-[#EAECEF] font-medium tabular-nums">
+          <span className="text-[#EDEDED] font-medium tabular-nums">
             {hideBalance
               ? "****"
               : `${marginBalance.toLocaleString("en-US", {
@@ -373,9 +373,9 @@ export function AccountMarginCard() {
           </span>
         </div>
 
-        <div className="flex items-center justify-between text-[#848E9C]">
+        <div className="flex items-center justify-between text-[#8A8A8A]">
           <span className="font-sans">Wallet Balance</span>
-          <span className="text-[#EAECEF] font-medium tabular-nums">
+          <span className="text-[#EDEDED] font-medium tabular-nums">
             {hideBalance
               ? "****"
               : `${walletBalance.toLocaleString("en-US", {
@@ -385,9 +385,9 @@ export function AccountMarginCard() {
           </span>
         </div>
 
-        <div className="flex items-center justify-between text-[#848E9C]">
+        <div className="flex items-center justify-between text-[#8A8A8A]">
           <span className="font-sans">Unrealized PnL</span>
-          <span className="text-[#0ECB81] font-medium tabular-nums">
+          <span className="text-[#00E676] font-medium tabular-nums">
             {hideBalance ? "****" : `+${unrealizedPnl.toFixed(4)} USDT`}
           </span>
         </div>
@@ -401,19 +401,19 @@ export function AccountMarginCard() {
             setTempAssetMode(assetMode);
             setShowAssetModeModal(true);
           }}
-          className="w-full py-1.5 rounded bg-[#2B313A]/60 hover:bg-[#2B313A] border border-[#2B313A] hover:border-[#F0B90B] text-[#EAECEF] text-xs font-medium transition-colors text-center cursor-pointer flex items-center justify-center gap-1.5"
+          className="w-full py-1.5 rounded bg-[#1C1C1C]/60 hover:bg-[#1C1C1C] border border-[#242D35] hover:border-[#00E5FF] text-[#EDEDED] text-xs font-medium transition-colors text-center cursor-pointer flex items-center justify-center gap-1.5"
         >
           <span>{assetMode === "single" ? "Single-Asset Mode" : "Multi-Assets Mode"}</span>
-          <span className="text-[#848E9C] text-[11px] font-mono">
+          <span className="text-[#8A8A8A] text-[11px] font-mono">
             ({assetMode === "single" ? "USDT" : "Multi"})
           </span>
         </button>
       </div>
 
       {/* 5. Deposit / Onboarding Callout Card */}
-      <div className="p-3 rounded bg-[#1E2329] border border-[#2B313A] space-y-2.5">
-        <div className="flex items-start gap-2 text-[#848E9C] text-xs leading-relaxed">
-          <AlertCircle size={15} className="text-[#F0B90B] shrink-0 mt-0.5" />
+      <div className="p-3 rounded bg-[#0E0E0E] border border-[#242D35] space-y-2.5">
+        <div className="flex items-start gap-2 text-[#8A8A8A] text-xs leading-relaxed">
+          <AlertCircle size={15} className="text-[#00E5FF] shrink-0 mt-0.5" />
           <span>To start trading, please transfer assets to your Futures account.</span>
         </div>
 
@@ -425,21 +425,21 @@ export function AccountMarginCard() {
               setTransferAmount("");
               setShowTransferModal(true);
             }}
-            className="py-1.5 rounded bg-[#2B313A] hover:bg-[#363D47] text-white transition-colors text-center cursor-pointer"
+            className="py-1.5 rounded bg-[#1C1C1C] hover:bg-[#262626] text-white transition-colors text-center cursor-pointer"
           >
             Transfer
           </button>
           <button
             type="button"
             onClick={() => setShowBuyCryptoModal(true)}
-            className="py-1.5 rounded bg-[#2B313A] hover:bg-[#363D47] text-white transition-colors text-center cursor-pointer"
+            className="py-1.5 rounded bg-[#1C1C1C] hover:bg-[#262626] text-white transition-colors text-center cursor-pointer"
           >
             Buy Crypto
           </button>
           <button
             type="button"
             onClick={() => setShowSwapModal(true)}
-            className="py-1.5 rounded bg-[#2B313A] hover:bg-[#363D47] text-white transition-colors text-center cursor-pointer"
+            className="py-1.5 rounded bg-[#1C1C1C] hover:bg-[#262626] text-white transition-colors text-center cursor-pointer"
           >
             Swap
           </button>
@@ -449,22 +449,22 @@ export function AccountMarginCard() {
       {/* MODAL 1: Transfer Assets */}
       {showTransferModal && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans">
-          <div className="bg-[#1E2329] border border-[#2B313A] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-[#2B313A] pb-3">
+          <div className="bg-[#0E0E0E] border border-[#242D35] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-[#242D35] pb-3">
               <h3 className="text-white font-bold text-sm">Transfer Assets</h3>
               <button
                 type="button"
                 onClick={() => setShowTransferModal(false)}
-                className="text-[#848E9C] hover:text-white transition-colors cursor-pointer"
+                className="text-[#8A8A8A] hover:text-white transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
             </div>
 
             {/* Direction Selector */}
-            <div className="bg-[#181A20] border border-[#2B313A] rounded p-3 space-y-2">
+            <div className="bg-[#000000] border border-[#242D35] rounded p-3 space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#848E9C]">From</span>
+                <span className="text-[#8A8A8A]">From</span>
                 <span className="text-white font-semibold">
                   {transferDirection === "toFutures" ? "Fiat and Spot" : "USDⓈ-M Futures"}
                 </span>
@@ -477,14 +477,14 @@ export function AccountMarginCard() {
                       transferDirection === "toFutures" ? "toSpot" : "toFutures"
                     )
                   }
-                  className="p-1.5 rounded-full bg-[#2B313A] hover:bg-[#363D47] text-[#F0B90B] transition-colors cursor-pointer"
+                  className="p-1.5 rounded-full bg-[#1C1C1C] hover:bg-[#262626] text-[#00E5FF] transition-colors cursor-pointer"
                   title="Reverse Direction"
                 >
                   <ArrowRightLeft size={14} />
                 </button>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#848E9C]">To</span>
+                <span className="text-[#8A8A8A]">To</span>
                 <span className="text-white font-semibold">
                   {transferDirection === "toFutures" ? "USDⓈ-M Futures" : "Fiat and Spot"}
                 </span>
@@ -492,14 +492,14 @@ export function AccountMarginCard() {
             </div>
 
             {/* Asset */}
-            <div className="flex items-center justify-between bg-[#181A20] border border-[#2B313A] rounded px-3 py-2 text-xs">
-              <span className="text-[#848E9C]">Asset</span>
+            <div className="flex items-center justify-between bg-[#000000] border border-[#242D35] rounded px-3 py-2 text-xs">
+              <span className="text-[#8A8A8A]">Asset</span>
               <span className="text-white font-mono font-bold">USDT (Tether)</span>
             </div>
 
             {/* Amount */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between bg-[#181A20] border border-[#2B313A] rounded px-3 py-2 text-xs font-mono focus-within:border-[#F0B90B]">
+              <div className="flex items-center justify-between bg-[#000000] border border-[#242D35] rounded px-3 py-2 text-xs font-mono focus-within:border-[#00E5FF]">
                 <input
                   type="text"
                   placeholder="Amount"
@@ -508,7 +508,7 @@ export function AccountMarginCard() {
                   className="bg-transparent text-white placeholder-[#848E9C] focus:outline-none w-full tabular-nums font-medium"
                 />
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[#848E9C]">USDT</span>
+                  <span className="text-[#8A8A8A]">USDT</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -518,13 +518,13 @@ export function AccountMarginCard() {
                         setTransferAmount(marginBalance.toFixed(2));
                       }
                     }}
-                    className="text-[#F0B90B] font-bold text-xs hover:underline font-sans cursor-pointer"
+                    className="text-[#00E5FF] font-bold text-xs hover:underline font-sans cursor-pointer"
                   >
                     MAX
                   </button>
                 </div>
               </div>
-              <div className="flex justify-between text-[11px] text-[#848E9C] font-mono">
+              <div className="flex justify-between text-[11px] text-[#8A8A8A] font-mono">
                 <span>Available:</span>
                 <span>
                   {transferDirection === "toFutures"
@@ -537,7 +537,7 @@ export function AccountMarginCard() {
             <button
               type="button"
               onClick={handleExecuteTransfer}
-              className="w-full py-2.5 bg-[#F0B90B] text-black font-bold rounded hover:bg-[#F0B90B]/90 transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-[#00E5FF] text-black font-bold rounded hover:bg-[#00E5FF]/90 transition-colors cursor-pointer"
             >
               Confirm Transfer
             </button>
@@ -548,16 +548,16 @@ export function AccountMarginCard() {
       {/* MODAL 2: Buy Crypto */}
       {showBuyCryptoModal && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans">
-          <div className="bg-[#1E2329] border border-[#2B313A] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-[#2B313A] pb-3">
+          <div className="bg-[#0E0E0E] border border-[#242D35] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-[#242D35] pb-3">
               <div className="flex items-center gap-2">
-                <CreditCard size={18} className="text-[#F0B90B]" />
+                <CreditCard size={18} className="text-[#00E5FF]" />
                 <h3 className="text-white font-bold text-sm">Buy Crypto</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowBuyCryptoModal(false)}
-                className="text-[#848E9C] hover:text-white transition-colors cursor-pointer"
+                className="text-[#8A8A8A] hover:text-white transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -565,32 +565,32 @@ export function AccountMarginCard() {
 
             {/* Spend Amount */}
             <div className="space-y-1">
-              <span className="text-[#848E9C] text-xs">Spend</span>
-              <div className="flex items-center justify-between bg-[#181A20] border border-[#2B313A] rounded px-3 py-2 text-xs font-mono focus-within:border-[#F0B90B]">
+              <span className="text-[#8A8A8A] text-xs">Spend</span>
+              <div className="flex items-center justify-between bg-[#000000] border border-[#242D35] rounded px-3 py-2 text-xs font-mono focus-within:border-[#00E5FF]">
                 <input
                   type="text"
                   value={buyFiatAmount}
                   onChange={(e) => setBuyFiatAmount(e.target.value)}
                   className="bg-transparent text-white focus:outline-none w-full tabular-nums font-medium"
                 />
-                <span className="text-[#EAECEF] font-bold shrink-0">USD</span>
+                <span className="text-[#EDEDED] font-bold shrink-0">USD</span>
               </div>
             </div>
 
             {/* Receive Estimate */}
             <div className="space-y-1">
-              <span className="text-[#848E9C] text-xs">Receive (Estimated)</span>
-              <div className="flex items-center justify-between bg-[#181A20] border border-[#2B313A] rounded px-3 py-2 text-xs font-mono">
-                <span className="text-[#0ECB81] font-bold text-sm tabular-nums">
+              <span className="text-[#8A8A8A] text-xs">Receive (Estimated)</span>
+              <div className="flex items-center justify-between bg-[#000000] border border-[#242D35] rounded px-3 py-2 text-xs font-mono">
+                <span className="text-[#00E676] font-bold text-sm tabular-nums">
                   ≈ {parseFloat(buyFiatAmount) > 0 ? parseFloat(buyFiatAmount).toFixed(2) : "0.00"}
                 </span>
-                <span className="text-[#EAECEF] font-bold shrink-0">USDT</span>
+                <span className="text-[#EDEDED] font-bold shrink-0">USDT</span>
               </div>
             </div>
 
             {/* Payment Method */}
             <div className="space-y-1.5">
-              <span className="text-[#848E9C] text-xs">Payment Method</span>
+              <span className="text-[#8A8A8A] text-xs">Payment Method</span>
               <div className="grid grid-cols-3 gap-1.5 text-xs">
                 {[
                   { id: "card", label: "Card" },
@@ -603,8 +603,8 @@ export function AccountMarginCard() {
                     onClick={() => setBuyPaymentMethod(m.id as "card" | "apple" | "bank")}
                     className={`py-2 rounded border text-center font-medium transition-colors cursor-pointer ${
                       buyPaymentMethod === m.id
-                        ? "border-[#F0B90B] bg-[#F0B90B]/10 text-[#F0B90B]"
-                        : "border-[#2B313A] bg-[#2B313A]/50 text-[#848E9C] hover:text-white"
+                        ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF]"
+                        : "border-[#242D35] bg-[#1C1C1C]/50 text-[#8A8A8A] hover:text-white"
                     }`}
                   >
                     {m.label}
@@ -616,7 +616,7 @@ export function AccountMarginCard() {
             <button
               type="button"
               onClick={handleExecuteBuyCrypto}
-              className="w-full py-2.5 bg-[#F0B90B] text-black font-bold rounded hover:bg-[#F0B90B]/90 transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-[#00E5FF] text-black font-bold rounded hover:bg-[#00E5FF]/90 transition-colors cursor-pointer"
             >
               Confirm Purchase
             </button>
@@ -627,16 +627,16 @@ export function AccountMarginCard() {
       {/* MODAL 3: Instant Swap / Convert */}
       {showSwapModal && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans">
-          <div className="bg-[#1E2329] border border-[#2B313A] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-[#2B313A] pb-3">
+          <div className="bg-[#0E0E0E] border border-[#242D35] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-[#242D35] pb-3">
               <div className="flex items-center gap-2">
-                <RefreshCw size={18} className="text-[#F0B90B]" />
+                <RefreshCw size={18} className="text-[#00E5FF]" />
                 <h3 className="text-white font-bold text-sm">Instant Convert & Swap</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowSwapModal(false)}
-                className="text-[#848E9C] hover:text-white transition-colors cursor-pointer"
+                className="text-[#8A8A8A] hover:text-white transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -644,8 +644,8 @@ export function AccountMarginCard() {
 
             {/* From Coin */}
             <div className="space-y-1">
-              <span className="text-[#848E9C] text-xs">From</span>
-              <div className="flex items-center justify-between bg-[#181A20] border border-[#2B313A] rounded px-3 py-2 text-xs font-mono focus-within:border-[#F0B90B]">
+              <span className="text-[#8A8A8A] text-xs">From</span>
+              <div className="flex items-center justify-between bg-[#000000] border border-[#242D35] rounded px-3 py-2 text-xs font-mono focus-within:border-[#00E5FF]">
                 <input
                   type="text"
                   value={swapAmount}
@@ -655,7 +655,7 @@ export function AccountMarginCard() {
                 <select
                   value={swapFromCoin}
                   onChange={(e) => setSwapFromCoin(e.target.value as "USDC" | "BTC" | "ETH")}
-                  className="bg-[#2B313A] text-white rounded px-2 py-1 outline-none text-xs font-sans font-bold cursor-pointer"
+                  className="bg-[#1C1C1C] text-white rounded px-2 py-1 outline-none text-xs font-sans font-bold cursor-pointer"
                 >
                   <option value="USDC">USDC</option>
                   <option value="BTC">BTC</option>
@@ -666,9 +666,9 @@ export function AccountMarginCard() {
 
             {/* To Coin (USDT) */}
             <div className="space-y-1">
-              <span className="text-[#848E9C] text-xs">To</span>
-              <div className="flex items-center justify-between bg-[#181A20] border border-[#2B313A] rounded px-3 py-2 text-xs font-mono">
-                <span className="text-[#0ECB81] font-bold text-sm tabular-nums">
+              <span className="text-[#8A8A8A] text-xs">To</span>
+              <div className="flex items-center justify-between bg-[#000000] border border-[#242D35] rounded px-3 py-2 text-xs font-mono">
+                <span className="text-[#00E676] font-bold text-sm tabular-nums">
                   ≈{" "}
                   {parseFloat(swapAmount) > 0
                     ? swapFromCoin === "USDC"
@@ -682,15 +682,15 @@ export function AccountMarginCard() {
               </div>
             </div>
 
-            <div className="text-xs text-[#848E9C] bg-[#181A20] p-2 rounded flex items-center justify-between font-mono">
+            <div className="text-xs text-[#8A8A8A] bg-[#000000] p-2 rounded flex items-center justify-between font-mono">
               <span className="font-sans">Conversion Fee:</span>
-              <span className="text-[#0ECB81] font-semibold">0.00% (Zero Fee)</span>
+              <span className="text-[#00E676] font-semibold">0.00% (Zero Fee)</span>
             </div>
 
             <button
               type="button"
               onClick={handleExecuteSwap}
-              className="w-full py-2.5 bg-[#F0B90B] text-black font-bold rounded hover:bg-[#F0B90B]/90 transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-[#00E5FF] text-black font-bold rounded hover:bg-[#00E5FF]/90 transition-colors cursor-pointer"
             >
               Confirm Swap
             </button>
@@ -701,13 +701,13 @@ export function AccountMarginCard() {
       {/* MODAL 4: Asset Mode Switch Modal */}
       {showAssetModeModal && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans">
-          <div className="bg-[#1E2329] border border-[#2B313A] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-[#2B313A] pb-3">
+          <div className="bg-[#0E0E0E] border border-[#242D35] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-[#242D35] pb-3">
               <h3 className="text-white font-bold text-sm">Asset Mode</h3>
               <button
                 type="button"
                 onClick={() => setShowAssetModeModal(false)}
-                className="text-[#848E9C] hover:text-white transition-colors cursor-pointer"
+                className="text-[#8A8A8A] hover:text-white transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -719,13 +719,13 @@ export function AccountMarginCard() {
                 onClick={() => setTempAssetMode("single")}
                 className={`w-full p-3 rounded border text-left transition-colors cursor-pointer ${
                   tempAssetMode === "single"
-                    ? "border-[#F0B90B] bg-[#F0B90B]/10 text-white"
-                    : "border-[#2B313A] text-[#848E9C] hover:text-white"
+                    ? "border-[#00E5FF] bg-[#00E5FF]/10 text-white"
+                    : "border-[#242D35] text-[#8A8A8A] hover:text-white"
                 }`}
               >
                 <div className="font-bold text-sm flex items-center justify-between">
                   <span>Single-Asset Mode</span>
-                  {tempAssetMode === "single" && <Check size={15} className="text-[#F0B90B]" />}
+                  {tempAssetMode === "single" && <Check size={15} className="text-[#00E5FF]" />}
                 </div>
                 <div className="text-xs mt-1.5 opacity-80 leading-relaxed">
                   Only USDT is used as margin. Supports both Cross and Isolated margin modes.
@@ -737,13 +737,13 @@ export function AccountMarginCard() {
                 onClick={() => setTempAssetMode("multi")}
                 className={`w-full p-3 rounded border text-left transition-colors cursor-pointer ${
                   tempAssetMode === "multi"
-                    ? "border-[#F0B90B] bg-[#F0B90B]/10 text-white"
-                    : "border-[#2B313A] text-[#848E9C] hover:text-white"
+                    ? "border-[#00E5FF] bg-[#00E5FF]/10 text-white"
+                    : "border-[#242D35] text-[#8A8A8A] hover:text-white"
                 }`}
               >
                 <div className="font-bold text-sm flex items-center justify-between">
                   <span>Multi-Assets Mode</span>
-                  {tempAssetMode === "multi" && <Check size={15} className="text-[#F0B90B]" />}
+                  {tempAssetMode === "multi" && <Check size={15} className="text-[#00E5FF]" />}
                 </div>
                 <div className="text-xs mt-1.5 opacity-80 leading-relaxed">
                   Margin is shared across USDT, USDC, and other eligible crypto collateral assets.
@@ -754,7 +754,7 @@ export function AccountMarginCard() {
             <button
               type="button"
               onClick={handleSaveAssetMode}
-              className="w-full py-2.5 bg-[#F0B90B] text-black font-bold rounded hover:bg-[#F0B90B]/90 transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-[#00E5FF] text-black font-bold rounded hover:bg-[#00E5FF]/90 transition-colors cursor-pointer"
             >
               Confirm
             </button>

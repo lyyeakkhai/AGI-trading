@@ -20,3 +20,4 @@ export * from "./AccountMarginCard";
 export * from "./PositionsOrdersTable";
 export * from "./BottomTickerStrip";
 export * from "./BinanceFuturesDesk";
+export * from "./AgiMarketPanel";

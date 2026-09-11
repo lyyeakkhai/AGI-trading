@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   OrderBookRow,
   TradeRecord,
   FuturesTickerStats,
 } from "../types/binanceFutures";
+import { mockMarketDetails } from "@/lib/mockMarketData";
 
 const INITIAL_TICKER: FuturesTickerStats = {
   symbol: "BTCUSDT",
@@ -60,6 +61,69 @@ export function useBinanceFuturesWs(symbol: string = "BTCUSDT") {
   const [connectionStatus, setConnectionStatus] = useState<"connected" | "connecting" | "disconnected">("connected");
 
   const countdownSecondsRef = useRef(8246); // ~2h 17m 26s
+
+  // Synchronize when symbol changes
+  useEffect(() => {
+    const rawClean = symbol.toUpperCase().replace(/[^A-Z]/g, "");
+    const baseAsset = rawClean.endsWith("USDT") ? rawClean.replace("USDT", "") : rawClean;
+    const formattedKey = `${baseAsset}-USDT`;
+    const mock = mockMarketDetails[formattedKey];
+
+    if (mock) {
+      const p = mock.price;
+      const step = p > 1000 ? 0.1 : p > 10 ? 0.01 : 0.0001;
+
+      setTicker((prev) => ({
+        ...prev,
+        symbol: `${baseAsset}USDT`,
+        lastPrice: p,
+        markPrice: Math.round((p - p * 0.00015) * 100) / 100,
+        indexPrice: Math.round((p - p * 0.00008) * 100) / 100,
+        priceChange: Math.round(p * (mock.change24h / 100) * 100) / 100,
+        priceChangePercent: mock.change24h,
+        high24h: mock.high24h,
+        low24h: mock.low24h,
+      }));
+
+      // Generate initial asks & bids for new price scale
+      const newAsks: OrderBookRow[] = [];
+      let askSum = 0;
+      for (let i = 1; i <= 7; i++) {
+        const askPrice = Math.round((p + i * step) * 100) / 100;
+        const size = Math.round((((i * 19) % 50) + 10) * 100) / 100;
+        askSum += size;
+        newAsks.push({
+          price: askPrice,
+          size,
+          sum: Math.round(askSum * 100) / 100,
+          depthPercent: Math.min(100, Math.round((size / 60) * 100)),
+        });
+      }
+      setAsks(newAsks.reverse());
+
+      const newBids: OrderBookRow[] = [];
+      let bidSum = 0;
+      for (let i = 1; i <= 7; i++) {
+        const bidPrice = Math.round((p - i * step) * 100) / 100;
+        const size = Math.round((((i * 17) % 50) + 10) * 100) / 100;
+        bidSum += size;
+        newBids.push({
+          price: bidPrice,
+          size,
+          sum: Math.round(bidSum * 100) / 100,
+          depthPercent: Math.min(100, Math.round((size / 60) * 100)),
+        });
+      }
+      setBids(newBids);
+
+      const newTrades: TradeRecord[] = [
+        { id: "t1", price: p, amount: 12.5, time: "20:42:33", side: "buy" },
+        { id: "t2", price: Math.round((p - step) * 100) / 100, amount: 8.2, time: "20:42:33", side: "sell" },
+        { id: "t3", price: Math.round((p + step) * 100) / 100, amount: 15.0, time: "20:42:32", side: "buy" },
+      ];
+      setTrades(newTrades);
+    }
+  }, [symbol]);
 
   // Format countdown clock
   useEffect(() => {
@@ -171,13 +235,13 @@ export function useBinanceFuturesWs(symbol: string = "BTCUSDT") {
     // Micro-jitter simulation to keep numbers dynamic even if network is offline or WS blocked
     fallbackInterval = setInterval(() => {
       setTicker((prev) => {
-        const delta = (Math.random() - 0.49) * 1.5;
-        const newPrice = Math.round((prev.lastPrice + delta) * 10) / 10;
+        const delta = (Math.random() - 0.49) * (prev.lastPrice > 1000 ? 1.5 : 0.05);
+        const newPrice = Math.round((prev.lastPrice + delta) * 100) / 100;
         return {
           ...prev,
           lastPrice: newPrice,
-          markPrice: Math.round((newPrice - 12.6) * 10) / 10,
-          indexPrice: Math.round((newPrice - 6.4) * 10) / 10,
+          markPrice: Math.round((newPrice - newPrice * 0.00015) * 100) / 100,
+          indexPrice: Math.round((newPrice - newPrice * 0.00008) * 100) / 100,
         };
       });
 
@@ -188,8 +252,8 @@ export function useBinanceFuturesWs(symbol: string = "BTCUSDT") {
         const timeStr = now.toTimeString().split(" ")[0];
         setTrades((prev) => {
           const basePrice = prev[0]?.price || 77841.9;
-          const priceDiff = (Math.random() - 0.48) * 0.8;
-          const nextPrice = Math.round((basePrice + priceDiff) * 10) / 10;
+          const priceDiff = (Math.random() - 0.48) * (basePrice > 1000 ? 0.8 : 0.02);
+          const nextPrice = Math.round((basePrice + priceDiff) * 100) / 100;
           const amount = Math.round((Math.random() * 200 + 10) * 100) / 100;
           const newTrade: TradeRecord = {
             id: String(Date.now()),

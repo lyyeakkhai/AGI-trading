@@ -144,33 +144,33 @@ export function OrderBookPanel({
   const renderSpreadRow = () => {
     const isUp = priceDirection === "up" || currentPrice >= markPrice;
     return (
-      <div className="my-0.5 py-1 px-3 bg-[#12161A] border-y border-[#23272E] flex items-center justify-between">
+      <div className="my-0.5 py-1 px-3 bg-[#0E0E0E] border-y border-[#242D35] flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => onSelectPrice?.(currentPrice)}
             className={`text-sm font-bold font-mono hover:opacity-80 transition-opacity flex items-center gap-1 cursor-pointer ${
-              isUp ? "text-[#0ECB81]" : "text-[#F6465D]"
+              isUp ? "text-[#00E676]" : "text-[#FF3B30]"
             }`}
             title="Click to select Last Traded Price"
           >
             <span>{formatPrice(currentPrice)}</span>
             {isUp ? (
-              <ArrowUp size={13} className="text-[#0ECB81] stroke-[2.5]" />
+              <ArrowUp size={13} className="text-[#00E676] stroke-[2.5]" />
             ) : (
-              <ArrowDown size={13} className="text-[#F6465D] stroke-[2.5]" />
+              <ArrowDown size={13} className="text-[#FF3B30] stroke-[2.5]" />
             )}
           </button>
           <button
             type="button"
             onClick={() => onSelectPrice?.(markPrice)}
-            className="text-xs font-mono text-[#848E9C] hover:text-[#EAECEF] cursor-pointer transition-colors"
+            className="text-xs font-mono text-[#8A8A8A] hover:text-[#EDEDED] cursor-pointer transition-colors"
             title="Click to select Mark Price"
           >
             {formatPrice(markPrice)}
           </button>
         </div>
-        <div className="text-xs font-mono text-[#848E9C] flex items-center gap-1">
+        <div className="text-xs font-mono text-[#8A8A8A] flex items-center gap-1">
           <span className="text-[11px] font-sans text-[#5E6673]">Spread</span>
           <span>{formatPrice(spread)}</span>
         </div>
@@ -179,26 +179,26 @@ export function OrderBookPanel({
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#181A20] text-xs select-none border-b border-[#23272E]">
+    <div className="flex flex-col h-full bg-[#000000] text-xs select-none border-b border-[#242D35]">
       {/* 1. Header Toolbar */}
-      <div className="h-8 px-3 flex items-center justify-between border-b border-[#23272E]">
-        <span className="font-sans font-semibold text-[#EAECEF] text-xs">Order Book</span>
+      <div className="h-8 px-3 flex items-center justify-between border-b border-[#242D35]">
+        <span className="font-sans font-semibold text-[#EDEDED] text-xs">Order Book</span>
 
         {/* Controls: Mode toggles, precision, more */}
         <div className="flex items-center gap-1.5">
           {/* Mode Toggles */}
-          <div className="flex items-center gap-0.5 bg-[#12161A] p-0.5 rounded border border-[#23272E]">
+          <div className="flex items-center gap-0.5 bg-[#0E0E0E] p-0.5 rounded border border-[#242D35]">
             {/* Both */}
             <button
               type="button"
               onClick={() => setViewMode("both")}
               className={`p-1 rounded flex flex-col gap-0.5 w-5 h-5 justify-center items-center transition-colors cursor-pointer ${
-                viewMode === "both" ? "bg-[#2B313A] text-white" : "text-[#848E9C] hover:bg-[#2B313A]/50"
+                viewMode === "both" ? "bg-[#1C1C1C] text-white" : "text-[#8A8A8A] hover:bg-[#1C1C1C]/50"
               }`}
               title="Default (Buy & Sell Orders)"
             >
-              <div className="w-3 h-1 bg-[#F6465D] rounded-[0.5px]" />
-              <div className="w-3 h-1 bg-[#0ECB81] rounded-[0.5px]" />
+              <div className="w-3 h-1 bg-[#FF3B30] rounded-[0.5px]" />
+              <div className="w-3 h-1 bg-[#00E676] rounded-[0.5px]" />
             </button>
 
             {/* Bids only */}
@@ -206,12 +206,12 @@ export function OrderBookPanel({
               type="button"
               onClick={() => setViewMode("bids")}
               className={`p-1 rounded flex flex-col gap-0.5 w-5 h-5 justify-center items-center transition-colors cursor-pointer ${
-                viewMode === "bids" ? "bg-[#2B313A] text-white" : "text-[#848E9C] hover:bg-[#2B313A]/50"
+                viewMode === "bids" ? "bg-[#1C1C1C] text-white" : "text-[#8A8A8A] hover:bg-[#1C1C1C]/50"
               }`}
               title="Buy Orders Only"
             >
-              <div className="w-3 h-1 bg-[#0ECB81] rounded-[0.5px]" />
-              <div className="w-3 h-1 bg-[#0ECB81] rounded-[0.5px]" />
+              <div className="w-3 h-1 bg-[#00E676] rounded-[0.5px]" />
+              <div className="w-3 h-1 bg-[#00E676] rounded-[0.5px]" />
             </button>
 
             {/* Asks only */}
@@ -219,12 +219,12 @@ export function OrderBookPanel({
               type="button"
               onClick={() => setViewMode("asks")}
               className={`p-1 rounded flex flex-col gap-0.5 w-5 h-5 justify-center items-center transition-colors cursor-pointer ${
-                viewMode === "asks" ? "bg-[#2B313A] text-white" : "text-[#848E9C] hover:bg-[#2B313A]/50"
+                viewMode === "asks" ? "bg-[#1C1C1C] text-white" : "text-[#8A8A8A] hover:bg-[#1C1C1C]/50"
               }`}
               title="Sell Orders Only"
             >
-              <div className="w-3 h-1 bg-[#F6465D] rounded-[0.5px]" />
-              <div className="w-3 h-1 bg-[#F6465D] rounded-[0.5px]" />
+              <div className="w-3 h-1 bg-[#FF3B30] rounded-[0.5px]" />
+              <div className="w-3 h-1 bg-[#FF3B30] rounded-[0.5px]" />
             </button>
           </div>
 
@@ -233,7 +233,7 @@ export function OrderBookPanel({
             <button
               type="button"
               onClick={() => setIsPrecisionOpen((prev) => !prev)}
-              className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#12161A] border border-[#23272E] text-xs font-mono text-[#848E9C] hover:text-[#EAECEF] hover:border-[#474D57] transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#0E0E0E] border border-[#242D35] text-xs font-mono text-[#8A8A8A] hover:text-[#EDEDED] hover:border-[#474D57] transition-colors cursor-pointer"
               title="Tick Precision"
             >
               <span>{precision}</span>
@@ -241,7 +241,7 @@ export function OrderBookPanel({
             </button>
 
             {isPrecisionOpen && (
-              <div className="absolute right-0 top-full mt-1 w-20 py-1 bg-[#1E2329] border border-[#2B313A] rounded shadow-xl z-50">
+              <div className="absolute right-0 top-full mt-1 w-20 py-1 bg-[#0E0E0E] border border-[#242D35] rounded shadow-xl z-50">
                 {PRECISION_OPTIONS.map((opt) => (
                   <button
                     key={opt}
@@ -252,12 +252,12 @@ export function OrderBookPanel({
                     }}
                     className={`w-full text-left px-2.5 py-1 text-xs font-mono transition-colors flex items-center justify-between cursor-pointer ${
                       precision === opt
-                        ? "text-[#F0B90B] bg-[#2B313A]/50 font-medium"
-                        : "text-[#848E9C] hover:text-[#EAECEF] hover:bg-[#2B313A]/30"
+                        ? "text-[#00E5FF] bg-[#1C1C1C]/50 font-medium"
+                        : "text-[#8A8A8A] hover:text-[#EDEDED] hover:bg-[#1C1C1C]/30"
                     }`}
                   >
                     <span>{opt}</span>
-                    {precision === opt && <span className="w-1.5 h-1.5 rounded-full bg-[#F0B90B]" />}
+                    {precision === opt && <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF]" />}
                   </button>
                 ))}
               </div>
@@ -266,7 +266,7 @@ export function OrderBookPanel({
 
           <button
             type="button"
-            className="p-1 text-[#848E9C] hover:text-white rounded hover:bg-[#2B313A] transition-colors cursor-pointer"
+            className="p-1 text-[#8A8A8A] hover:text-white rounded hover:bg-[#1C1C1C] transition-colors cursor-pointer"
           >
             <MoreHorizontal size={13} />
           </button>
@@ -274,7 +274,7 @@ export function OrderBookPanel({
       </div>
 
       {/* 2. Column Headers */}
-      <div className="grid grid-cols-3 px-3 py-1 text-xs font-sans text-[#848E9C] border-b border-[#23272E]/50">
+      <div className="grid grid-cols-3 px-3 py-1 text-xs font-sans text-[#8A8A8A] border-b border-[#242D35]/50">
         <div className="text-left">Price (USDT)</div>
         <div className="text-right">Size (USDT)</div>
         <div className="text-right">Sum (USDT)</div>
@@ -284,7 +284,7 @@ export function OrderBookPanel({
       <div className="flex-1 flex flex-col justify-between py-0.5 overflow-hidden font-mono text-xs">
         {viewMode === "bids" && renderSpreadRow()}
 
-        {/* Asks (Sell Orders - Red #F6465D) */}
+        {/* Asks (Sell Orders - Red #FF3B30) */}
         {visibleAsks.length > 0 && (
           <div className="flex flex-col justify-end space-y-[1px]">
             {visibleAsks.map((row, idx) => {
@@ -297,20 +297,20 @@ export function OrderBookPanel({
                 <div
                   key={`ask-${idx}-${row.price}`}
                   onClick={() => onSelectPrice?.(row.price)}
-                  className="grid grid-cols-3 px-3 py-[1px] relative hover:bg-[#2B313A]/40 cursor-pointer group leading-tight"
+                  className="grid grid-cols-3 px-3 py-[1px] relative hover:bg-[#1C1C1C]/40 cursor-pointer group leading-tight"
                 >
-                  {/* Visual Depth Percentage Bar (#F6465D for asks) */}
+                  {/* Visual Depth Percentage Bar (#FF3B30 for asks) */}
                   <div
-                    className="absolute right-0 top-0 bottom-0 bg-[#F6465D]/15 group-hover:bg-[#F6465D]/25 pointer-events-none transition-all duration-150 ease-out"
+                    className="absolute right-0 top-0 bottom-0 bg-[#FF3B30]/15 group-hover:bg-[#FF3B30]/25 pointer-events-none transition-all duration-150 ease-out"
                     style={{ width: `${depthPercent}%` }}
                   />
-                  <div className="text-left text-[#F6465D] font-medium z-10">
+                  <div className="text-left text-[#FF3B30] font-medium z-10">
                     {formatPrice(row.price)}
                   </div>
-                  <div className="text-right text-[#EAECEF] z-10">
+                  <div className="text-right text-[#EDEDED] z-10">
                     {formatSize(row.size)}
                   </div>
-                  <div className="text-right text-[#848E9C] z-10">
+                  <div className="text-right text-[#8A8A8A] z-10">
                     {formatSize(row.sum)}
                   </div>
                 </div>
@@ -321,7 +321,7 @@ export function OrderBookPanel({
 
         {viewMode === "both" && renderSpreadRow()}
 
-        {/* Bids (Buy Orders - Green #0ECB81) */}
+        {/* Bids (Buy Orders - Green #00E676) */}
         {visibleBids.length > 0 && (
           <div className="flex flex-col space-y-[1px]">
             {visibleBids.map((row, idx) => {
@@ -334,20 +334,20 @@ export function OrderBookPanel({
                 <div
                   key={`bid-${idx}-${row.price}`}
                   onClick={() => onSelectPrice?.(row.price)}
-                  className="grid grid-cols-3 px-3 py-[1px] relative hover:bg-[#2B313A]/40 cursor-pointer group leading-tight"
+                  className="grid grid-cols-3 px-3 py-[1px] relative hover:bg-[#1C1C1C]/40 cursor-pointer group leading-tight"
                 >
-                  {/* Visual Depth Percentage Bar (#0ECB81 for bids) */}
+                  {/* Visual Depth Percentage Bar (#00E676 for bids) */}
                   <div
-                    className="absolute right-0 top-0 bottom-0 bg-[#0ECB81]/15 group-hover:bg-[#0ECB81]/25 pointer-events-none transition-all duration-150 ease-out"
+                    className="absolute right-0 top-0 bottom-0 bg-[#00E676]/15 group-hover:bg-[#00E676]/25 pointer-events-none transition-all duration-150 ease-out"
                     style={{ width: `${depthPercent}%` }}
                   />
-                  <div className="text-left text-[#0ECB81] font-medium z-10">
+                  <div className="text-left text-[#00E676] font-medium z-10">
                     {formatPrice(row.price)}
                   </div>
-                  <div className="text-right text-[#EAECEF] z-10">
+                  <div className="text-right text-[#EDEDED] z-10">
                     {formatSize(row.size)}
                   </div>
-                  <div className="text-right text-[#848E9C] z-10">
+                  <div className="text-right text-[#8A8A8A] z-10">
                     {formatSize(row.sum)}
                   </div>
                 </div>

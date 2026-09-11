@@ -29,11 +29,11 @@ export function BottomTickerStrip({ connectionStatus = "connected" }: BottomTick
   const marqueeItems = [...pairs, ...pairs];
 
   const footerLinks = [
-    "Campaign Center",
-    "Announcements",
-    "Disclaimer",
-    "Futures Chatroom",
-    "Cookie Preferences",
+    "Hermes AI Stream",
+    "Risk Guard Engine",
+    "Market Share Analytics",
+    "Protocol v2.4",
+    "Latency: 12ms",
   ];
 
   const formatPrice = (price: number) => {
@@ -47,7 +47,7 @@ export function BottomTickerStrip({ connectionStatus = "connected" }: BottomTick
   };
 
   return (
-    <footer className="h-7 min-h-[28px] max-h-[28px] bg-[#12161A] border-t border-[#23272E] flex items-center justify-between text-[11px] font-mono select-none overflow-hidden z-20 shrink-0 relative">
+    <footer className="h-7 min-h-[28px] max-h-[28px] bg-[#000000] border-t border-[#242D35] flex items-center justify-between text-[11px] font-mono select-none overflow-hidden z-20 shrink-0 relative">
       <style>{`
         @keyframes bottomTickerMarquee {
           0% {
@@ -70,27 +70,27 @@ export function BottomTickerStrip({ connectionStatus = "connected" }: BottomTick
       `}</style>
 
       {/* 1. Left: Glowing Green Stable Connection Dot & Wifi Icon */}
-      <div className="flex items-center gap-2 shrink-0 px-3 h-full border-r border-[#23272E] bg-[#12161A] z-10">
+      <div className="flex items-center gap-2 shrink-0 px-3 h-full border-r border-[#242D35] bg-[#000000] z-10">
         <div className="relative flex items-center justify-center">
           {connectionStatus === "connected" ? (
             <>
-              <span className="absolute w-2.5 h-2.5 rounded-full bg-[#0ECB81]/40 animate-ping" />
-              <span className="w-2 h-2 rounded-full bg-[#0ECB81] shadow-[0_0_8px_#0ECB81]" />
+              <span className="absolute w-2.5 h-2.5 rounded-full bg-[#00E676]/40 animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-[#00E676] shadow-[0_0_8px_#00E676]" />
             </>
           ) : connectionStatus === "connecting" ? (
-            <span className="w-2 h-2 rounded-full bg-[#F0B90B] shadow-[0_0_6px_#F0B90B] animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-[#00E5FF] shadow-[0_0_6px_#00E5FF] animate-pulse" />
           ) : (
-            <span className="w-2 h-2 rounded-full bg-[#F6465D] shadow-[0_0_6px_#F6465D]" />
+            <span className="w-2 h-2 rounded-full bg-[#FF3B30] shadow-[0_0_6px_#FF3B30]" />
           )}
         </div>
 
         <span
           className={`font-sans text-[11px] font-medium tracking-tight select-none whitespace-nowrap hidden sm:inline ${
             connectionStatus === "connected"
-              ? "text-[#0ECB81]"
+              ? "text-[#00E676]"
               : connectionStatus === "connecting"
-              ? "text-[#F0B90B]"
-              : "text-[#F6465D]"
+              ? "text-[#00E5FF]"
+              : "text-[#FF3B30]"
           }`}
         >
           {connectionStatus === "connected"
@@ -101,12 +101,12 @@ export function BottomTickerStrip({ connectionStatus = "connected" }: BottomTick
         </span>
 
         {connectionStatus === "disconnected" ? (
-          <WifiOff size={12} className="text-[#F6465D] opacity-90 shrink-0" />
+          <WifiOff size={12} className="text-[#FF3B30] opacity-90 shrink-0" />
         ) : (
           <Wifi
             size={12}
             className={`shrink-0 ${
-              connectionStatus === "connected" ? "text-[#0ECB81]" : "text-[#F0B90B]"
+              connectionStatus === "connected" ? "text-[#00E676]" : "text-[#00E5FF]"
             } opacity-90`}
           />
         )}
@@ -123,18 +123,18 @@ export function BottomTickerStrip({ connectionStatus = "connected" }: BottomTick
                 className="flex items-center gap-1.5 shrink-0 px-3 cursor-pointer group"
                 title={`${p.symbol}: ${isPos ? "+" : ""}${p.changePercent.toFixed(2)}% | ${formatPrice(p.price)}`}
               >
-                <span className="text-[#848E9C] group-hover:text-[#EAECEF] transition-colors font-medium">
+                <span className="text-[#8A8A8A] group-hover:text-[#EDEDED] transition-colors font-medium">
                   {p.symbol}
                 </span>
                 <span
                   className={`font-semibold ${
-                    isPos ? "text-[#0ECB81]" : "text-[#F6465D]"
+                    isPos ? "text-[#00E676]" : "text-[#FF3B30]"
                   }`}
                 >
                   {isPos ? "+" : ""}
                   {p.changePercent.toFixed(2)}%
                 </span>
-                <span className="text-[#EAECEF] tabular-nums">
+                <span className="text-[#EDEDED] tabular-nums">
                   {formatPrice(p.price)}
                 </span>
                 <span className="text-[#2B313A] ml-2 select-none">|</span>
@@ -145,12 +145,12 @@ export function BottomTickerStrip({ connectionStatus = "connected" }: BottomTick
       </div>
 
       {/* 3. Right: Footer Navigation Links */}
-      <div className="hidden lg:flex items-center gap-4 xl:gap-5 px-3 shrink-0 border-l border-[#23272E] h-full font-sans text-[11px] text-[#848E9C] bg-[#12161A] z-10 select-none">
+      <div className="hidden lg:flex items-center gap-4 xl:gap-5 px-3 shrink-0 border-l border-[#242D35] h-full font-sans text-[11px] text-[#8A8A8A] bg-[#000000] z-10 select-none">
         {footerLinks.map((link) => (
           <button
             key={link}
             type="button"
-            className="hover:text-[#EAECEF] transition-colors whitespace-nowrap cursor-pointer focus:outline-none"
+            className="hover:text-[#EDEDED] transition-colors whitespace-nowrap cursor-pointer focus:outline-none"
           >
             {link}
           </button>

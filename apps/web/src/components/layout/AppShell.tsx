@@ -14,7 +14,7 @@ export function AppShell({ children }: AppShellProps) {
 
   if (isImmersiveTrade) {
     return (
-      <div className="h-screen w-screen overflow-hidden bg-[#12161A] text-[#EAECEF] antialiased selection:bg-[#F0B90B]/30">
+      <div className="h-screen w-screen overflow-hidden bg-[#000000] text-[#EDEDED] antialiased selection:bg-cyan-500/30">
         {children}
       </div>
     );

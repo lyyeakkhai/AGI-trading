@@ -364,16 +364,16 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
   };
 
   return (
-    <div className="flex flex-col bg-[#181A20] text-xs select-none border-b border-[#23272E] p-3 space-y-3 font-sans relative">
+    <div className="flex flex-col bg-[#000000] text-xs select-none border-b border-[#242D35] p-3 space-y-3 font-sans relative">
       {/* Toast Notification Banner */}
       {toast && (
         <div
           className={`absolute top-2 left-2 right-2 z-50 p-2.5 rounded text-xs flex items-center justify-between shadow-lg transition-all ${
             toast.type === "success"
-              ? "bg-[#0ECB81] text-black font-semibold"
+              ? "bg-[#00E676] text-black font-semibold"
               : toast.type === "error"
-              ? "bg-[#F6465D] text-white font-semibold"
-              : "bg-[#2B313A] text-[#EAECEF] border border-[#F0B90B]"
+              ? "bg-[#FF3B30] text-white font-semibold"
+              : "bg-[#1C1C1C] text-[#EDEDED] border border-[#00E5FF]"
           }`}
         >
           <span>{toast.message}</span>
@@ -392,7 +392,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             setTempMarginMode(marginMode);
             setShowMarginModal(true);
           }}
-          className="flex items-center justify-center py-1.5 rounded bg-[#2B313A] hover:bg-[#363D47] text-[#EAECEF] font-semibold transition-colors capitalize active:scale-[0.98] cursor-pointer"
+          className="flex items-center justify-center py-1.5 rounded bg-[#1C1C1C] hover:bg-[#262626] text-[#EDEDED] font-semibold transition-colors capitalize active:scale-[0.98] cursor-pointer"
           title="Margin Mode (Cross / Isolated)"
         >
           {marginMode}
@@ -405,7 +405,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             setTempLeverage(leverage);
             setShowLeverageModal(true);
           }}
-          className="flex items-center justify-center py-1.5 rounded bg-[#2B313A] hover:bg-[#363D47] text-[#EAECEF] font-semibold transition-colors active:scale-[0.98] cursor-pointer"
+          className="flex items-center justify-center py-1.5 rounded bg-[#1C1C1C] hover:bg-[#262626] text-[#EDEDED] font-semibold transition-colors active:scale-[0.98] cursor-pointer"
           title="Adjust Leverage"
         >
           {leverage}x
@@ -418,7 +418,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             setTempAssetMode(assetMode);
             setShowAssetModeModal(true);
           }}
-          className="flex items-center justify-center py-1.5 rounded bg-[#2B313A] hover:bg-[#363D47] text-[#EAECEF] font-semibold transition-colors active:scale-[0.98] cursor-pointer"
+          className="flex items-center justify-center py-1.5 rounded bg-[#1C1C1C] hover:bg-[#262626] text-[#EDEDED] font-semibold transition-colors active:scale-[0.98] cursor-pointer"
           title={assetMode === "single" ? "Single-Asset Mode (USDT only)" : "Multi-Assets Mode (Shared margin)"}
         >
           {assetMode === "single" ? "S" : "M"}
@@ -426,7 +426,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
       </div>
 
       {/* 2. Order Type Tabs & Settings */}
-      <div className="flex items-center justify-between border-b border-[#23272E] pb-2 text-xs relative">
+      <div className="flex items-center justify-between border-b border-[#242D35] pb-2 text-xs relative">
         <div className="flex items-center gap-4 font-sans">
           {(["limit", "market", "conditional"] as const).map((type) => (
             <button
@@ -435,8 +435,8 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
               onClick={() => setOrderType(type)}
               className={`capitalize font-semibold transition-colors pb-1 cursor-pointer ${
                 orderType === type
-                  ? "text-[#EAECEF] border-b-2 border-[#F0B90B] -mb-[9px]"
-                  : "text-[#848E9C] hover:text-white"
+                  ? "text-[#EDEDED] border-b-2 border-[#00E5FF] -mb-[9px]"
+                  : "text-[#8A8A8A] hover:text-white"
               }`}
             >
               {type}
@@ -449,7 +449,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
           <button
             type="button"
             onClick={() => setShowSettingsMenu(!showSettingsMenu)}
-            className="p-1 text-[#848E9C] hover:text-white rounded hover:bg-[#2B313A] transition-colors cursor-pointer"
+            className="p-1 text-[#8A8A8A] hover:text-white rounded hover:bg-[#1C1C1C] transition-colors cursor-pointer"
             title="Order Settings & Time In Force"
           >
             <SlidersHorizontal size={14} />
@@ -457,13 +457,13 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
 
           {/* Settings Dropdown Popover */}
           {showSettingsMenu && (
-            <div className="absolute right-0 top-7 w-48 bg-[#1E2329] border border-[#2B313A] rounded shadow-2xl p-2.5 z-40 space-y-2.5 text-xs font-sans">
-              <div className="flex items-center justify-between font-semibold text-[#EAECEF] border-b border-[#2B313A] pb-1">
+            <div className="absolute right-0 top-7 w-48 bg-[#0E0E0E] border border-[#242D35] rounded shadow-2xl p-2.5 z-40 space-y-2.5 text-xs font-sans">
+              <div className="flex items-center justify-between font-semibold text-[#EDEDED] border-b border-[#242D35] pb-1">
                 <span>Order Settings</span>
                 <button
                   type="button"
                   onClick={() => setShowSettingsMenu(false)}
-                  className="text-[#848E9C] hover:text-white cursor-pointer"
+                  className="text-[#8A8A8A] hover:text-white cursor-pointer"
                 >
                   <X size={12} />
                 </button>
@@ -471,7 +471,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
 
               {/* Time In Force */}
               <div>
-                <span className="text-[#848E9C] block mb-1">Time in Force (TIF)</span>
+                <span className="text-[#8A8A8A] block mb-1">Time in Force (TIF)</span>
                 <div className="grid grid-cols-3 gap-1 font-mono">
                   {(["GTC", "IOC", "FOK"] as const).map((item) => (
                     <button
@@ -480,8 +480,8 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                       onClick={() => setTif(item)}
                       className={`py-1 rounded text-center transition-colors cursor-pointer ${
                         tif === item
-                          ? "bg-[#F0B90B] text-black font-bold"
-                          : "bg-[#2B313A] text-[#848E9C] hover:text-white"
+                          ? "bg-[#00E5FF] text-black font-bold"
+                          : "bg-[#1C1C1C] text-[#8A8A8A] hover:text-white"
                       }`}
                     >
                       {item}
@@ -491,12 +491,12 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
               </div>
 
               {/* Post-Only Checkbox */}
-              <label className="flex items-center gap-2 cursor-pointer text-[#848E9C] hover:text-white pt-1">
+              <label className="flex items-center gap-2 cursor-pointer text-[#8A8A8A] hover:text-white pt-1">
                 <input
                   type="checkbox"
                   checked={isPostOnly}
                   onChange={(e) => setIsPostOnly(e.target.checked)}
-                  className="w-3.5 h-3.5 rounded bg-[#2B313A] border-[#474D57] text-[#F0B90B] focus:ring-0 cursor-pointer"
+                  className="w-3.5 h-3.5 rounded bg-[#1C1C1C] border-[#474D57] text-[#00E5FF] focus:ring-0 cursor-pointer"
                 />
                 <span>Post-Only</span>
               </label>
@@ -507,9 +507,9 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
 
       {/* 3. Available Balance Row & Transfer Shortcut */}
       <div className="flex items-center justify-between text-xs font-mono">
-        <span className="text-[#848E9C] font-sans">Avbl</span>
+        <span className="text-[#8A8A8A] font-sans">Avbl</span>
         <div className="flex items-center gap-1.5">
-          <span className="text-[#EAECEF] font-medium tabular-nums">
+          <span className="text-[#EDEDED] font-medium tabular-nums">
             {availableBalance.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
@@ -522,7 +522,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
               setTransferAmount("");
               setShowTransferModal(true);
             }}
-            className="text-[#F0B90B] hover:opacity-80 transition-opacity p-0.5 cursor-pointer"
+            className="text-[#00E5FF] hover:opacity-80 transition-opacity p-0.5 cursor-pointer"
             title="Transfer assets between Spot & Futures"
           >
             <ArrowRightLeft size={13} />
@@ -532,8 +532,8 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
 
       {/* 4. Trigger Price (For Conditional Orders) */}
       {orderType === "conditional" && (
-        <div className="flex items-center justify-between bg-[#2B313A]/40 border border-[#2B313A] rounded px-2.5 py-1.5 font-mono text-xs focus-within:border-[#F0B90B] transition-colors">
-          <span className="text-[#848E9C] select-none font-sans">Trigger Price</span>
+        <div className="flex items-center justify-between bg-[#1C1C1C]/40 border border-[#242D35] rounded px-2.5 py-1.5 font-mono text-xs focus-within:border-[#00E5FF] transition-colors">
+          <span className="text-[#8A8A8A] select-none font-sans">Trigger Price</span>
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -542,11 +542,11 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
               className="bg-transparent text-right text-white focus:outline-none w-28 font-medium tabular-nums"
               placeholder="0.0"
             />
-            <span className="text-[#848E9C]">USDT</span>
+            <span className="text-[#8A8A8A]">USDT</span>
             <button
               type="button"
               onClick={() => setTriggerType(triggerType === "mark" ? "last" : "mark")}
-              className="px-1.5 py-0.5 rounded bg-[#2B313A] hover:bg-[#363D47] text-xs text-[#F0B90B] font-semibold transition-colors capitalize font-sans cursor-pointer"
+              className="px-1.5 py-0.5 rounded bg-[#1C1C1C] hover:bg-[#262626] text-xs text-[#00E5FF] font-semibold transition-colors capitalize font-sans cursor-pointer"
               title="Toggle Trigger Price Reference"
             >
               {triggerType}
@@ -557,8 +557,8 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
 
       {/* 5. Price Input (Limit or Conditional Limit) */}
       {orderType !== "market" ? (
-        <div className="flex items-center justify-between bg-[#2B313A]/40 border border-[#2B313A] rounded px-2.5 py-1.5 font-mono text-xs focus-within:border-[#F0B90B] transition-colors">
-          <span className="text-[#848E9C] select-none font-sans">Price</span>
+        <div className="flex items-center justify-between bg-[#1C1C1C]/40 border border-[#242D35] rounded px-2.5 py-1.5 font-mono text-xs focus-within:border-[#00E5FF] transition-colors">
+          <span className="text-[#8A8A8A] select-none font-sans">Price</span>
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -567,11 +567,11 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
               className="bg-transparent text-right text-white focus:outline-none w-28 font-medium tabular-nums"
               placeholder="0.0"
             />
-            <span className="text-[#848E9C]">USDT</span>
+            <span className="text-[#8A8A8A]">USDT</span>
             <button
               type="button"
               onClick={handleBboClick}
-              className="px-1.5 py-0.5 rounded bg-[#2B313A] hover:bg-[#363D47] text-xs text-[#848E9C] hover:text-white transition-colors font-sans cursor-pointer"
+              className="px-1.5 py-0.5 rounded bg-[#1C1C1C] hover:bg-[#262626] text-xs text-[#8A8A8A] hover:text-white transition-colors font-sans cursor-pointer"
               title="Set to Best Bid / Offer (Current Price)"
             >
               BBO
@@ -579,16 +579,16 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
           </div>
         </div>
       ) : (
-        <div className="flex items-center justify-between bg-[#2B313A]/20 border border-[#2B313A] rounded px-2.5 py-2 font-mono text-xs text-[#848E9C]">
+        <div className="flex items-center justify-between bg-[#1C1C1C]/20 border border-[#242D35] rounded px-2.5 py-2 font-mono text-xs text-[#8A8A8A]">
           <span className="font-sans">Price</span>
-          <span className="font-medium text-[#EAECEF]">Market Price</span>
+          <span className="font-medium text-[#EDEDED]">Market Price</span>
         </div>
       )}
 
       {/* 6. Size Input with Unit Dropdown */}
       <div className="relative">
-        <div className="flex items-center justify-between bg-[#2B313A]/40 border border-[#2B313A] rounded px-2.5 py-1.5 font-mono text-xs focus-within:border-[#F0B90B] transition-colors">
-          <span className="text-[#848E9C] select-none font-sans">Size</span>
+        <div className="flex items-center justify-between bg-[#1C1C1C]/40 border border-[#242D35] rounded px-2.5 py-1.5 font-mono text-xs focus-within:border-[#00E5FF] transition-colors">
+          <span className="text-[#8A8A8A] select-none font-sans">Size</span>
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -601,7 +601,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             <button
               type="button"
               onClick={() => setShowUnitDropdown(!showUnitDropdown)}
-              className="flex items-center gap-0.5 text-[#848E9C] hover:text-white text-xs font-semibold px-1 py-0.5 rounded hover:bg-[#2B313A] cursor-pointer"
+              className="flex items-center gap-0.5 text-[#8A8A8A] hover:text-white text-xs font-semibold px-1 py-0.5 rounded hover:bg-[#1C1C1C] cursor-pointer"
             >
               <span>{sizeUnit}</span>
               <ChevronDown size={12} />
@@ -611,12 +611,12 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
 
         {/* Dropdown Menu */}
         {showUnitDropdown && (
-          <div className="absolute right-0 top-10 w-24 bg-[#1E2329] border border-[#2B313A] rounded shadow-2xl z-40 overflow-hidden text-xs font-mono">
+          <div className="absolute right-0 top-10 w-24 bg-[#0E0E0E] border border-[#242D35] rounded shadow-2xl z-40 overflow-hidden text-xs font-mono">
             <button
               type="button"
               onClick={() => handleSelectUnit("USDT")}
               className={`w-full px-3 py-1.5 text-left transition-colors flex items-center justify-between cursor-pointer ${
-                sizeUnit === "USDT" ? "bg-[#2B313A] text-[#F0B90B] font-bold" : "text-[#EAECEF] hover:bg-[#2B313A]"
+                sizeUnit === "USDT" ? "bg-[#1C1C1C] text-[#00E5FF] font-bold" : "text-[#EDEDED] hover:bg-[#1C1C1C]"
               }`}
             >
               <span>USDT</span>
@@ -626,7 +626,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
               type="button"
               onClick={() => handleSelectUnit("BTC")}
               className={`w-full px-3 py-1.5 text-left transition-colors flex items-center justify-between cursor-pointer ${
-                sizeUnit === "BTC" ? "bg-[#2B313A] text-[#F0B90B] font-bold" : "text-[#EAECEF] hover:bg-[#2B313A]"
+                sizeUnit === "BTC" ? "bg-[#1C1C1C] text-[#00E5FF] font-bold" : "text-[#EDEDED] hover:bg-[#1C1C1C]"
               }`}
             >
               <span>BTC</span>
@@ -640,11 +640,11 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
       <div className="pt-2 pb-3">
         <div className="relative flex items-center h-4 select-none">
           {/* Background track line */}
-          <div className="absolute left-0 right-0 h-[3px] bg-[#2B313A] rounded-full" />
+          <div className="absolute left-0 right-0 h-[3px] bg-[#1C1C1C] rounded-full" />
 
           {/* Active filled track line */}
           <div
-            className="absolute left-0 h-[3px] bg-[#F0B90B] rounded-full transition-all duration-100"
+            className="absolute left-0 h-[3px] bg-[#00E5FF] rounded-full transition-all duration-100"
             style={{ width: `${sliderPercent}%` }}
           />
 
@@ -673,8 +673,8 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                 }}
                 className={`absolute w-2.5 h-2.5 rotate-45 -translate-x-1/2 -translate-y-1/2 top-1/2 border transition-all duration-150 z-20 cursor-pointer ${
                   isReached
-                    ? "bg-[#F0B90B] border-[#F0B90B] scale-110 shadow-[0_0_6px_rgba(240,185,11,0.6)]"
-                    : "bg-[#181A20] border-[#474D57] hover:border-[#848E9C]"
+                    ? "bg-[#00E5FF] border-[#00E5FF] scale-110 shadow-[0_0_6px_rgba(240,185,11,0.6)]"
+                    : "bg-[#000000] border-[#474D57] hover:border-[#848E9C]"
                 }`}
                 style={{ left: `${stop}%` }}
                 title={`${stop}%`}
@@ -684,14 +684,14 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
         </div>
 
         {/* Milestone Labels */}
-        <div className="relative flex justify-between text-[11px] font-mono text-[#848E9C] pt-1 select-none">
+        <div className="relative flex justify-between text-[11px] font-mono text-[#8A8A8A] pt-1 select-none">
           {[0, 25, 50, 75, 100].map((stop) => (
             <button
               key={stop}
               type="button"
               onClick={() => handlePercentClick(stop)}
               className={`hover:text-white transition-colors cursor-pointer ${
-                sliderPercent === stop ? "text-[#F0B90B] font-bold" : ""
+                sliderPercent === stop ? "text-[#00E5FF] font-bold" : ""
               }`}
             >
               {stop}%
@@ -701,36 +701,36 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
       </div>
 
       {/* 8. Conditions & Flags Checkboxes */}
-      <div className="space-y-2 text-xs text-[#848E9C] font-sans">
+      <div className="space-y-2 text-xs text-[#8A8A8A] font-sans">
         <div className="flex items-center justify-between">
-          <label className="flex items-center gap-1.5 cursor-pointer hover:text-[#EAECEF]">
+          <label className="flex items-center gap-1.5 cursor-pointer hover:text-[#EDEDED]">
             <input
               type="checkbox"
               checked={isTpSl}
               onChange={(e) => setIsTpSl(e.target.checked)}
-              className="w-3.5 h-3.5 rounded bg-[#2B313A] border-[#474D57] text-[#F0B90B] focus:ring-0 cursor-pointer"
+              className="w-3.5 h-3.5 rounded bg-[#1C1C1C] border-[#474D57] text-[#00E5FF] focus:ring-0 cursor-pointer"
             />
             <span>TP/SL</span>
           </label>
 
-          <label className="flex items-center gap-1.5 cursor-pointer hover:text-[#EAECEF]">
+          <label className="flex items-center gap-1.5 cursor-pointer hover:text-[#EDEDED]">
             <input
               type="checkbox"
               checked={isReduceOnly}
               onChange={(e) => setIsReduceOnly(e.target.checked)}
-              className="w-3.5 h-3.5 rounded bg-[#2B313A] border-[#474D57] text-[#F0B90B] focus:ring-0 cursor-pointer"
+              className="w-3.5 h-3.5 rounded bg-[#1C1C1C] border-[#474D57] text-[#00E5FF] focus:ring-0 cursor-pointer"
             />
             <span>Reduce-Only</span>
           </label>
 
-          <span className="font-mono text-xs text-[#848E9C]">TIF {tif}</span>
+          <span className="font-mono text-xs text-[#8A8A8A]">TIF {tif}</span>
         </div>
 
         {/* Expandable TP/SL Inputs */}
         {isTpSl && (
           <div className="space-y-1.5 pt-1 font-mono">
-            <div className="flex items-center justify-between bg-[#2B313A]/30 border border-[#2B313A] rounded px-2.5 py-1.5">
-              <span className="text-xs text-[#0ECB81] font-sans font-medium">Take Profit</span>
+            <div className="flex items-center justify-between bg-[#1C1C1C]/30 border border-[#242D35] rounded px-2.5 py-1.5">
+              <span className="text-xs text-[#00E676] font-sans font-medium">Take Profit</span>
               <div className="flex items-center gap-1.5">
                 <input
                   type="text"
@@ -739,11 +739,11 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                   placeholder="TP Price"
                   className="bg-transparent text-right text-white placeholder-[#848E9C] w-24 text-xs focus:outline-none tabular-nums"
                 />
-                <span className="text-[#848E9C]">USDT</span>
+                <span className="text-[#8A8A8A]">USDT</span>
               </div>
             </div>
-            <div className="flex items-center justify-between bg-[#2B313A]/30 border border-[#2B313A] rounded px-2.5 py-1.5">
-              <span className="text-xs text-[#F6465D] font-sans font-medium">Stop Loss</span>
+            <div className="flex items-center justify-between bg-[#1C1C1C]/30 border border-[#242D35] rounded px-2.5 py-1.5">
+              <span className="text-xs text-[#FF3B30] font-sans font-medium">Stop Loss</span>
               <div className="flex items-center gap-1.5">
                 <input
                   type="text"
@@ -752,7 +752,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                   placeholder="SL Price"
                   className="bg-transparent text-right text-white placeholder-[#848E9C] w-24 text-xs focus:outline-none tabular-nums"
                 />
-                <span className="text-[#848E9C]">USDT</span>
+                <span className="text-[#8A8A8A]">USDT</span>
               </div>
             </div>
           </div>
@@ -764,7 +764,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
         <button
           type="button"
           onClick={() => handleOrderSubmit("buy")}
-          className="w-full py-2.5 rounded bg-[#0ECB81] hover:bg-[#0ECB81]/90 text-white font-bold text-sm transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-1 cursor-pointer"
+          className="w-full py-2.5 rounded bg-[#00E676] hover:bg-[#00E676]/90 text-white font-bold text-sm transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-1 cursor-pointer"
         >
           <span>Buy / Long</span>
         </button>
@@ -772,19 +772,19 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
         <button
           type="button"
           onClick={() => handleOrderSubmit("sell")}
-          className="w-full py-2.5 rounded bg-[#F6465D] hover:bg-[#F6465D]/90 text-white font-bold text-sm transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-1 cursor-pointer"
+          className="w-full py-2.5 rounded bg-[#FF3B30] hover:bg-[#FF3B30]/90 text-white font-bold text-sm transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-1 cursor-pointer"
         >
           <span>Sell / Short</span>
         </button>
       </div>
 
       {/* 10. Live Estimated Margin Cost and Liquidation Price Row */}
-      <div className="grid grid-cols-2 gap-3 text-xs font-mono text-[#848E9C] pt-2 border-t border-[#23272E]">
+      <div className="grid grid-cols-2 gap-3 text-xs font-mono text-[#8A8A8A] pt-2 border-t border-[#242D35]">
         {/* Buy/Long Calculations */}
         <div className="space-y-1">
           <div className="flex justify-between items-center">
             <span className="font-sans">Liq Price</span>
-            <span className="text-[#EAECEF] font-semibold tabular-nums">
+            <span className="text-[#EDEDED] font-semibold tabular-nums">
               {buyLiqPrice !== null
                 ? `${buyLiqPrice.toLocaleString("en-US", {
                     minimumFractionDigits: 1,
@@ -795,13 +795,13 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
           </div>
           <div className="flex justify-between items-center">
             <span className="font-sans">Cost</span>
-            <span className="text-[#EAECEF] font-semibold tabular-nums">
+            <span className="text-[#EDEDED] font-semibold tabular-nums">
               {estMarginCost.toFixed(2)} USDT
             </span>
           </div>
           <div className="flex justify-between items-center">
             <span className="font-sans">Max</span>
-            <span className="text-[#EAECEF] font-semibold tabular-nums">
+            <span className="text-[#EDEDED] font-semibold tabular-nums">
               {sizeUnit === "USDT"
                 ? `${maxNotional.toLocaleString("en-US", {
                     minimumFractionDigits: 2,
@@ -816,7 +816,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
         <div className="space-y-1">
           <div className="flex justify-between items-center">
             <span className="font-sans">Liq Price</span>
-            <span className="text-[#EAECEF] font-semibold tabular-nums">
+            <span className="text-[#EDEDED] font-semibold tabular-nums">
               {sellLiqPrice !== null
                 ? `${sellLiqPrice.toLocaleString("en-US", {
                     minimumFractionDigits: 1,
@@ -827,13 +827,13 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
           </div>
           <div className="flex justify-between items-center">
             <span className="font-sans">Cost</span>
-            <span className="text-[#EAECEF] font-semibold tabular-nums">
+            <span className="text-[#EDEDED] font-semibold tabular-nums">
               {estMarginCost.toFixed(2)} USDT
             </span>
           </div>
           <div className="flex justify-between items-center">
             <span className="font-sans">Max</span>
-            <span className="text-[#EAECEF] font-semibold tabular-nums">
+            <span className="text-[#EDEDED] font-semibold tabular-nums">
               {sizeUnit === "USDT"
                 ? `${maxNotional.toLocaleString("en-US", {
                     minimumFractionDigits: 2,
@@ -847,15 +847,15 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
 
       {/* 11. Fee Level & Quiz CTA Card */}
       <div className="space-y-2 pt-1 font-sans">
-        <div className="flex items-center justify-between text-xs text-[#848E9C]">
+        <div className="flex items-center justify-between text-xs text-[#8A8A8A]">
           <span
             onClick={() => showToast("VIP 0 Tier: Maker 0.0200% / Taker 0.0500%", "info")}
-            className="text-[#F0B90B] cursor-pointer hover:underline flex items-center gap-1 font-medium"
+            className="text-[#00E5FF] cursor-pointer hover:underline flex items-center gap-1 font-medium"
           >
             <span>% Fee level</span>
             <ExternalLink size={11} />
           </span>
-          <span className="font-mono text-xs text-[#848E9C]">
+          <span className="font-mono text-xs text-[#8A8A8A]">
             Maker 0.020% / Taker 0.050%
           </span>
         </div>
@@ -868,14 +868,14 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
               setQuizError("");
               setShowQuizModal(true);
             }}
-            className="w-full flex items-center justify-center gap-2 p-2.5 rounded bg-[#2B313A]/60 hover:bg-[#2B313A] border border-[#2B313A] hover:border-[#F0B90B] text-white text-xs font-semibold transition-all group active:scale-[0.98] cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 p-2.5 rounded bg-[#1C1C1C]/60 hover:bg-[#1C1C1C] border border-[#242D35] hover:border-[#00E5FF] text-white text-xs font-semibold transition-all group active:scale-[0.98] cursor-pointer"
           >
-            <Edit3 size={15} className="text-[#F0B90B] group-hover:scale-110 transition-transform" />
+            <Edit3 size={15} className="text-[#00E5FF] group-hover:scale-110 transition-transform" />
             <span>Finish Quiz to Get Started</span>
           </button>
         ) : (
-          <div className="w-full flex items-center justify-between p-2 rounded bg-[#0ECB81]/10 border border-[#0ECB81]/30 text-xs">
-            <div className="flex items-center gap-1.5 text-[#0ECB81] font-semibold">
+          <div className="w-full flex items-center justify-between p-2 rounded bg-[#00E676]/10 border border-[#00E676]/30 text-xs">
+            <div className="flex items-center gap-1.5 text-[#00E676] font-semibold">
               <CheckCircle2 size={15} />
               <span>Futures Trading Verified</span>
             </div>
@@ -886,7 +886,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                 setQuizError("");
                 setShowQuizModal(true);
               }}
-              className="text-[#848E9C] hover:text-white underline text-[11px] cursor-pointer"
+              className="text-[#8A8A8A] hover:text-white underline text-[11px] cursor-pointer"
             >
               Review
             </button>
@@ -897,34 +897,34 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
       {/* MODAL 1: Adjust Leverage (1x - 125x) */}
       {showLeverageModal && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans">
-          <div className="bg-[#1E2329] border border-[#2B313A] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-[#2B313A] pb-3">
+          <div className="bg-[#0E0E0E] border border-[#242D35] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-[#242D35] pb-3">
               <h3 className="text-white font-bold text-sm">Adjust Leverage</h3>
               <button
                 type="button"
                 onClick={() => setShowLeverageModal(false)}
-                className="text-[#848E9C] hover:text-white transition-colors cursor-pointer"
+                className="text-[#8A8A8A] hover:text-white transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
             </div>
 
             {/* Stepper + Display */}
-            <div className="flex items-center justify-between bg-[#181A20] border border-[#2B313A] rounded p-2">
+            <div className="flex items-center justify-between bg-[#000000] border border-[#242D35] rounded p-2">
               <button
                 type="button"
                 onClick={() => setTempLeverage((prev) => Math.max(1, prev - 1))}
-                className="w-8 h-8 rounded bg-[#2B313A] hover:bg-[#363D47] text-white flex items-center justify-center font-bold text-base transition-colors cursor-pointer"
+                className="w-8 h-8 rounded bg-[#1C1C1C] hover:bg-[#262626] text-white flex items-center justify-center font-bold text-base transition-colors cursor-pointer"
               >
                 <Minus size={14} />
               </button>
-              <div className="text-center font-mono text-2xl font-bold text-[#F0B90B] tabular-nums">
+              <div className="text-center font-mono text-2xl font-bold text-[#00E5FF] tabular-nums">
                 {tempLeverage}x
               </div>
               <button
                 type="button"
                 onClick={() => setTempLeverage((prev) => Math.min(125, prev + 1))}
-                className="w-8 h-8 rounded bg-[#2B313A] hover:bg-[#363D47] text-white flex items-center justify-center font-bold text-base transition-colors cursor-pointer"
+                className="w-8 h-8 rounded bg-[#1C1C1C] hover:bg-[#262626] text-white flex items-center justify-center font-bold text-base transition-colors cursor-pointer"
               >
                 <Plus size={14} />
               </button>
@@ -938,9 +938,9 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                 max={125}
                 value={tempLeverage}
                 onChange={(e) => setTempLeverage(Number(e.target.value))}
-                className="w-full accent-[#F0B90B] cursor-pointer"
+                className="w-full accent-[#00E5FF] cursor-pointer"
               />
-              <div className="flex justify-between text-[11px] font-mono text-[#848E9C]">
+              <div className="flex justify-between text-[11px] font-mono text-[#8A8A8A]">
                 <span>1x</span>
                 <span>25x</span>
                 <span>50x</span>
@@ -959,8 +959,8 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                   onClick={() => setTempLeverage(lvl)}
                   className={`py-1 rounded border transition-colors cursor-pointer ${
                     tempLeverage === lvl
-                      ? "border-[#F0B90B] bg-[#F0B90B]/10 text-[#F0B90B] font-bold"
-                      : "border-[#2B313A] bg-[#2B313A]/50 text-[#848E9C] hover:text-white"
+                      ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF] font-bold"
+                      : "border-[#242D35] bg-[#1C1C1C]/50 text-[#8A8A8A] hover:text-white"
                   }`}
                 >
                   {lvl}x
@@ -969,10 +969,10 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             </div>
 
             {/* Max Position Tier Info */}
-            <div className="text-xs text-[#848E9C] bg-[#181A20] p-2 rounded space-y-1 font-sans">
+            <div className="text-xs text-[#8A8A8A] bg-[#000000] p-2 rounded space-y-1 font-sans">
               <div className="flex justify-between">
                 <span>Max position at {tempLeverage}x:</span>
-                <span className="text-[#EAECEF] font-mono font-medium">
+                <span className="text-[#EDEDED] font-mono font-medium">
                   {tempLeverage <= 20
                     ? "5,000,000 USDT"
                     : tempLeverage <= 50
@@ -985,7 +985,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             </div>
 
             {/* Warning Message */}
-            <div className="flex items-start gap-2 text-xs text-[#F0B90B] bg-[#F0B90B]/10 border border-[#F0B90B]/20 p-2.5 rounded leading-relaxed">
+            <div className="flex items-start gap-2 text-xs text-[#00E5FF] bg-[#00E5FF]/10 border border-[#00E5FF]/20 p-2.5 rounded leading-relaxed">
               <AlertTriangle size={16} className="shrink-0 mt-0.5" />
               <span>
                 Selecting higher leverage such as [20x+] increases your liquidation risk. Always manage your position size carefully.
@@ -1000,7 +1000,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                 setShowLeverageModal(false);
                 showToast(`Leverage updated to ${tempLeverage}x`, "info");
               }}
-              className="w-full py-2.5 bg-[#F0B90B] text-black font-bold rounded hover:bg-[#F0B90B]/90 transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-[#00E5FF] text-black font-bold rounded hover:bg-[#00E5FF]/90 transition-colors cursor-pointer"
             >
               Confirm
             </button>
@@ -1011,13 +1011,13 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
       {/* MODAL 2: Margin Mode (Cross / Isolated) */}
       {showMarginModal && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans">
-          <div className="bg-[#1E2329] border border-[#2B313A] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-[#2B313A] pb-3">
+          <div className="bg-[#0E0E0E] border border-[#242D35] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-[#242D35] pb-3">
               <h3 className="text-white font-bold text-sm">Margin Mode</h3>
               <button
                 type="button"
                 onClick={() => setShowMarginModal(false)}
-                className="text-[#848E9C] hover:text-white transition-colors cursor-pointer"
+                className="text-[#8A8A8A] hover:text-white transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -1029,13 +1029,13 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                 onClick={() => setTempMarginMode("cross")}
                 className={`p-3 rounded border text-left transition-colors cursor-pointer ${
                   tempMarginMode === "cross"
-                    ? "border-[#F0B90B] bg-[#F0B90B]/10 text-white"
-                    : "border-[#2B313A] text-[#848E9C] hover:text-white"
+                    ? "border-[#00E5FF] bg-[#00E5FF]/10 text-white"
+                    : "border-[#242D35] text-[#8A8A8A] hover:text-white"
                 }`}
               >
                 <div className="font-bold text-sm flex items-center justify-between">
                   <span>Cross</span>
-                  {tempMarginMode === "cross" && <Check size={14} className="text-[#F0B90B]" />}
+                  {tempMarginMode === "cross" && <Check size={14} className="text-[#00E5FF]" />}
                 </div>
                 <div className="text-xs mt-1.5 opacity-80 leading-relaxed">
                   Shared margin across all cross positions under the same asset.
@@ -1047,13 +1047,13 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                 onClick={() => setTempMarginMode("isolated")}
                 className={`p-3 rounded border text-left transition-colors cursor-pointer ${
                   tempMarginMode === "isolated"
-                    ? "border-[#F0B90B] bg-[#F0B90B]/10 text-white"
-                    : "border-[#2B313A] text-[#848E9C] hover:text-white"
+                    ? "border-[#00E5FF] bg-[#00E5FF]/10 text-white"
+                    : "border-[#242D35] text-[#8A8A8A] hover:text-white"
                 }`}
               >
                 <div className="font-bold text-sm flex items-center justify-between">
                   <span>Isolated</span>
-                  {tempMarginMode === "isolated" && <Check size={14} className="text-[#F0B90B]" />}
+                  {tempMarginMode === "isolated" && <Check size={14} className="text-[#00E5FF]" />}
                 </div>
                 <div className="text-xs mt-1.5 opacity-80 leading-relaxed">
                   Risk capped strictly to individual allocated position margin.
@@ -1061,7 +1061,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
               </button>
             </div>
 
-            <div className="text-xs text-[#848E9C] bg-[#181A20] p-2.5 rounded leading-relaxed">
+            <div className="text-xs text-[#8A8A8A] bg-[#000000] p-2.5 rounded leading-relaxed">
               Switching margin mode only applies to subsequent contracts and does not affect already opened positions.
             </div>
 
@@ -1080,7 +1080,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                   );
                 }
               }}
-              className="w-full py-2.5 bg-[#F0B90B] text-black font-bold rounded hover:bg-[#F0B90B]/90 transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-[#00E5FF] text-black font-bold rounded hover:bg-[#00E5FF]/90 transition-colors cursor-pointer"
             >
               Confirm
             </button>
@@ -1091,13 +1091,13 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
       {/* MODAL 3: Asset Mode (Single-Asset vs Multi-Assets) */}
       {showAssetModeModal && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans">
-          <div className="bg-[#1E2329] border border-[#2B313A] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-[#2B313A] pb-3">
+          <div className="bg-[#0E0E0E] border border-[#242D35] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-[#242D35] pb-3">
               <h3 className="text-white font-bold text-sm">Asset Mode</h3>
               <button
                 type="button"
                 onClick={() => setShowAssetModeModal(false)}
-                className="text-[#848E9C] hover:text-white transition-colors cursor-pointer"
+                className="text-[#8A8A8A] hover:text-white transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -1109,13 +1109,13 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                 onClick={() => setTempAssetMode("single")}
                 className={`w-full p-3 rounded border text-left transition-colors cursor-pointer ${
                   tempAssetMode === "single"
-                    ? "border-[#F0B90B] bg-[#F0B90B]/10 text-white"
-                    : "border-[#2B313A] text-[#848E9C] hover:text-white"
+                    ? "border-[#00E5FF] bg-[#00E5FF]/10 text-white"
+                    : "border-[#242D35] text-[#8A8A8A] hover:text-white"
                 }`}
               >
                 <div className="font-bold text-sm flex items-center justify-between">
                   <span>Single-Asset Mode (S)</span>
-                  {tempAssetMode === "single" && <Check size={15} className="text-[#F0B90B]" />}
+                  {tempAssetMode === "single" && <Check size={15} className="text-[#00E5FF]" />}
                 </div>
                 <div className="text-xs mt-1.5 opacity-80 leading-relaxed">
                   Only USDT is used as margin. Supports both Cross and Isolated margin modes.
@@ -1127,13 +1127,13 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                 onClick={() => setTempAssetMode("multi")}
                 className={`w-full p-3 rounded border text-left transition-colors cursor-pointer ${
                   tempAssetMode === "multi"
-                    ? "border-[#F0B90B] bg-[#F0B90B]/10 text-white"
-                    : "border-[#2B313A] text-[#848E9C] hover:text-white"
+                    ? "border-[#00E5FF] bg-[#00E5FF]/10 text-white"
+                    : "border-[#242D35] text-[#8A8A8A] hover:text-white"
                 }`}
               >
                 <div className="font-bold text-sm flex items-center justify-between">
                   <span>Multi-Assets Mode (M)</span>
-                  {tempAssetMode === "multi" && <Check size={15} className="text-[#F0B90B]" />}
+                  {tempAssetMode === "multi" && <Check size={15} className="text-[#00E5FF]" />}
                 </div>
                 <div className="text-xs mt-1.5 opacity-80 leading-relaxed">
                   Margin is shared across USDT, USDC, and other eligible crypto collateral assets.
@@ -1159,7 +1159,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                   );
                 }
               }}
-              className="w-full py-2.5 bg-[#F0B90B] text-black font-bold rounded hover:bg-[#F0B90B]/90 transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-[#00E5FF] text-black font-bold rounded hover:bg-[#00E5FF]/90 transition-colors cursor-pointer"
             >
               Confirm
             </button>
@@ -1170,22 +1170,22 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
       {/* MODAL 4: Transfer Assets Shortcut Modal */}
       {showTransferModal && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans">
-          <div className="bg-[#1E2329] border border-[#2B313A] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-[#2B313A] pb-3">
+          <div className="bg-[#0E0E0E] border border-[#242D35] rounded-lg w-full max-w-sm p-4 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-[#242D35] pb-3">
               <h3 className="text-white font-bold text-sm">Transfer Assets</h3>
               <button
                 type="button"
                 onClick={() => setShowTransferModal(false)}
-                className="text-[#848E9C] hover:text-white transition-colors cursor-pointer"
+                className="text-[#8A8A8A] hover:text-white transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
             </div>
 
             {/* Direction Selector */}
-            <div className="bg-[#181A20] border border-[#2B313A] rounded p-3 space-y-2">
+            <div className="bg-[#000000] border border-[#242D35] rounded p-3 space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#848E9C]">From</span>
+                <span className="text-[#8A8A8A]">From</span>
                 <span className="text-white font-semibold">
                   {transferDirection === "toFutures" ? "Fiat and Spot" : "USDⓈ-M Futures"}
                 </span>
@@ -1198,14 +1198,14 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                       transferDirection === "toFutures" ? "toSpot" : "toFutures"
                     )
                   }
-                  className="p-1.5 rounded-full bg-[#2B313A] hover:bg-[#363D47] text-[#F0B90B] transition-colors cursor-pointer"
+                  className="p-1.5 rounded-full bg-[#1C1C1C] hover:bg-[#262626] text-[#00E5FF] transition-colors cursor-pointer"
                   title="Reverse Transfer Direction"
                 >
                   <ArrowRightLeft size={14} />
                 </button>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#848E9C]">To</span>
+                <span className="text-[#8A8A8A]">To</span>
                 <span className="text-white font-semibold">
                   {transferDirection === "toFutures" ? "USDⓈ-M Futures" : "Fiat and Spot"}
                 </span>
@@ -1213,14 +1213,14 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             </div>
 
             {/* Coin Selector */}
-            <div className="flex items-center justify-between bg-[#181A20] border border-[#2B313A] rounded px-3 py-2 text-xs">
-              <span className="text-[#848E9C]">Asset</span>
+            <div className="flex items-center justify-between bg-[#000000] border border-[#242D35] rounded px-3 py-2 text-xs">
+              <span className="text-[#8A8A8A]">Asset</span>
               <span className="text-white font-mono font-bold">USDT (Tether)</span>
             </div>
 
             {/* Amount Input */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between bg-[#181A20] border border-[#2B313A] rounded px-3 py-2 text-xs font-mono focus-within:border-[#F0B90B]">
+              <div className="flex items-center justify-between bg-[#000000] border border-[#242D35] rounded px-3 py-2 text-xs font-mono focus-within:border-[#00E5FF]">
                 <input
                   type="text"
                   placeholder="Amount"
@@ -1229,7 +1229,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                   className="bg-transparent text-white placeholder-[#848E9C] focus:outline-none w-full tabular-nums font-medium"
                 />
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[#848E9C]">USDT</span>
+                  <span className="text-[#8A8A8A]">USDT</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -1239,13 +1239,13 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                         setTransferAmount(availableBalance.toFixed(2));
                       }
                     }}
-                    className="text-[#F0B90B] font-bold text-xs hover:underline font-sans cursor-pointer"
+                    className="text-[#00E5FF] font-bold text-xs hover:underline font-sans cursor-pointer"
                   >
                     MAX
                   </button>
                 </div>
               </div>
-              <div className="flex justify-between text-[11px] text-[#848E9C] font-mono">
+              <div className="flex justify-between text-[11px] text-[#8A8A8A] font-mono">
                 <span>Available to transfer:</span>
                 <span>
                   {transferDirection === "toFutures"
@@ -1258,7 +1258,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             <button
               type="button"
               onClick={handleExecuteTransfer}
-              className="w-full py-2.5 bg-[#F0B90B] text-black font-bold rounded hover:bg-[#F0B90B]/90 transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-[#00E5FF] text-black font-bold rounded hover:bg-[#00E5FF]/90 transition-colors cursor-pointer"
             >
               Confirm Transfer
             </button>
@@ -1269,33 +1269,33 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
       {/* MODAL 5: Binance Futures Quiz Modal */}
       {showQuizModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans">
-          <div className="bg-[#1E2329] border border-[#2B313A] rounded-lg w-full max-w-md p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-[#2B313A] pb-3">
+          <div className="bg-[#0E0E0E] border border-[#242D35] rounded-lg w-full max-w-md p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-[#242D35] pb-3">
               <div className="flex items-center gap-2">
-                <ShieldAlert size={18} className="text-[#F0B90B]" />
+                <ShieldAlert size={18} className="text-[#00E5FF]" />
                 <h3 className="text-white font-bold text-sm">Binance Futures Knowledge Quiz</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowQuizModal(false)}
-                className="text-[#848E9C] hover:text-white transition-colors cursor-pointer"
+                className="text-[#8A8A8A] hover:text-white transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
             </div>
 
-            <p className="text-xs text-[#848E9C] leading-relaxed">
+            <p className="text-xs text-[#8A8A8A] leading-relaxed">
               Complete this mandatory quiz to ensure you understand leverage, liquidation risks, and margin mechanics before trading USDⓈ-M Futures.
             </p>
 
             {quizError && (
-              <div className="p-2.5 bg-[#F6465D]/10 border border-[#F6465D]/30 text-[#F6465D] text-xs rounded font-medium">
+              <div className="p-2.5 bg-[#FF3B30]/10 border border-[#FF3B30]/30 text-[#FF3B30] text-xs rounded font-medium">
                 {quizError}
               </div>
             )}
 
             {/* Question 1 */}
-            <div className="space-y-2 bg-[#181A20] p-3 rounded border border-[#2B313A] text-xs">
+            <div className="space-y-2 bg-[#000000] p-3 rounded border border-[#242D35] text-xs">
               <span className="font-semibold text-white block">
                 1. What is the maximum available leverage on BTCUSDT Perpetual Contracts?
               </span>
@@ -1306,14 +1306,14 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
               ].map((opt) => (
                 <label
                   key={opt.val}
-                  className="flex items-center gap-2 cursor-pointer text-[#848E9C] hover:text-white"
+                  className="flex items-center gap-2 cursor-pointer text-[#8A8A8A] hover:text-white"
                 >
                   <input
                     type="radio"
                     name="q1"
                     checked={quizAnswers[1] === opt.val}
                     onChange={() => setQuizAnswers({ ...quizAnswers, 1: opt.val })}
-                    className="text-[#F0B90B] focus:ring-0 cursor-pointer"
+                    className="text-[#00E5FF] focus:ring-0 cursor-pointer"
                   />
                   <span>{opt.label}</span>
                 </label>
@@ -1321,7 +1321,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             </div>
 
             {/* Question 2 */}
-            <div className="space-y-2 bg-[#181A20] p-3 rounded border border-[#2B313A] text-xs">
+            <div className="space-y-2 bg-[#000000] p-3 rounded border border-[#242D35] text-xs">
               <span className="font-semibold text-white block">
                 2. What happens when your account Margin Ratio reaches 100%?
               </span>
@@ -1332,14 +1332,14 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
               ].map((opt) => (
                 <label
                   key={opt.val}
-                  className="flex items-center gap-2 cursor-pointer text-[#848E9C] hover:text-white"
+                  className="flex items-center gap-2 cursor-pointer text-[#8A8A8A] hover:text-white"
                 >
                   <input
                     type="radio"
                     name="q2"
                     checked={quizAnswers[2] === opt.val}
                     onChange={() => setQuizAnswers({ ...quizAnswers, 2: opt.val })}
-                    className="text-[#F0B90B] focus:ring-0 cursor-pointer"
+                    className="text-[#00E5FF] focus:ring-0 cursor-pointer"
                   />
                   <span>{opt.label}</span>
                 </label>
@@ -1347,7 +1347,7 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
             </div>
 
             {/* Question 3 */}
-            <div className="space-y-2 bg-[#181A20] p-3 rounded border border-[#2B313A] text-xs">
+            <div className="space-y-2 bg-[#000000] p-3 rounded border border-[#242D35] text-xs">
               <span className="font-semibold text-white block">
                 3. In Isolated Margin mode, what is the maximum potential loss?
               </span>
@@ -1358,14 +1358,14 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
               ].map((opt) => (
                 <label
                   key={opt.val}
-                  className="flex items-center gap-2 cursor-pointer text-[#848E9C] hover:text-white"
+                  className="flex items-center gap-2 cursor-pointer text-[#8A8A8A] hover:text-white"
                 >
                   <input
                     type="radio"
                     name="q3"
                     checked={quizAnswers[3] === opt.val}
                     onChange={() => setQuizAnswers({ ...quizAnswers, 3: opt.val })}
-                    className="text-[#F0B90B] focus:ring-0 cursor-pointer"
+                    className="text-[#00E5FF] focus:ring-0 cursor-pointer"
                   />
                   <span>{opt.label}</span>
                 </label>
@@ -1379,14 +1379,14 @@ export function FuturesOrderPanel({ currentPrice }: FuturesOrderPanelProps) {
                   // Auto-fill correct answers for quick testing
                   setQuizAnswers({ 1: 2, 2: 1, 3: 0 });
                 }}
-                className="py-2 px-3 rounded bg-[#2B313A] hover:bg-[#363D47] text-[#848E9C] hover:text-white text-xs font-semibold transition-colors cursor-pointer"
+                className="py-2 px-3 rounded bg-[#1C1C1C] hover:bg-[#262626] text-[#8A8A8A] hover:text-white text-xs font-semibold transition-colors cursor-pointer"
               >
                 Auto-Fill Answers
               </button>
               <button
                 type="button"
                 onClick={handleQuizSubmit}
-                className="flex-1 py-2.5 bg-[#F0B90B] text-black font-bold rounded hover:bg-[#F0B90B]/90 text-xs transition-colors cursor-pointer"
+                className="flex-1 py-2.5 bg-[#00E5FF] text-black font-bold rounded hover:bg-[#00E5FF]/90 text-xs transition-colors cursor-pointer"
               >
                 Submit & Verify
               </button>

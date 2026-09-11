@@ -345,14 +345,14 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight || 450,
       layout: {
-        background: { type: ColorType.Solid, color: "#12161A" },
-        textColor: "#848E9C",
+        background: { type: ColorType.Solid, color: "#000000" },
+        textColor: "#8A8A8A",
         fontFamily: "var(--font-jetbrains-mono), monospace",
         fontSize: 11,
       },
       grid: {
-        vertLines: { color: "#1E2329" },
-        horzLines: { color: "#1E2329" },
+        vertLines: { color: "#151A1E" },
+        horzLines: { color: "#151A1E" },
       },
       crosshair: {
         mode: CrosshairMode.Normal,
@@ -388,26 +388,26 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
 
     // Candlestick Series (hidden if timeframe is "Time")
     const candleSeries = chart.addCandlestickSeries({
-      upColor: "#0ECB81",
-      downColor: "#F6465D",
+      upColor: "#00E676",
+      downColor: "#FF3B30",
       borderVisible: false,
-      wickUpColor: "#0ECB81",
-      wickDownColor: "#F6465D",
+      wickUpColor: "#00E676",
+      wickDownColor: "#FF3B30",
     });
     candleSeriesRef.current = candleSeries;
 
     // Area Series (visible only if timeframe is "Time")
     const areaSeries = chart.addAreaSeries({
-      topColor: "rgba(240, 185, 11, 0.35)",
-      bottomColor: "rgba(240, 185, 11, 0.02)",
-      lineColor: "#F0B90B",
+      topColor: "rgba(0, 229, 255, 0.35)",
+      bottomColor: "rgba(0, 229, 255, 0.02)",
+      lineColor: "#00E5FF",
       lineWidth: 2,
     });
     areaSeriesRef.current = areaSeries;
 
     // Moving Averages: MA7 (#F0B90B), MA25 (#E040FB), MA99 (#7C4DFF)
     const ma7Series = chart.addLineSeries({
-      color: "#F0B90B",
+      color: "#00E5FF",
       lineWidth: 1,
       crosshairMarkerVisible: false,
       lastValueVisible: true,
@@ -416,7 +416,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
     ma7SeriesRef.current = ma7Series;
 
     const ma25Series = chart.addLineSeries({
-      color: "#E040FB",
+      color: "#A855F7",
       lineWidth: 1,
       crosshairMarkerVisible: false,
       lastValueVisible: true,
@@ -425,7 +425,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
     ma25SeriesRef.current = ma25Series;
 
     const ma99Series = chart.addLineSeries({
-      color: "#7C4DFF",
+      color: "#6366F1",
       lineWidth: 1,
       crosshairMarkerVisible: false,
       lastValueVisible: true,
@@ -541,10 +541,10 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
   return (
     <div
       ref={containerRef}
-      className="flex flex-col h-full w-full bg-[#12161A] select-none relative overflow-hidden border-r border-[#23272E]"
+      className="flex flex-col h-full w-full bg-[#000000] select-none relative overflow-hidden border-r border-[#242D35]"
     >
       {/* 1. Sub-nav tabs & utilities row */}
-      <div className="h-8 border-b border-[#23272E] px-3 flex items-center justify-between text-xs font-sans bg-[#181A20] shrink-0">
+      <div className="h-8 border-b border-[#242D35] px-3 flex items-center justify-between text-xs font-sans bg-[#0E0E0E] shrink-0">
         {/* Left: Tabs */}
         <div className="flex items-center gap-4">
           {(["Chart", "Info", "Data"] as const).map((tab) => (
@@ -554,8 +554,8 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
               onClick={() => setActiveTab(tab)}
               className={`h-8 font-medium border-b-2 transition-colors ${
                 activeTab === tab
-                  ? "text-white border-[#F0B90B] font-semibold"
-                  : "text-[#848E9C] border-transparent hover:text-white"
+                  ? "text-white border-[#00E5FF] font-semibold"
+                  : "text-[#8A8A8A] border-transparent hover:text-white"
               }`}
             >
               {tab}
@@ -564,16 +564,16 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
         </div>
 
         {/* Right: Chart tools */}
-        <div className="flex items-center gap-1.5 text-[#848E9C]">
+        <div className="flex items-center gap-1.5 text-[#8A8A8A]">
           {/* Quick Order Pill toggle if closed */}
           {!showOrderPill && activeTab === "Chart" && viewStyle !== "Depth" && (
             <button
               type="button"
               onClick={() => setShowOrderPill(true)}
-              className="flex items-center gap-1 text-[11px] text-[#848E9C] hover:text-[#F0B90B] px-1.5 py-0.5 rounded hover:bg-[#2B313A] transition-colors mr-1"
+              className="flex items-center gap-1 text-[11px] text-[#8A8A8A] hover:text-[#00E5FF] px-1.5 py-0.5 rounded hover:bg-[#1C1C1C] transition-colors mr-1"
               title="Show Quick Order Pill"
             >
-              <Zap size={12} className="text-[#F0B90B]" />
+              <Zap size={12} className="text-[#00E5FF]" />
               <span className="font-sans">Order Pill</span>
             </button>
           )}
@@ -584,33 +584,33 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
               type="button"
               onClick={() => setShowIndicatorsModal((prev) => !prev)}
               className={`p-1 rounded transition-colors ${
-                showIndicatorsModal ? "text-[#F0B90B] bg-[#2B313A]" : "hover:text-white hover:bg-[#2B313A]"
+                showIndicatorsModal ? "text-[#00E5FF] bg-[#1C1C1C]" : "hover:text-white hover:bg-[#1C1C1C]"
               }`}
               title="Technical Indicators (MA, Volume)"
             >
               <Activity size={14} />
             </button>
             {showIndicatorsModal && (
-              <div className="absolute right-0 top-7 z-30 w-44 bg-[#1E2329] border border-[#2B313A] rounded shadow-2xl p-2 text-xs font-sans text-white">
-                <div className="text-[11px] font-bold text-[#848E9C] uppercase tracking-wider mb-2 px-1">
+              <div className="absolute right-0 top-7 z-30 w-44 bg-[#0E0E0E] border border-[#242D35] rounded shadow-2xl p-2 text-xs font-sans text-white">
+                <div className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-wider mb-2 px-1">
                   Indicators
                 </div>
-                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#2B313A] rounded cursor-pointer">
+                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#1C1C1C] rounded cursor-pointer">
                   <span>Moving Averages</span>
                   <input
                     type="checkbox"
                     checked={showMAs}
                     onChange={(e) => setShowMAs(e.target.checked)}
-                    className="accent-[#F0B90B]"
+                    className="accent-[#00E5FF]"
                   />
                 </label>
-                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#2B313A] rounded cursor-pointer">
+                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#1C1C1C] rounded cursor-pointer">
                   <span>Volume Histogram</span>
                   <input
                     type="checkbox"
                     checked={showVolume}
                     onChange={(e) => setShowVolume(e.target.checked)}
-                    className="accent-[#F0B90B]"
+                    className="accent-[#00E5FF]"
                   />
                 </label>
               </div>
@@ -624,7 +624,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
               setOrderToast("Chart snapshot captured to clipboard");
               setTimeout(() => setOrderToast(null), 2500);
             }}
-            className="p-1 hover:text-white rounded hover:bg-[#2B313A] transition-colors"
+            className="p-1 hover:text-white rounded hover:bg-[#1C1C1C] transition-colors"
             title="Screenshot"
           >
             <Camera size={14} />
@@ -634,7 +634,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
           <button
             type="button"
             onClick={toggleFullscreen}
-            className="p-1 hover:text-white rounded hover:bg-[#2B313A] transition-colors"
+            className="p-1 hover:text-white rounded hover:bg-[#1C1C1C] transition-colors"
             title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
           >
             {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
@@ -646,33 +646,33 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
               type="button"
               onClick={() => setShowSettingsModal((prev) => !prev)}
               className={`p-1 rounded transition-colors ${
-                showSettingsModal ? "text-[#F0B90B] bg-[#2B313A]" : "hover:text-white hover:bg-[#2B313A]"
+                showSettingsModal ? "text-[#00E5FF] bg-[#1C1C1C]" : "hover:text-white hover:bg-[#1C1C1C]"
               }`}
               title="Chart Settings"
             >
               <Settings size={14} />
             </button>
             {showSettingsModal && (
-              <div className="absolute right-0 top-7 z-30 w-48 bg-[#1E2329] border border-[#2B313A] rounded shadow-2xl p-2 text-xs font-sans text-white">
-                <div className="text-[11px] font-bold text-[#848E9C] uppercase tracking-wider mb-2 px-1">
+              <div className="absolute right-0 top-7 z-30 w-48 bg-[#0E0E0E] border border-[#242D35] rounded shadow-2xl p-2 text-xs font-sans text-white">
+                <div className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-wider mb-2 px-1">
                   Chart Settings
                 </div>
-                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#2B313A] rounded cursor-pointer">
+                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#1C1C1C] rounded cursor-pointer">
                   <span>Quick Order Pill</span>
                   <input
                     type="checkbox"
                     checked={showOrderPill}
                     onChange={(e) => setShowOrderPill(e.target.checked)}
-                    className="accent-[#F0B90B]"
+                    className="accent-[#00E5FF]"
                   />
                 </label>
-                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#2B313A] rounded cursor-pointer">
+                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#1C1C1C] rounded cursor-pointer">
                   <span>MA Lines</span>
                   <input
                     type="checkbox"
                     checked={showMAs}
                     onChange={(e) => setShowMAs(e.target.checked)}
-                    className="accent-[#F0B90B]"
+                    className="accent-[#00E5FF]"
                   />
                 </label>
               </div>
@@ -684,7 +684,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
       {activeTab === "Chart" && (
         <>
           {/* 2. Timeframe & View Styles Toolbar */}
-          <div className="h-8 border-b border-[#23272E] px-3 flex items-center justify-between text-[11px] font-mono bg-[#12161A] shrink-0">
+          <div className="h-8 border-b border-[#242D35] px-3 flex items-center justify-between text-[11px] font-mono bg-[#000000] shrink-0">
             {/* Left: Timeframes */}
             <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
               {timeframes.map((tf) => (
@@ -694,8 +694,8 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                   onClick={() => setTimeframe(tf)}
                   className={`px-1.5 py-0.5 rounded transition-colors ${
                     timeframe === tf
-                      ? "text-[#F0B90B] font-bold bg-[#2B313A]/60 shadow-sm"
-                      : "text-[#848E9C] hover:text-white"
+                      ? "text-[#00E5FF] font-bold bg-[#1C1C1C]/60 shadow-sm"
+                      : "text-[#8A8A8A] hover:text-white"
                   }`}
                 >
                   {tf}
@@ -707,13 +707,13 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                 <button
                   type="button"
                   onClick={() => setShowTfDropdown((prev) => !prev)}
-                  className="p-1 text-[#848E9C] hover:text-white rounded hover:bg-[#2B313A]"
+                  className="p-1 text-[#8A8A8A] hover:text-white rounded hover:bg-[#1C1C1C]"
                   title="More intervals"
                 >
                   <ChevronDown size={12} />
                 </button>
                 {showTfDropdown && (
-                  <div className="absolute left-0 top-7 z-30 grid grid-cols-2 gap-1 w-28 bg-[#1E2329] border border-[#2B313A] rounded shadow-2xl p-1.5 text-xs font-mono">
+                  <div className="absolute left-0 top-7 z-30 grid grid-cols-2 gap-1 w-28 bg-[#0E0E0E] border border-[#242D35] rounded shadow-2xl p-1.5 text-xs font-mono">
                     {extraTimeframes.map((etf) => (
                       <button
                         key={etf}
@@ -724,8 +724,8 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                         }}
                         className={`px-1.5 py-1 rounded text-center transition-colors ${
                           timeframe === etf
-                            ? "text-[#F0B90B] font-bold bg-[#2B313A]"
-                            : "text-[#848E9C] hover:text-white hover:bg-[#2B313A]/50"
+                            ? "text-[#00E5FF] font-bold bg-[#1C1C1C]"
+                            : "text-[#8A8A8A] hover:text-white hover:bg-[#1C1C1C]/50"
                         }`}
                       >
                         {etf}
@@ -739,7 +739,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
 
               <button
                 type="button"
-                className="flex items-center gap-1 text-[#848E9C] hover:text-white px-1 py-0.5 rounded font-sans text-[11px]"
+                className="flex items-center gap-1 text-[#8A8A8A] hover:text-white px-1 py-0.5 rounded font-sans text-[11px]"
               >
                 <span>Price</span>
                 <ChevronDown size={10} />
@@ -747,7 +747,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
             </div>
 
             {/* Right: Original / Trading View / Depth switch */}
-            <div className="flex items-center gap-1 bg-[#181A20] p-0.5 rounded border border-[#23272E]">
+            <div className="flex items-center gap-1 bg-[#0E0E0E] p-0.5 rounded border border-[#242D35]">
               {(["Original", "Trading View", "Depth"] as const).map((style) => (
                 <button
                   key={style}
@@ -755,8 +755,8 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                   onClick={() => setViewStyle(style)}
                   className={`px-2 py-0.5 rounded text-[10px] font-sans transition-colors ${
                     viewStyle === style
-                      ? "bg-[#2B313A] text-white font-semibold shadow-sm"
-                      : "text-[#848E9C] hover:text-white"
+                      ? "bg-[#1C1C1C] text-white font-semibold shadow-sm"
+                      : "text-[#8A8A8A] hover:text-white"
                   }`}
                 >
                   {style}
@@ -767,7 +767,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
 
           {/* 3. OHLC & Moving Averages Legend Bar */}
           {viewStyle !== "Depth" && (
-            <div className="px-3 py-1 bg-[#12161A] flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] font-mono text-[#848E9C] border-b border-[#1E2329] shrink-0">
+            <div className="px-3 py-1 bg-[#000000] flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] font-mono text-[#8A8A8A] border-b border-[#242D35] shrink-0">
               {activeCandle && (
                 <>
                   <span className="text-white font-semibold font-sans">BTCUSDT Perp</span>
@@ -802,7 +802,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                     C:{" "}
                     <strong
                       className={
-                        activeCandle.close >= activeCandle.open ? "text-[#0ECB81]" : "text-[#F6465D]"
+                        activeCandle.close >= activeCandle.open ? "text-[#00E676]" : "text-[#FF3B30]"
                       }
                     >
                       {activeCandle.close.toLocaleString("en-US", {
@@ -815,7 +815,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                     CHANGE:{" "}
                     <span
                       className={
-                        activeCandle.close >= activeCandle.open ? "text-[#0ECB81]" : "text-[#F6465D]"
+                        activeCandle.close >= activeCandle.open ? "text-[#00E676]" : "text-[#FF3B30]"
                       }
                     >
                       {(
@@ -830,7 +830,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                   {showMAs && timeframe !== "Time" && (
                     <>
                       {activeMa7 !== undefined && (
-                        <span className="text-[#F0B90B] font-semibold">
+                        <span className="text-[#00E5FF] font-semibold">
                           MA(7):{" "}
                           {activeMa7.toLocaleString("en-US", {
                             minimumFractionDigits: 2,
@@ -839,7 +839,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                         </span>
                       )}
                       {activeMa25 !== undefined && (
-                        <span className="text-[#E040FB] font-semibold">
+                        <span className="text-[#A855F7] font-semibold">
                           MA(25):{" "}
                           {activeMa25.toLocaleString("en-US", {
                             minimumFractionDigits: 2,
@@ -848,7 +848,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                         </span>
                       )}
                       {activeMa99 !== undefined && (
-                        <span className="text-[#7C4DFF] font-semibold">
+                        <span className="text-[#6366F1] font-semibold">
                           MA(99):{" "}
                           {activeMa99.toLocaleString("en-US", {
                             minimumFractionDigits: 2,
@@ -865,7 +865,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                       Vol(BTC):{" "}
                       <strong
                         className={
-                          activeCandle.close >= activeCandle.open ? "text-[#0ECB81]" : "text-[#F6465D]"
+                          activeCandle.close >= activeCandle.open ? "text-[#00E676]" : "text-[#FF3B30]"
                         }
                       >
                         {activeCandle.volume.toLocaleString("en-US")}
@@ -881,7 +881,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
           <div className="flex-1 w-full relative min-h-[350px] flex overflow-hidden">
             {/* Left Drawing Toolbar for TradingView Mode */}
             {viewStyle === "Trading View" && (
-              <div className="w-10 bg-[#181A20] border-r border-[#23272E] flex flex-col items-center py-2 gap-2 text-[#848E9C] shrink-0 z-10">
+              <div className="w-10 bg-[#0E0E0E] border-r border-[#242D35] flex flex-col items-center py-2 gap-2 text-[#8A8A8A] shrink-0 z-10">
                 {[
                   { id: "crosshair", icon: Crosshair, label: "Crosshair" },
                   { id: "trendline", icon: TrendingUp, label: "Trendline" },
@@ -900,8 +900,8 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                       onClick={() => setActiveTvTool(tool.id)}
                       className={`p-1.5 rounded transition-colors ${
                         isActive
-                          ? "bg-[#2B313A] text-[#F0B90B]"
-                          : "hover:text-white hover:bg-[#2B313A]/60"
+                          ? "bg-[#1C1C1C] text-[#00E5FF]"
+                          : "hover:text-white hover:bg-[#1C1C1C]/60"
                       }`}
                       title={tool.label}
                     >
@@ -916,12 +916,12 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
             <div className="flex-1 relative w-full h-full min-h-0">
               {/* Floating Quick Order Pill */}
               {showOrderPill && viewStyle !== "Depth" && (
-                <div className="absolute top-3 left-3 z-20 flex items-center bg-[#1E2329]/95 border border-[#2B313A] rounded shadow-2xl p-1 gap-1.5 backdrop-blur-md select-none transition-all">
+                <div className="absolute top-3 left-3 z-20 flex items-center bg-[#0E0E0E]/95 border border-[#242D35] rounded shadow-2xl p-1 gap-1.5 backdrop-blur-md select-none transition-all">
                   {/* Buy / Long Button */}
                   <button
                     type="button"
                     onClick={() => handleQuickOrder("buy")}
-                    className="flex flex-col items-center justify-center bg-[#0ECB81] hover:bg-[#0ECB81]/90 active:scale-[0.98] text-white px-2.5 py-1 rounded text-left transition-all font-mono shadow-sm"
+                    className="flex flex-col items-center justify-center bg-[#00E676] hover:bg-[#00E676]/90 active:scale-[0.98] text-white px-2.5 py-1 rounded text-left transition-all font-mono shadow-sm"
                   >
                     <span className="text-[10px] font-sans font-bold leading-tight uppercase tracking-wider">
                       Buy/Long
@@ -935,8 +935,8 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                   </button>
 
                   {/* Size Input */}
-                  <div className="flex flex-col justify-center px-2 py-0.5 bg-[#14171A] border border-[#2B313A] rounded font-mono">
-                    <span className="text-[9px] text-[#848E9C] font-sans font-semibold uppercase leading-none mb-0.5">
+                  <div className="flex flex-col justify-center px-2 py-0.5 bg-[#14171A] border border-[#242D35] rounded font-mono">
+                    <span className="text-[9px] text-[#8A8A8A] font-sans font-semibold uppercase leading-none mb-0.5">
                       Size (USDT)
                     </span>
                     <input
@@ -952,7 +952,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                   <button
                     type="button"
                     onClick={() => handleQuickOrder("sell")}
-                    className="flex flex-col items-center justify-center bg-[#F6465D] hover:bg-[#F6465D]/90 active:scale-[0.98] text-white px-2.5 py-1 rounded text-left transition-all font-mono shadow-sm"
+                    className="flex flex-col items-center justify-center bg-[#FF3B30] hover:bg-[#FF3B30]/90 active:scale-[0.98] text-white px-2.5 py-1 rounded text-left transition-all font-mono shadow-sm"
                   >
                     <span className="text-[10px] font-sans font-bold leading-tight uppercase tracking-wider">
                       Sell/Short
@@ -969,7 +969,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                   <button
                     type="button"
                     onClick={() => setShowOrderPill(false)}
-                    className="p-1 text-[#848E9C] hover:text-white rounded hover:bg-[#2B313A] transition-colors"
+                    className="p-1 text-[#8A8A8A] hover:text-white rounded hover:bg-[#1C1C1C] transition-colors"
                     title="Close Quick Trade Pill"
                   >
                     <X size={12} />
@@ -979,8 +979,8 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
 
               {/* Order Feedback Toast */}
               {orderToast && (
-                <div className="absolute top-16 left-3 z-30 flex items-center gap-2 bg-[#1E2329] border border-[#0ECB81] text-white text-xs font-mono px-3 py-1.5 rounded shadow-2xl animate-fade-in backdrop-blur-md">
-                  <Check size={14} className="text-[#0ECB81]" />
+                <div className="absolute top-16 left-3 z-30 flex items-center gap-2 bg-[#0E0E0E] border border-[#00E676] text-white text-xs font-mono px-3 py-1.5 rounded shadow-2xl animate-fade-in backdrop-blur-md">
+                  <Check size={14} className="text-[#00E676]" />
                   <span>{orderToast}</span>
                 </div>
               )}
@@ -1053,20 +1053,20 @@ function DepthChartPane({ currentPrice, depthZoom, onZoomChange }: DepthChartPan
   );
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#12161A] p-4 text-xs font-mono select-none">
+    <div className="w-full h-full flex flex-col bg-[#000000] p-4 text-xs font-mono select-none">
       {/* Top Depth Header Controls */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#23272E]">
+      <div className="flex items-center justify-between pb-3 border-b border-[#242D35]">
         <div className="flex items-center gap-3">
           <span className="text-white font-semibold font-sans">Market Depth Curve</span>
-          <span className="text-[#848E9C]">Mid Price:</span>
+          <span className="text-[#8A8A8A]">Mid Price:</span>
           <span className="text-white font-bold">
             {currentPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT
           </span>
         </div>
 
         {/* Zoom selector */}
-        <div className="flex items-center gap-1 bg-[#181A20] p-0.5 rounded border border-[#23272E]">
-          <span className="text-[10px] text-[#848E9C] px-1 font-sans">Zoom:</span>
+        <div className="flex items-center gap-1 bg-[#0E0E0E] p-0.5 rounded border border-[#242D35]">
+          <span className="text-[10px] text-[#8A8A8A] px-1 font-sans">Zoom:</span>
           {[0.01, 0.02, 0.05, 0.1].map((z) => (
             <button
               key={z}
@@ -1074,8 +1074,8 @@ function DepthChartPane({ currentPrice, depthZoom, onZoomChange }: DepthChartPan
               onClick={() => onZoomChange(z)}
               className={`px-1.5 py-0.5 rounded text-[10px] ${
                 depthZoom === z
-                  ? "bg-[#2B313A] text-[#F0B90B] font-bold"
-                  : "text-[#848E9C] hover:text-white"
+                  ? "bg-[#1C1C1C] text-[#00E5FF] font-bold"
+                  : "text-[#8A8A8A] hover:text-white"
               }`}
             >
               {(z * 100).toFixed(0)}%
@@ -1087,10 +1087,10 @@ function DepthChartPane({ currentPrice, depthZoom, onZoomChange }: DepthChartPan
       {/* SVG Depth Graphic */}
       <div className="flex-1 relative w-full pt-4">
         {hoverData && (
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-[#1E2329]/95 border border-[#2B313A] px-3 py-1.5 rounded shadow-xl flex items-center gap-3 text-xs z-20">
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-[#0E0E0E]/95 border border-[#242D35] px-3 py-1.5 rounded shadow-xl flex items-center gap-3 text-xs z-20">
             <span
               className={`font-bold ${
-                hoverData.side === "Bid" ? "text-[#0ECB81]" : "text-[#F6465D]"
+                hoverData.side === "Bid" ? "text-[#00E676]" : "text-[#FF3B30]"
               }`}
             >
               {hoverData.side}
@@ -1103,12 +1103,12 @@ function DepthChartPane({ currentPrice, depthZoom, onZoomChange }: DepthChartPan
         <svg className="w-full h-full" viewBox="0 0 1000 300" preserveAspectRatio="none">
           <defs>
             <linearGradient id="bidGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#0ECB81" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#0ECB81" stopOpacity="0.02" />
+              <stop offset="0%" stopColor="#00E676" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#00E676" stopOpacity="0.02" />
             </linearGradient>
             <linearGradient id="askGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#F6465D" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#F6465D" stopOpacity="0.02" />
+              <stop offset="0%" stopColor="#FF3B30" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#FF3B30" stopOpacity="0.02" />
             </linearGradient>
           </defs>
 
@@ -1128,7 +1128,7 @@ function DepthChartPane({ currentPrice, depthZoom, onZoomChange }: DepthChartPan
               })
               .join(" ")} L 500 280 Z`}
             fill="url(#bidGrad)"
-            stroke="#0ECB81"
+            stroke="#00E676"
             strokeWidth="1.5"
           />
 
@@ -1142,17 +1142,17 @@ function DepthChartPane({ currentPrice, depthZoom, onZoomChange }: DepthChartPan
               })
               .join(" ")} L 1000 280 Z`}
             fill="url(#askGrad)"
-            stroke="#F6465D"
+            stroke="#FF3B30"
             strokeWidth="1.5"
           />
         </svg>
 
         {/* X Axis Labels */}
-        <div className="flex justify-between text-[10px] text-[#848E9C] pt-2 border-t border-[#23272E]">
+        <div className="flex justify-between text-[10px] text-[#8A8A8A] pt-2 border-t border-[#242D35]">
           <span>{(currentPrice * (1 - depthZoom)).toFixed(1)}</span>
-          <span className="text-[#0ECB81] font-bold">BIDS</span>
+          <span className="text-[#00E676] font-bold">BIDS</span>
           <span className="text-white font-bold">{currentPrice.toFixed(1)}</span>
-          <span className="text-[#F6465D] font-bold">ASKS</span>
+          <span className="text-[#FF3B30] font-bold">ASKS</span>
           <span>{(currentPrice * (1 + depthZoom)).toFixed(1)}</span>
         </div>
       </div>
@@ -1180,13 +1180,13 @@ function ContractInfoPane({ symbol, currentPrice }: { symbol: string; currentPri
   ];
 
   return (
-    <div className="flex-1 w-full bg-[#12161A] p-6 overflow-y-auto no-scrollbar font-sans text-xs">
+    <div className="flex-1 w-full bg-[#000000] p-6 overflow-y-auto no-scrollbar font-sans text-xs">
       <div className="max-w-4xl mx-auto space-y-6">
         <div>
           <h3 className="text-sm font-bold text-white mb-1">
             {symbol} Perpetual Contract Specifications
           </h3>
-          <p className="text-[#848E9C]">
+          <p className="text-[#8A8A8A]">
             Detailed parameters and trading rules governing the {symbol} USD-M Perpetual Market.
           </p>
         </div>
@@ -1195,9 +1195,9 @@ function ContractInfoPane({ symbol, currentPrice }: { symbol: string; currentPri
           {specs.map((spec) => (
             <div
               key={spec.label}
-              className="bg-[#181A20] border border-[#23272E] p-3 rounded flex flex-col justify-between"
+              className="bg-[#0E0E0E] border border-[#242D35] p-3 rounded flex flex-col justify-between"
             >
-              <span className="text-[#848E9C] text-[11px] uppercase tracking-wider mb-1">
+              <span className="text-[#8A8A8A] text-[11px] uppercase tracking-wider mb-1">
                 {spec.label}
               </span>
               <span className="text-white font-mono font-semibold text-xs">{spec.value}</span>
@@ -1214,49 +1214,49 @@ function ContractInfoPane({ symbol, currentPrice }: { symbol: string; currentPri
 // --------------------------------------------------------------------------
 function MarketDataPane({ symbol, currentPrice }: { symbol: string; currentPrice: number }) {
   return (
-    <div className="flex-1 w-full bg-[#12161A] p-6 overflow-y-auto no-scrollbar font-sans text-xs">
+    <div className="flex-1 w-full bg-[#000000] p-6 overflow-y-auto no-scrollbar font-sans text-xs">
       <div className="max-w-4xl mx-auto space-y-6">
         <div>
           <h3 className="text-sm font-bold text-white mb-1">
             {symbol} Futures Market Intelligence
           </h3>
-          <p className="text-[#848E9C]">
+          <p className="text-[#8A8A8A]">
             Macro positioning, open interest distribution, and liquidity flow indicators.
           </p>
         </div>
 
         {/* 1. Long / Short Ratio */}
-        <div className="bg-[#181A20] border border-[#23272E] p-4 rounded space-y-3">
+        <div className="bg-[#0E0E0E] border border-[#242D35] p-4 rounded space-y-3">
           <div className="flex items-center justify-between">
             <span className="font-semibold text-white">Top Trader Long / Short Ratio (Accounts)</span>
-            <span className="text-[#848E9C] font-mono">1.66</span>
+            <span className="text-[#8A8A8A] font-mono">1.66</span>
           </div>
           <div className="h-3 w-full bg-[#23272E] rounded flex overflow-hidden">
-            <div className="bg-[#0ECB81] h-full" style={{ width: "62.4%" }} />
-            <div className="bg-[#F6465D] h-full" style={{ width: "37.6%" }} />
+            <div className="bg-[#00E676] h-full" style={{ width: "62.4%" }} />
+            <div className="bg-[#FF3B30] h-full" style={{ width: "37.6%" }} />
           </div>
           <div className="flex items-center justify-between font-mono text-[11px]">
-            <span className="text-[#0ECB81]">Long: 62.4%</span>
-            <span className="text-[#F6465D]">Short: 37.6%</span>
+            <span className="text-[#00E676]">Long: 62.4%</span>
+            <span className="text-[#FF3B30]">Short: 37.6%</span>
           </div>
         </div>
 
         {/* 2. Key Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="bg-[#181A20] border border-[#23272E] p-4 rounded">
-            <div className="text-[#848E9C] text-[11px] uppercase mb-1">24h Open Interest</div>
+          <div className="bg-[#0E0E0E] border border-[#242D35] p-4 rounded">
+            <div className="text-[#8A8A8A] text-[11px] uppercase mb-1">24h Open Interest</div>
             <div className="text-white font-mono text-base font-bold">$8,239,420,736</div>
-            <div className="text-[#0ECB81] font-mono text-[11px] mt-1">+3.42% 24h</div>
+            <div className="text-[#00E676] font-mono text-[11px] mt-1">+3.42% 24h</div>
           </div>
-          <div className="bg-[#181A20] border border-[#23272E] p-4 rounded">
-            <div className="text-[#848E9C] text-[11px] uppercase mb-1">Taker Buy / Sell Volume</div>
+          <div className="bg-[#0E0E0E] border border-[#242D35] p-4 rounded">
+            <div className="text-[#8A8A8A] text-[11px] uppercase mb-1">Taker Buy / Sell Volume</div>
             <div className="text-white font-mono text-base font-bold">1.18 Ratio</div>
-            <div className="text-[#848E9C] font-mono text-[11px] mt-1">$6.16B / $5.21B</div>
+            <div className="text-[#8A8A8A] font-mono text-[11px] mt-1">$6.16B / $5.21B</div>
           </div>
-          <div className="bg-[#181A20] border border-[#23272E] p-4 rounded">
-            <div className="text-[#848E9C] text-[11px] uppercase mb-1">24h Liquidations</div>
+          <div className="bg-[#0E0E0E] border border-[#242D35] p-4 rounded">
+            <div className="text-[#8A8A8A] text-[11px] uppercase mb-1">24h Liquidations</div>
             <div className="text-white font-mono text-base font-bold">$38,421,900</div>
-            <div className="text-[#F6465D] font-mono text-[11px] mt-1">$24.2M Shorts wiped</div>
+            <div className="text-[#FF3B30] font-mono text-[11px] mt-1">$24.2M Shorts wiped</div>
           </div>
         </div>
       </div>

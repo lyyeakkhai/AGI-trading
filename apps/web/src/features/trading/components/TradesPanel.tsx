@@ -47,9 +47,9 @@ export function TradesPanel({ trades, onSelectPrice }: TradesPanelProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#181A20] text-xs select-none">
+    <div className="flex flex-col h-full bg-[#000000] text-xs select-none">
       {/* 1. Header Tabs */}
-      <div className="h-8 px-3 flex items-center justify-between border-b border-[#23272E]">
+      <div className="h-8 px-3 flex items-center justify-between border-b border-[#242D35]">
         <div className="flex items-center gap-4">
           {(["Trades", "Top Movers"] as const).map((tab) => {
             const isActive = activeTab === tab;
@@ -60,8 +60,8 @@ export function TradesPanel({ trades, onSelectPrice }: TradesPanelProps) {
                 onClick={() => setActiveTab(tab)}
                 className={`h-8 font-sans font-semibold text-xs border-b-2 transition-colors flex items-center cursor-pointer ${
                   isActive
-                    ? "text-[#EAECEF] border-[#F0B90B]"
-                    : "text-[#848E9C] border-transparent hover:text-[#EAECEF]"
+                    ? "text-[#EDEDED] border-[#00E5FF]"
+                    : "text-[#8A8A8A] border-transparent hover:text-[#EDEDED]"
                 }`}
               >
                 <span>{tab}</span>
@@ -70,17 +70,17 @@ export function TradesPanel({ trades, onSelectPrice }: TradesPanelProps) {
           })}
         </div>
 
-        <div className="flex items-center gap-1 text-[#848E9C]">
+        <div className="flex items-center gap-1 text-[#8A8A8A]">
           <button
             type="button"
-            className="p-1 hover:text-[#EAECEF] rounded hover:bg-[#2B313A] transition-colors cursor-pointer"
+            className="p-1 hover:text-[#EDEDED] rounded hover:bg-[#1C1C1C] transition-colors cursor-pointer"
             title="Pop out panel"
           >
             <Maximize2 size={13} />
           </button>
           <button
             type="button"
-            className="p-1 hover:text-[#EAECEF] rounded hover:bg-[#2B313A] transition-colors cursor-pointer"
+            className="p-1 hover:text-[#EDEDED] rounded hover:bg-[#1C1C1C] transition-colors cursor-pointer"
           >
             <MoreHorizontal size={13} />
           </button>
@@ -91,7 +91,7 @@ export function TradesPanel({ trades, onSelectPrice }: TradesPanelProps) {
       {activeTab === "Trades" ? (
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
           {/* Column Headers */}
-          <div className="grid grid-cols-3 px-3 py-1 text-xs font-sans text-[#848E9C] border-b border-[#23272E]/50">
+          <div className="grid grid-cols-3 px-3 py-1 text-xs font-sans text-[#8A8A8A] border-b border-[#242D35]/50">
             <div className="text-left">Price (USDT)</div>
             <div className="text-right">Amount (USDT)</div>
             <div className="text-right">Time</div>
@@ -105,11 +105,11 @@ export function TradesPanel({ trades, onSelectPrice }: TradesPanelProps) {
                 <div
                   key={`${trade.id}-${idx}`}
                   onClick={() => onSelectPrice?.(trade.price)}
-                  className="grid grid-cols-3 px-3 py-[1.5px] hover:bg-[#2B313A]/40 transition-colors duration-150 leading-tight cursor-pointer group"
+                  className="grid grid-cols-3 px-3 py-[1.5px] hover:bg-[#1C1C1C]/40 transition-colors duration-150 leading-tight cursor-pointer group"
                 >
                   <div
                     className={`text-left font-medium transition-colors ${
-                      isBuy ? "text-[#0ECB81]" : "text-[#F6465D]"
+                      isBuy ? "text-[#00E676]" : "text-[#FF3B30]"
                     }`}
                   >
                     {trade.price.toLocaleString("en-US", {
@@ -117,10 +117,10 @@ export function TradesPanel({ trades, onSelectPrice }: TradesPanelProps) {
                       maximumFractionDigits: 1,
                     })}
                   </div>
-                  <div className="text-right text-[#EAECEF] transition-colors">
+                  <div className="text-right text-[#EDEDED] transition-colors">
                     {formatAmount(trade.amount)}
                   </div>
-                  <div className="text-right text-[#848E9C] transition-colors">
+                  <div className="text-right text-[#8A8A8A] transition-colors">
                     {trade.time}
                   </div>
                 </div>
@@ -131,7 +131,7 @@ export function TradesPanel({ trades, onSelectPrice }: TradesPanelProps) {
       ) : (
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
           {/* Column Headers */}
-          <div className="grid grid-cols-3 px-3 py-1 text-xs font-sans text-[#848E9C] border-b border-[#23272E]/50">
+          <div className="grid grid-cols-3 px-3 py-1 text-xs font-sans text-[#8A8A8A] border-b border-[#242D35]/50">
             <div className="text-left">Symbol</div>
             <div className="text-right">Price (USDT)</div>
             <div className="text-right">24h Change</div>
@@ -143,20 +143,20 @@ export function TradesPanel({ trades, onSelectPrice }: TradesPanelProps) {
               <div
                 key={item.symbol}
                 onClick={() => onSelectPrice?.(item.price)}
-                className="grid grid-cols-3 px-3 py-1.5 hover:bg-[#2B313A]/40 transition-colors duration-150 items-center cursor-pointer group"
+                className="grid grid-cols-3 px-3 py-1.5 hover:bg-[#1C1C1C]/40 transition-colors duration-150 items-center cursor-pointer group"
               >
-                <div className="text-left font-medium text-[#EAECEF] group-hover:text-[#00E5FF] transition-colors">
+                <div className="text-left font-medium text-[#EDEDED] group-hover:text-[#00E5FF] transition-colors">
                   {item.symbol}
                 </div>
-                <div className="text-right text-[#848E9C]">
+                <div className="text-right text-[#8A8A8A]">
                   {formatMoverPrice(item.price)}
                 </div>
                 <div className="text-right">
                   <span
                     className={`inline-block px-1.5 py-0.5 rounded-sm text-[11px] font-medium leading-none ${
                       item.isPositive
-                        ? "text-[#0ECB81] bg-[#0ECB81]/15"
-                        : "text-[#F6465D] bg-[#F6465D]/15"
+                        ? "text-[#00E676] bg-[#00E676]/15"
+                        : "text-[#FF3B30] bg-[#FF3B30]/15"
                     }`}
                   >
                     {item.change}

@@ -13,65 +13,59 @@ import {
   Bell,
   Settings,
   ArrowLeft,
+  Shield,
+  Activity,
+  Bot,
 } from "lucide-react";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 
 export function BinanceFuturesHeader() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const navItems = [
-    { label: "Futures", hasChevron: true },
-    { label: "Options", hasChevron: true },
-    { label: "Trading Bots", hasChevron: true },
-    { label: "Copy Trading", hasChevron: false },
-    { label: "Smart Money", hasChevron: false },
-    { label: "Campaigns", hasChevron: true },
-    { label: "Data", hasChevron: true },
-    { label: "More", hasChevron: true },
+    { label: "Overview", href: "/overview", hasChevron: false },
+    { label: "Markets", href: "/markets", hasChevron: false },
+    { label: "Futures", href: "/trade", hasChevron: true, active: true },
+    { label: "Hermes AI", href: "/hermes", hasChevron: false },
+    { label: "Opportunities", href: "/opportunities", hasChevron: false },
+    { label: "Execution", href: "/execution", hasChevron: false },
+    { label: "Risk Guard", href: "/risk", hasChevron: false },
+    { label: "Analytics", href: "/analytics", hasChevron: false },
   ];
 
   return (
-    <header className="h-12 bg-[#181A20] border-b border-[#23272E] px-3 flex items-center justify-between select-none z-30 shrink-0">
-      {/* Left side: Brand Logo + Nav links */}
-      <div className="flex items-center gap-5">
-        {/* Binance Logo and Brand */}
-        <div className="flex items-center gap-2">
-          {/* Quick return to AGI platform if desired */}
-          <Link
-            href="/overview"
-            className="p-1 rounded hover:bg-[#2B313A] text-[#848E9C] hover:text-[#EAECEF] transition-colors"
-            title="Return to AGI Overview"
-          >
-            <ArrowLeft size={16} />
-          </Link>
+    <header className="h-12 bg-[#000000] border-b border-[#242D35] px-3 flex items-center justify-between select-none z-30 shrink-0">
+      {/* Left side: AGI Brand Logo + Platform Navigation */}
+      <div className="flex items-center gap-4">
+        {/* Return to AGI Overview */}
+        <Link
+          href="/overview"
+          className="p-1 rounded hover:bg-[#1C1C1C] text-[#8A8A8A] hover:text-[#00E5FF] transition-colors"
+          title="Return to AGI Overview"
+        >
+          <ArrowLeft size={16} />
+        </Link>
 
-          <Link href="/trade" className="flex items-center gap-1.5 group">
-            {/* Binance Diamond Logo */}
-            <svg
-              className="w-5 h-5 text-[#F0B90B] flex-shrink-0"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 2.5L7.75 6.75L12 11L16.25 6.75L12 2.5Z" />
-              <path d="M2.5 12L6.75 7.75L11 12L6.75 16.25L2.5 12Z" />
-              <path d="M21.5 12L17.25 7.75L13 12L17.25 16.25L21.5 12Z" />
-              <path d="M12 21.5L16.25 17.25L12 13L7.75 17.25L12 21.5Z" />
-              <path d="M12 14.5L14.5 12L12 9.5L9.5 12L12 14.5Z" />
-            </svg>
-            <div className="flex flex-col leading-tight">
-              <div className="flex items-center gap-1">
-                <span className="font-sans font-black tracking-tight text-white text-[13px]">
-                  BINANCE
-                </span>
-                <span className="font-sans font-bold text-[#F0B90B] text-[10px] tracking-wider uppercase">
-                  FUTURES
-                </span>
-              </div>
+        {/* AGI Futures Brand Logo */}
+        <Link href="/trade" className="flex items-center gap-2 group">
+          <BrandLogo size="sm" variant="vector" />
+          <div className="flex flex-col leading-tight">
+            <div className="flex items-center gap-1.5">
+              <span className="font-mono font-black tracking-tight text-[#EDEDED] text-[13px] group-hover:text-white transition-colors">
+                AGI
+              </span>
+              <span className="font-mono font-bold text-[#00E5FF] text-[11px] tracking-wider uppercase">
+                FUTURES
+              </span>
+              <span className="px-1.5 py-0.2 rounded bg-[#0A5965]/40 text-[#00E5FF] text-[9px] font-mono font-bold border border-[#00E5FF]/30">
+                PRO DESK
+              </span>
             </div>
-          </Link>
-        </div>
+          </div>
+        </Link>
 
         {/* Navigation items */}
-        <nav className="hidden xl:flex items-center gap-1 text-[12px] font-sans">
+        <nav className="hidden xl:flex items-center gap-1 text-[12px] font-sans ml-2">
           {navItems.map((item) => (
             <div
               key={item.label}
@@ -79,27 +73,35 @@ export function BinanceFuturesHeader() {
               onMouseEnter={() => item.hasChevron && setActiveDropdown(item.label)}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button
-                type="button"
-                className={`flex items-center gap-0.5 px-2.5 py-1.5 rounded text-[#848E9C] hover:text-[#EAECEF] hover:bg-[#2B313A]/50 transition-colors ${
-                  item.label === "Futures" ? "text-[#EAECEF] font-semibold" : ""
+              <Link
+                href={item.href}
+                className={`flex items-center gap-0.5 px-2.5 py-1.5 rounded transition-colors ${
+                  item.active
+                    ? "text-[#00E5FF] font-semibold bg-[#00E5FF]/10"
+                    : "text-[#8A8A8A] hover:text-[#EDEDED] hover:bg-[#1C1C1C]"
                 }`}
               >
                 <span>{item.label}</span>
-                {item.hasChevron && <ChevronDown size={12} className="opacity-70" />}
-              </button>
+                {item.hasChevron && <ChevronDown size={11} className="opacity-70" />}
+              </Link>
 
               {activeDropdown === item.label && item.hasChevron && (
-                <div className="absolute top-full left-0 mt-0.5 w-44 bg-[#1E2329] border border-[#2B313A] rounded shadow-2xl py-1 z-50">
-                  <div className="px-3 py-1.5 text-[11px] text-[#848E9C] font-mono border-b border-[#2B313A]">
-                    {item.label} Markets
+                <div className="absolute top-full left-0 mt-0.5 w-44 bg-[#0E0E0E] border border-[#242D35] rounded shadow-2xl py-1 z-50">
+                  <div className="px-3 py-1.5 text-[10px] text-[#8A8A8A] font-mono border-b border-[#242D35] uppercase">
+                    AGI Execution Desks
                   </div>
-                  <button className="w-full text-left px-3 py-2 text-[12px] text-[#EAECEF] hover:bg-[#2B313A]">
+                  <Link
+                    href="/trade"
+                    className="w-full block text-left px-3 py-2 text-[12px] text-[#00E5FF] font-medium bg-[#141414] hover:bg-[#1C1C1C]"
+                  >
                     USDⓈ-M Futures
-                  </button>
-                  <button className="w-full text-left px-3 py-2 text-[12px] text-[#848E9C] hover:text-[#EAECEF] hover:bg-[#2B313A]">
-                    COIN-M Futures
-                  </button>
+                  </Link>
+                  <Link
+                    href="/markets"
+                    className="w-full block text-left px-3 py-2 text-[12px] text-[#8A8A8A] hover:text-[#EDEDED] hover:bg-[#1C1C1C]"
+                  >
+                    Spot & Multi-Asset
+                  </Link>
                 </div>
               )}
             </div>
@@ -107,63 +109,61 @@ export function BinanceFuturesHeader() {
         </nav>
       </div>
 
-      {/* Right side utilities */}
-      <div className="flex items-center gap-2 sm:gap-3 text-[#848E9C]">
+      {/* Right side utilities: Telemetry & User Controls */}
+      <div className="flex items-center gap-2 sm:gap-3 text-[#8A8A8A]">
+        {/* Risk Status Indicator */}
+        <div className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded bg-[#0A5965]/20 border border-[#00E5FF]/20 text-[11px] font-mono text-[#00E5FF]">
+          <Shield size={12} className="text-[#00E5FF]" />
+          <span>Risk Engine: Active</span>
+        </div>
+
+        {/* Hermes Status Indicator */}
+        <div className="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded bg-[#141414] border border-[#242D35] text-[11px] font-mono text-[#00E676]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00E676] animate-pulse" />
+          <span>Hermes 78% Bullish</span>
+        </div>
+
         <button
           type="button"
-          className="p-1.5 hover:text-[#EAECEF] hover:bg-[#2B313A] rounded transition-colors"
+          className="p-1.5 hover:text-[#00E5FF] hover:bg-[#1C1C1C] rounded transition-colors"
           title="Account / Profile"
         >
-          <User size={16} />
+          <User size={15} />
         </button>
         <button
           type="button"
-          className="p-1.5 hover:text-[#EAECEF] hover:bg-[#2B313A] rounded transition-colors"
-          title="Assets / Wallet"
+          className="p-1.5 hover:text-[#00E5FF] hover:bg-[#1C1C1C] rounded transition-colors"
+          title="Assets / Margin Balance"
         >
-          <Wallet size={16} />
+          <Wallet size={15} />
         </button>
         <button
           type="button"
-          className="p-1.5 hover:text-[#EAECEF] hover:bg-[#2B313A] rounded transition-colors"
-          title="Orders"
+          className="p-1.5 hover:text-[#00E5FF] hover:bg-[#1C1C1C] rounded transition-colors"
+          title="Execution Orders"
         >
-          <FileText size={16} />
+          <FileText size={15} />
         </button>
         <button
           type="button"
-          className="p-1.5 hover:text-[#EAECEF] hover:bg-[#2B313A] rounded transition-colors"
+          className="p-1.5 hover:text-[#00E5FF] hover:bg-[#1C1C1C] rounded transition-colors"
           title="Layout Settings"
         >
-          <Grid size={16} />
+          <Grid size={15} />
         </button>
         <button
           type="button"
-          className="p-1.5 hover:text-[#EAECEF] hover:bg-[#2B313A] rounded transition-colors"
-          title="Language & Currency"
+          className="p-1.5 hover:text-[#00E5FF] hover:bg-[#1C1C1C] rounded transition-colors"
+          title="System Notifications"
         >
-          <Globe size={16} />
+          <Bell size={15} />
         </button>
         <button
           type="button"
-          className="p-1.5 hover:text-[#EAECEF] hover:bg-[#2B313A] rounded transition-colors"
-          title="24/7 Support"
+          className="p-1.5 hover:text-[#00E5FF] hover:bg-[#1C1C1C] rounded transition-colors"
+          title="Trading Terminal Preferences"
         >
-          <Headphones size={16} />
-        </button>
-        <button
-          type="button"
-          className="p-1.5 hover:text-[#EAECEF] hover:bg-[#2B313A] rounded transition-colors"
-          title="Notifications"
-        >
-          <Bell size={16} />
-        </button>
-        <button
-          type="button"
-          className="p-1.5 hover:text-[#EAECEF] hover:bg-[#2B313A] rounded transition-colors"
-          title="Preferences"
-        >
-          <Settings size={16} />
+          <Settings size={15} />
         </button>
       </div>
     </header>
