@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import {
   createChart,
   IChartApi,
@@ -8,79 +8,220 @@ import {
   ColorType,
   CrosshairMode,
   LineStyle,
+  Time,
 } from "lightweight-charts";
 import {
   Maximize2,
+  Minimize2,
   Camera,
   Settings,
   ChevronDown,
   Activity,
   X,
+  Zap,
+  Check,
+  TrendingUp,
+  Pencil,
+  Type,
+  Ruler,
+  Crosshair,
+  ArrowUpDown,
+  Trash2,
 } from "lucide-react";
-import { CandleData, mockMarketDetails } from "@/lib/mockMarketData";
+import { CandleData } from "@/lib/mockMarketData";
 
 interface FuturesChartPaneProps {
   symbol?: string;
   currentPrice: number;
 }
 
-// Generate realistic chart history that visually matches the reference screenshot
-// (May to Sept range from ~60k -> 57.7k -> rally to 77.8k)
-function generateHistoricalCandles(baseLastPrice: number): CandleData[] {
+// Generate realistic chart history tailored to timeframe
+function generateCandlesForTimeframe(timeframe: string, baseLastPrice: number): CandleData[] {
   const result: CandleData[] = [];
-  const days = 140;
-  const startTime = Math.floor(new Date("2026-05-01T00:00:00Z").getTime() / 1000);
-  const oneDay = 86400;
+  const now = Math.floor(new Date("2026-09-11T14:15:00Z").getTime() / 1000);
 
-  let price = 63500;
-  for (let i = 0; i < days; i++) {
-    const time = (startTime + i * oneDay) as any;
-    
-    // Simulate trend: drop to ~57.7k at i=50-60, then rally hard up to ~78k
-    let dailyTrend = 0;
-    if (i < 40) {
-      dailyTrend = (Math.random() - 0.52) * 800;
-    } else if (i < 65) {
-      // Dip to 57,758
-      dailyTrend = i === 60 ? -1500 : (Math.random() - 0.55) * 900;
-      if (price < 58000 && i >= 60) dailyTrend = Math.abs(dailyTrend);
-    } else if (i < 100) {
-      // Gradual base build
-      dailyTrend = (Math.random() - 0.45) * 700;
-    } else if (i < 125) {
-      // Breakout rally
-      dailyTrend = (Math.random() - 0.35) * 1200;
-    } else {
-      // Top consolidation around 77k-78k
-      dailyTrend = (Math.random() - 0.48) * 600;
+  if (timeframe === "1D") {
+    // 140 daily bars spanning May 1, 2026 to Sept 11, 2026
+    // Reference pattern: drop to 57,758 around June/July, then rally breakout to 77,841.90
+    const days = 140;
+    const startTime = Math.floor(new Date("2026-04-24T00:00:00Z").getTime() / 1000);
+    const oneDay = 86400;
+    let price = 63500;
+
+    for (let i = 0; i < days; i++) {
+      const time = (startTime + i * oneDay) as Time;
+      let dailyTrend = 0;
+      if (i < 40) {
+        dailyTrend = (Math.sin(i * 0.15) * 400) + (Math.random() - 0.52) * 600;
+      } else if (i < 65) {
+        // Dip to exactly 57,758
+        dailyTrend = i === 60 ? -1500 : (Math.random() - 0.58) * 800;
+        if (price < 58000 && i >= 60) dailyTrend = Math.abs(dailyTrend) + 400;
+      } else if (i < 100) {
+        dailyTrend = (Math.random() - 0.44) * 650;
+      } else if (i < 125) {
+        dailyTrend = (Math.random() - 0.35) * 1100; // Breakout rally
+      } else {
+        dailyTrend = (Math.random() - 0.47) * 550;
+      }
+
+      const open = Math.round(price);
+      price = Math.max(57758, price + dailyTrend);
+      if (i === days - 1) {
+        price = baseLastPrice;
+      }
+
+      const high = Math.round(Math.max(open, price) + Math.random() * 850 + 150);
+      const low = Math.round(Math.min(open, price) - Math.random() * 750 - 50);
+      const close = Math.round(price);
+      const volume = Math.round((Math.random() * 75000 + 25000) * (i > 115 ? 1.7 : 1));
+
+      result.push({ time, open, high, low, close, volume });
     }
+  } else if (timeframe === "1W") {
+    // 104 weekly bars (~2 years)
+    const weeks = 104;
+    const oneWeek = 86400 * 7;
+    const startTime = now - weeks * oneWeek;
+    let price = 28500;
 
-    const open = Math.round(price);
-    price = Math.max(57758, price + dailyTrend);
-    if (i === days - 1) {
-      price = baseLastPrice;
+    for (let i = 0; i < weeks; i++) {
+      const time = (startTime + i * oneWeek) as Time;
+      let weeklyTrend = 0;
+      if (i < 35) {
+        weeklyTrend = 450 + (Math.random() - 0.45) * 1200;
+      } else if (i < 55) {
+        weeklyTrend = 900 + (Math.random() - 0.4) * 1800;
+      } else if (i < 75) {
+        weeklyTrend = -400 + (Math.random() - 0.55) * 1600;
+      } else {
+        weeklyTrend = 650 + (Math.random() - 0.42) * 1500;
+      }
+
+      const open = Math.round(price);
+      price = Math.max(25000, price + weeklyTrend);
+      if (i === weeks - 1) price = baseLastPrice;
+
+      const high = Math.round(Math.max(open, price) + Math.random() * 1800 + 300);
+      const low = Math.round(Math.min(open, price) - Math.random() * 1500 - 100);
+      const close = Math.round(price);
+      const volume = Math.round((Math.random() * 250000 + 100000) * 1.5);
+
+      result.push({ time, open, high, low, close, volume });
     }
+  } else if (timeframe === "4h") {
+    // 150 4-hour bars (~25 days)
+    const bars = 150;
+    const interval = 14400;
+    const startTime = now - bars * interval;
+    let price = 68400;
 
-    const high = Math.round(Math.max(open, price) + Math.random() * 900 + 100);
-    const low = Math.round(Math.min(open, price) - Math.random() * 800 - 50);
-    const close = Math.round(price);
-    const volume = Math.round((Math.random() * 80000 + 20000) * (i > 115 ? 1.8 : 1));
+    for (let i = 0; i < bars; i++) {
+      const time = (startTime + i * interval) as Time;
+      const trend = (i / bars) * 60 + (Math.random() - 0.48) * 350;
+      const open = Math.round(price);
+      price = open + trend;
+      if (i === bars - 1) price = baseLastPrice;
 
-    result.push({
-      time,
-      open,
-      high,
-      low,
-      close,
-      volume,
-    });
+      const high = Math.round(Math.max(open, price) + Math.random() * 400 + 80);
+      const low = Math.round(Math.min(open, price) - Math.random() * 380 - 40);
+      const close = Math.round(price);
+      const volume = Math.round(Math.random() * 22000 + 6000);
+
+      result.push({ time, open, high, low, close, volume });
+    }
+  } else if (timeframe === "1h") {
+    // 168 1-hour bars (7 days)
+    const bars = 168;
+    const interval = 3600;
+    const startTime = now - bars * interval;
+    let price = 74600;
+
+    for (let i = 0; i < bars; i++) {
+      const time = (startTime + i * interval) as Time;
+      const trend = (i / bars) * 20 + (Math.random() - 0.49) * 220;
+      const open = Math.round(price * 10) / 10;
+      price = open + trend;
+      if (i === bars - 1) price = baseLastPrice;
+
+      const high = Math.round((Math.max(open, price) + Math.random() * 240 + 50) * 10) / 10;
+      const low = Math.round((Math.min(open, price) - Math.random() * 220 - 30) * 10) / 10;
+      const close = Math.round(price * 10) / 10;
+      const volume = Math.round(Math.random() * 9500 + 2500);
+
+      result.push({ time, open, high, low, close, volume });
+    }
+  } else if (timeframe === "15m") {
+    // 160 15-minute bars (40 hours)
+    const bars = 160;
+    const interval = 900;
+    const startTime = now - bars * interval;
+    let price = 76950;
+
+    for (let i = 0; i < bars; i++) {
+      const time = (startTime + i * interval) as Time;
+      const trend = (Math.random() - 0.49) * 110;
+      const open = Math.round(price * 10) / 10;
+      price = open + trend;
+      if (i === bars - 1) price = baseLastPrice;
+
+      const high = Math.round((Math.max(open, price) + Math.random() * 120 + 25) * 10) / 10;
+      const low = Math.round((Math.min(open, price) - Math.random() * 110 - 15) * 10) / 10;
+      const close = Math.round(price * 10) / 10;
+      const volume = Math.round(Math.random() * 3200 + 800);
+
+      result.push({ time, open, high, low, close, volume });
+    }
+  } else if (timeframe === "1s") {
+    // 180 1-second bars (3 minutes)
+    const bars = 180;
+    const interval = 1;
+    const startTime = now - bars * interval;
+    let price = baseLastPrice - 1.2;
+
+    for (let i = 0; i < bars; i++) {
+      const time = (startTime + i * interval) as Time;
+      const delta = (Math.random() - 0.49) * 0.8;
+      const open = Number(price.toFixed(1));
+      price = Math.max(baseLastPrice - 15, Math.min(baseLastPrice + 15, open + delta));
+      if (i === bars - 1) price = baseLastPrice;
+
+      const high = Number((Math.max(open, price) + Math.random() * 0.6).toFixed(1));
+      const low = Number((Math.min(open, price) - Math.random() * 0.6).toFixed(1));
+      const close = Number(price.toFixed(1));
+      const volume = Math.round(Math.random() * 85 + 12);
+
+      result.push({ time, open, high, low, close, volume });
+    }
+  } else {
+    // "Time" tick view: 180 high-frequency price points
+    const bars = 180;
+    const interval = 1;
+    const startTime = now - bars * interval;
+    let price = baseLastPrice - 2.5;
+
+    for (let i = 0; i < bars; i++) {
+      const time = (startTime + i * interval) as Time;
+      const delta = (Math.random() - 0.48) * 0.6;
+      const open = Number(price.toFixed(1));
+      price = open + delta;
+      if (i === bars - 1) price = baseLastPrice;
+
+      const high = Number((Math.max(open, price) + Math.random() * 0.4).toFixed(1));
+      const low = Number((Math.min(open, price) - Math.random() * 0.4).toFixed(1));
+      const close = Number(price.toFixed(1));
+      const volume = Math.round(Math.random() * 60 + 10);
+
+      result.push({ time, open, high, low, close, volume });
+    }
   }
+
   return result;
 }
 
-// Compute Simple Moving Average
+// Compute Simple Moving Average with 2 decimal places
 function calculateSMA(candles: CandleData[], period: number) {
-  const lineData = [];
+  const lineData: { time: Time; value: number }[] = [];
   for (let i = period - 1; i < candles.length; i++) {
     let sum = 0;
     for (let j = 0; j < period; j++) {
@@ -88,7 +229,7 @@ function calculateSMA(candles: CandleData[], period: number) {
     }
     lineData.push({
       time: candles[i].time,
-      value: Math.round(sum / period),
+      value: Number((sum / period).toFixed(2)),
     });
   }
   return lineData;
@@ -97,28 +238,97 @@ function calculateSMA(candles: CandleData[], period: number) {
 export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesChartPaneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
+
+  // Series references
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
+  const areaSeriesRef = useRef<ISeriesApi<"Area"> | null>(null);
+  const ma7SeriesRef = useRef<ISeriesApi<"Line"> | null>(null);
+  const ma25SeriesRef = useRef<ISeriesApi<"Line"> | null>(null);
+  const ma99SeriesRef = useRef<ISeriesApi<"Line"> | null>(null);
   const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
 
+  // Workspace UI states
   const [activeTab, setActiveTab] = useState<"Chart" | "Info" | "Data">("Chart");
   const [timeframe, setTimeframe] = useState<string>("1D");
+  const [showTfDropdown, setShowTfDropdown] = useState(false);
   const [viewStyle, setViewStyle] = useState<"Original" | "Trading View" | "Depth">("Original");
+
+  // Floating Quick Order Pill State
   const [showOrderPill, setShowOrderPill] = useState(true);
   const [pillSize, setPillSize] = useState("");
+  const [orderToast, setOrderToast] = useState<string | null>(null);
+
+  // Technical Indicators & Settings Modals
+  const [showIndicatorsModal, setShowIndicatorsModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showMAs, setShowMAs] = useState(true);
+  const [showVolume, setShowVolume] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // TradingView drawing tools state
+  const [activeTvTool, setActiveTvTool] = useState<string>("crosshair");
+
+  // Depth Chart zoom level state
+  const [depthZoom, setDepthZoom] = useState<number>(0.05); // 5% default
+
+  // Hover candle state for legend
   const [hoveredCandle, setHoveredCandle] = useState<CandleData | null>(null);
 
   const timeframes = ["Time", "1s", "15m", "1h", "4h", "1D", "1W"];
+  const extraTimeframes = ["1m", "3m", "5m", "30m", "2h", "6h", "8h", "12h", "3D", "1M"];
 
-  // Prepare candle data
+  // Prepare candle data based on current timeframe
   const candles = useMemo(() => {
-    return generateHistoricalCandles(currentPrice);
-  }, [currentPrice]);
+    return generateCandlesForTimeframe(timeframe, currentPrice);
+  }, [timeframe, currentPrice]);
 
-  const activeCandle = hoveredCandle || (candles.length > 0 ? candles[candles.length - 1] : null);
+  // Compute Moving Averages
+  const ma7Data = useMemo(() => calculateSMA(candles, 7), [candles]);
+  const ma25Data = useMemo(() => calculateSMA(candles, 25), [candles]);
+  const ma99Data = useMemo(() => calculateSMA(candles, 99), [candles]);
 
-  // Initialize Chart
-  useEffect(() => {
+  // Build quick map for lookup on hover
+  const ma7Map = useMemo(() => new Map(ma7Data.map((d) => [d.time, d.value])), [ma7Data]);
+  const ma25Map = useMemo(() => new Map(ma25Data.map((d) => [d.time, d.value])), [ma25Data]);
+  const ma99Map = useMemo(() => new Map(ma99Data.map((d) => [d.time, d.value])), [ma99Data]);
+
+  // Active candle displayed in OHLC legend (hovered or latest)
+  const latestCandle = candles.length > 0 ? candles[candles.length - 1] : null;
+  const activeCandle = hoveredCandle || latestCandle;
+  const activeMa7 = activeCandle ? ma7Map.get(activeCandle.time) : undefined;
+  const activeMa25 = activeCandle ? ma25Map.get(activeCandle.time) : undefined;
+  const activeMa99 = activeCandle ? ma99Map.get(activeCandle.time) : undefined;
+
+  // Handle Quick Order action with toast feedback
+  const handleQuickOrder = (side: "buy" | "sell") => {
+    const actionSide = side === "buy" ? "Buy/Long" : "Sell/Short";
+    const priceText =
+      side === "buy"
+        ? (currentPrice + 0.1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        : currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const sizeText = pillSize.trim() ? `${pillSize} USDT` : "100.00 USDT";
+
+    setOrderToast(`${actionSide} ${sizeText} @ ${priceText} Submitted`);
+    setTimeout(() => {
+      setOrderToast(null);
+    }, 3000);
+  };
+
+  // Toggle fullscreen
+  const toggleFullscreen = () => {
     if (!containerRef.current) return;
+    if (!document.fullscreenElement) {
+      containerRef.current.requestFullscreen().catch(() => {});
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen().catch(() => {});
+      setIsFullscreen(false);
+    }
+  };
+
+  // Initialize and maintain Lightweight Chart
+  useEffect(() => {
+    if (!containerRef.current || viewStyle === "Depth" || activeTab !== "Chart") return;
 
     const chart = createChart(containerRef.current, {
       width: containerRef.current.clientWidth,
@@ -139,11 +349,13 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
           color: "#474D57",
           width: 1,
           style: LineStyle.Dashed,
+          labelBackgroundColor: "#2B313A",
         },
         horzLine: {
           color: "#474D57",
           width: 1,
           style: LineStyle.Dashed,
+          labelBackgroundColor: "#2B313A",
         },
       },
       rightPriceScale: {
@@ -152,17 +364,18 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
           top: 0.08,
           bottom: 0.22,
         },
+        alignLabels: true,
       },
       timeScale: {
         borderColor: "#23272E",
-        timeVisible: true,
-        secondsVisible: false,
+        timeVisible: timeframe !== "1D" && timeframe !== "1W",
+        secondsVisible: timeframe === "Time" || timeframe === "1s",
       },
     });
 
     chartRef.current = chart;
 
-    // Candlesticks
+    // Candlestick Series (hidden if timeframe is "Time")
     const candleSeries = chart.addCandlestickSeries({
       upColor: "#0ECB81",
       downColor: "#F6465D",
@@ -170,36 +383,44 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
       wickUpColor: "#0ECB81",
       wickDownColor: "#F6465D",
     });
-    candleSeries.setData(candles as any);
     candleSeriesRef.current = candleSeries;
 
-    // Moving Averages: MA7 (Yellow), MA25 (Pink), MA99 (Purple)
+    // Area Series (visible only if timeframe is "Time")
+    const areaSeries = chart.addAreaSeries({
+      topColor: "rgba(240, 185, 11, 0.35)",
+      bottomColor: "rgba(240, 185, 11, 0.02)",
+      lineColor: "#F0B90B",
+      lineWidth: 2,
+    });
+    areaSeriesRef.current = areaSeries;
+
+    // Moving Averages: MA7 (#F0B90B), MA25 (#E040FB), MA99 (#7C4DFF)
     const ma7Series = chart.addLineSeries({
       color: "#F0B90B",
       lineWidth: 1,
       crosshairMarkerVisible: false,
-      lastValueVisible: false,
+      lastValueVisible: true,
       priceLineVisible: false,
     });
-    ma7Series.setData(calculateSMA(candles, 7) as any);
+    ma7SeriesRef.current = ma7Series;
 
     const ma25Series = chart.addLineSeries({
       color: "#E040FB",
       lineWidth: 1,
       crosshairMarkerVisible: false,
-      lastValueVisible: false,
+      lastValueVisible: true,
       priceLineVisible: false,
     });
-    ma25Series.setData(calculateSMA(candles, 25) as any);
+    ma25SeriesRef.current = ma25Series;
 
     const ma99Series = chart.addLineSeries({
       color: "#7C4DFF",
       lineWidth: 1,
       crosshairMarkerVisible: false,
-      lastValueVisible: false,
+      lastValueVisible: true,
       priceLineVisible: false,
     });
-    ma99Series.setData(calculateSMA(candles, 99) as any);
+    ma99SeriesRef.current = ma99Series;
 
     // Volume histogram
     const volumeSeries = chart.addHistogramSeries({
@@ -212,13 +433,6 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
         bottom: 0,
       },
     });
-    volumeSeries.setData(
-      candles.map((c) => ({
-        time: c.time,
-        value: c.volume,
-        color: c.close >= c.open ? "rgba(14, 203, 129, 0.45)" : "rgba(246, 70, 93, 0.45)",
-      })) as any
-    );
     volumeSeriesRef.current = volumeSeries;
 
     // Crosshair hover tracking
@@ -258,12 +472,69 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
       chart.remove();
       chartRef.current = null;
     };
-  }, [candles]);
+  }, [viewStyle, activeTab]);
+
+  // Update chart data when timeframe, candles, or indicators change
+  useEffect(() => {
+    if (!chartRef.current || viewStyle === "Depth" || activeTab !== "Chart") return;
+
+    if (timeframe === "Time") {
+      // Area series mode
+      candleSeriesRef.current?.applyOptions({ visible: false });
+      areaSeriesRef.current?.applyOptions({ visible: true });
+      areaSeriesRef.current?.setData(
+        candles.map((c) => ({
+          time: c.time,
+          value: c.close,
+        })) as any
+      );
+    } else {
+      // Candlestick series mode
+      areaSeriesRef.current?.applyOptions({ visible: false });
+      candleSeriesRef.current?.applyOptions({ visible: true });
+      candleSeriesRef.current?.setData(candles as any);
+    }
+
+    // Moving Averages
+    ma7SeriesRef.current?.applyOptions({ visible: showMAs && timeframe !== "Time" });
+    ma25SeriesRef.current?.applyOptions({ visible: showMAs && timeframe !== "Time" });
+    ma99SeriesRef.current?.applyOptions({ visible: showMAs && timeframe !== "Time" });
+
+    if (showMAs && timeframe !== "Time") {
+      ma7SeriesRef.current?.setData(ma7Data as any);
+      ma25SeriesRef.current?.setData(ma25Data as any);
+      ma99SeriesRef.current?.setData(ma99Data as any);
+    }
+
+    // Volume
+    volumeSeriesRef.current?.applyOptions({ visible: showVolume });
+    if (showVolume) {
+      volumeSeriesRef.current?.setData(
+        candles.map((c) => ({
+          time: c.time,
+          value: c.volume,
+          color: c.close >= c.open ? "rgba(14, 203, 129, 0.45)" : "rgba(246, 70, 93, 0.45)",
+        })) as any
+      );
+    }
+
+    // Adjust timeScale options according to timeframe
+    chartRef.current.timeScale().applyOptions({
+      timeVisible: timeframe !== "1D" && timeframe !== "1W",
+      secondsVisible: timeframe === "Time" || timeframe === "1s",
+    });
+
+    chartRef.current.timeScale().fitContent();
+  }, [candles, timeframe, ma7Data, ma25Data, ma99Data, showMAs, showVolume, viewStyle, activeTab]);
 
   return (
-    <div className="flex flex-col h-full w-full bg-[#12161A] select-none relative overflow-hidden border-r border-[#23272E]">
+    <div
+      ref={containerRef}
+      className="flex flex-col h-full w-full bg-[#12161A] select-none relative overflow-hidden border-r border-[#23272E]"
+    >
       {/* 1. Sub-nav tabs & utilities row */}
-      <div className="h-8 border-b border-[#23272E] px-3 flex items-center justify-between text-xs font-sans bg-[#181A20]">
+      <div className="h-8 border-b border-[#23272E] px-3 flex items-center justify-between text-xs font-sans bg-[#181A20] shrink-0">
+        {/* Left: Tabs */}
         <div className="flex items-center gap-4">
           {(["Chart", "Info", "Data"] as const).map((tab) => (
             <button
@@ -281,190 +552,702 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
           ))}
         </div>
 
-        {/* Right chart tools */}
-        <div className="flex items-center gap-2 text-[#848E9C]">
+        {/* Right: Chart tools */}
+        <div className="flex items-center gap-1.5 text-[#848E9C]">
+          {/* Quick Order Pill toggle if closed */}
+          {!showOrderPill && activeTab === "Chart" && viewStyle !== "Depth" && (
+            <button
+              type="button"
+              onClick={() => setShowOrderPill(true)}
+              className="flex items-center gap-1 text-[11px] text-[#848E9C] hover:text-[#F0B90B] px-1.5 py-0.5 rounded hover:bg-[#2B313A] transition-colors mr-1"
+              title="Show Quick Order Pill"
+            >
+              <Zap size={12} className="text-[#F0B90B]" />
+              <span className="font-sans">Order Pill</span>
+            </button>
+          )}
+
+          {/* Technical Indicators */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowIndicatorsModal((prev) => !prev)}
+              className={`p-1 rounded transition-colors ${
+                showIndicatorsModal ? "text-[#F0B90B] bg-[#2B313A]" : "hover:text-white hover:bg-[#2B313A]"
+              }`}
+              title="Technical Indicators (MA, Volume)"
+            >
+              <Activity size={14} />
+            </button>
+            {showIndicatorsModal && (
+              <div className="absolute right-0 top-7 z-30 w-44 bg-[#1E2329] border border-[#2B313A] rounded shadow-2xl p-2 text-xs font-sans text-white">
+                <div className="text-[11px] font-bold text-[#848E9C] uppercase tracking-wider mb-2 px-1">
+                  Indicators
+                </div>
+                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#2B313A] rounded cursor-pointer">
+                  <span>Moving Averages</span>
+                  <input
+                    type="checkbox"
+                    checked={showMAs}
+                    onChange={(e) => setShowMAs(e.target.checked)}
+                    className="accent-[#F0B90B]"
+                  />
+                </label>
+                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#2B313A] rounded cursor-pointer">
+                  <span>Volume Histogram</span>
+                  <input
+                    type="checkbox"
+                    checked={showVolume}
+                    onChange={(e) => setShowVolume(e.target.checked)}
+                    className="accent-[#F0B90B]"
+                  />
+                </label>
+              </div>
+            )}
+          </div>
+
+          {/* Screenshot */}
           <button
             type="button"
-            className="p-1 hover:text-white rounded hover:bg-[#2B313A] transition-colors"
-            title="Technical Indicators"
-          >
-            <Activity size={14} />
-          </button>
-          <button
-            type="button"
+            onClick={() => {
+              setOrderToast("Chart snapshot captured to clipboard");
+              setTimeout(() => setOrderToast(null), 2500);
+            }}
             className="p-1 hover:text-white rounded hover:bg-[#2B313A] transition-colors"
             title="Screenshot"
           >
             <Camera size={14} />
           </button>
+
+          {/* Fullscreen */}
           <button
             type="button"
+            onClick={toggleFullscreen}
             className="p-1 hover:text-white rounded hover:bg-[#2B313A] transition-colors"
-            title="Fullscreen"
+            title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
           >
-            <Maximize2 size={14} />
+            {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
           </button>
-          <button
-            type="button"
-            className="p-1 hover:text-white rounded hover:bg-[#2B313A] transition-colors"
-            title="Chart Settings"
-          >
-            <Settings size={14} />
-          </button>
-        </div>
-      </div>
 
-      {/* 2. Timeframe & View Styles Toolbar */}
-      <div className="h-8 border-b border-[#23272E] px-3 flex items-center justify-between text-[11px] font-mono bg-[#12161A]">
-        {/* Left: Timeframes */}
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-          {timeframes.map((tf) => (
+          {/* Chart Settings */}
+          <div className="relative">
             <button
-              key={tf}
               type="button"
-              onClick={() => setTimeframe(tf)}
-              className={`px-1.5 py-0.5 rounded transition-colors ${
-                timeframe === tf
-                  ? "text-[#F0B90B] font-bold bg-[#2B313A]/50"
-                  : "text-[#848E9C] hover:text-white"
+              onClick={() => setShowSettingsModal((prev) => !prev)}
+              className={`p-1 rounded transition-colors ${
+                showSettingsModal ? "text-[#F0B90B] bg-[#2B313A]" : "hover:text-white hover:bg-[#2B313A]"
               }`}
+              title="Chart Settings"
             >
-              {tf}
+              <Settings size={14} />
             </button>
-          ))}
-          <ChevronDown size={12} className="text-[#848E9C] cursor-pointer hover:text-white ml-0.5" />
-
-          <div className="h-3 w-px bg-[#23272E] mx-1" />
-
-          <button
-            type="button"
-            className="flex items-center gap-1 text-[#848E9C] hover:text-white px-1 py-0.5 rounded"
-          >
-            <span>Last Price</span>
-            <ChevronDown size={10} />
-          </button>
-        </div>
-
-        {/* Right: Original / Trading View / Depth switch */}
-        <div className="flex items-center gap-1 bg-[#181A20] p-0.5 rounded border border-[#23272E]">
-          {(["Original", "Trading View", "Depth"] as const).map((style) => (
-            <button
-              key={style}
-              type="button"
-              onClick={() => setViewStyle(style)}
-              className={`px-2 py-0.5 rounded text-[10px] transition-colors ${
-                viewStyle === style
-                  ? "bg-[#2B313A] text-white font-semibold"
-                  : "text-[#848E9C] hover:text-white"
-              }`}
-            >
-              {style}
-            </button>
-          ))}
+            {showSettingsModal && (
+              <div className="absolute right-0 top-7 z-30 w-48 bg-[#1E2329] border border-[#2B313A] rounded shadow-2xl p-2 text-xs font-sans text-white">
+                <div className="text-[11px] font-bold text-[#848E9C] uppercase tracking-wider mb-2 px-1">
+                  Chart Settings
+                </div>
+                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#2B313A] rounded cursor-pointer">
+                  <span>Quick Order Pill</span>
+                  <input
+                    type="checkbox"
+                    checked={showOrderPill}
+                    onChange={(e) => setShowOrderPill(e.target.checked)}
+                    className="accent-[#F0B90B]"
+                  />
+                </label>
+                <label className="flex items-center justify-between px-1 py-1 hover:bg-[#2B313A] rounded cursor-pointer">
+                  <span>MA Lines</span>
+                  <input
+                    type="checkbox"
+                    checked={showMAs}
+                    onChange={(e) => setShowMAs(e.target.checked)}
+                    className="accent-[#F0B90B]"
+                  />
+                </label>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* 3. OHLC Hover Legend Bar */}
-      <div className="px-3 py-1 bg-[#12161A] flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] font-mono text-[#848E9C] border-b border-[#1E2329]">
-        {activeCandle && (
-          <>
-            <span className="text-white font-semibold">BTCUSDT Perp</span>
-            <span>
-              O: <strong className="text-white">{activeCandle.open.toLocaleString()}</strong>
-            </span>
-            <span>
-              H: <strong className="text-white">{activeCandle.high.toLocaleString()}</strong>
-            </span>
-            <span>
-              L: <strong className="text-white">{activeCandle.low.toLocaleString()}</strong>
-            </span>
-            <span>
-              C:{" "}
-              <strong
-                className={activeCandle.close >= activeCandle.open ? "text-[#0ECB81]" : "text-[#F6465D]"}
-              >
-                {activeCandle.close.toLocaleString()}
-              </strong>
-            </span>
-            <span>
-              CHANGE:{" "}
-              <span
-                className={activeCandle.close >= activeCandle.open ? "text-[#0ECB81]" : "text-[#F6465D]"}
-              >
-                {(
-                  ((activeCandle.close - activeCandle.open) / activeCandle.open) *
-                  100
-                ).toFixed(2)}
-                %
-              </span>
-            </span>
-            <span className="hidden xl:inline">
-              Range:{" "}
-              <span className="text-[#848E9C]">
-                {(
-                  ((activeCandle.high - activeCandle.low) / activeCandle.low) *
-                  100
-                ).toFixed(2)}
-                %
-              </span>
-            </span>
-          </>
-        )}
-      </div>
+      {activeTab === "Chart" && (
+        <>
+          {/* 2. Timeframe & View Styles Toolbar */}
+          <div className="h-8 border-b border-[#23272E] px-3 flex items-center justify-between text-[11px] font-mono bg-[#12161A] shrink-0">
+            {/* Left: Timeframes */}
+            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+              {timeframes.map((tf) => (
+                <button
+                  key={tf}
+                  type="button"
+                  onClick={() => setTimeframe(tf)}
+                  className={`px-1.5 py-0.5 rounded transition-colors ${
+                    timeframe === tf
+                      ? "text-[#F0B90B] font-bold bg-[#2B313A]/60 shadow-sm"
+                      : "text-[#848E9C] hover:text-white"
+                  }`}
+                >
+                  {tf}
+                </button>
+              ))}
 
-      {/* 4. Canvas Chart with Floating In-Chart Order Pill */}
-      <div className="flex-1 w-full relative min-h-[350px]">
-        {/* Floating In-Chart Quick Order Widget */}
-        {showOrderPill && (
-          <div className="absolute top-3 left-4 z-20 flex items-center bg-[#1E2329]/95 border border-[#2B313A] rounded shadow-2xl p-1 gap-1.5 backdrop-blur-sm select-none">
-            {/* Buy / Long Button */}
-            <button
-              type="button"
-              className="flex flex-col items-center justify-center bg-[#0ECB81] hover:bg-[#0ECB81]/90 text-white px-2.5 py-1 rounded text-left transition-colors font-mono"
-            >
-              <span className="text-[10px] font-sans font-bold leading-tight">Buy/Long</span>
-              <span className="text-[11px] font-bold leading-tight">
-                {(currentPrice + 0.1).toFixed(2)}
-              </span>
-            </button>
+              {/* Dropdown for extra intervals */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowTfDropdown((prev) => !prev)}
+                  className="p-1 text-[#848E9C] hover:text-white rounded hover:bg-[#2B313A]"
+                  title="More intervals"
+                >
+                  <ChevronDown size={12} />
+                </button>
+                {showTfDropdown && (
+                  <div className="absolute left-0 top-7 z-30 grid grid-cols-2 gap-1 w-28 bg-[#1E2329] border border-[#2B313A] rounded shadow-2xl p-1.5 text-xs font-mono">
+                    {extraTimeframes.map((etf) => (
+                      <button
+                        key={etf}
+                        type="button"
+                        onClick={() => {
+                          setTimeframe(etf);
+                          setShowTfDropdown(false);
+                        }}
+                        className={`px-1.5 py-1 rounded text-center transition-colors ${
+                          timeframe === etf
+                            ? "text-[#F0B90B] font-bold bg-[#2B313A]"
+                            : "text-[#848E9C] hover:text-white hover:bg-[#2B313A]/50"
+                        }`}
+                      >
+                        {etf}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-            {/* Size Input */}
-            <div className="flex flex-col justify-center px-1.5 font-mono">
-              <span className="text-[9px] text-[#848E9C] font-sans leading-none mb-0.5">Size (USDT)</span>
-              <input
-                type="text"
-                value={pillSize}
-                onChange={(e) => setPillSize(e.target.value)}
-                placeholder="Enter Size"
-                className="bg-transparent text-[11px] text-white placeholder-[#848E9C] focus:outline-none w-20 leading-tight"
-              />
+              <div className="h-3 w-px bg-[#23272E] mx-1" />
+
+              <button
+                type="button"
+                className="flex items-center gap-1 text-[#848E9C] hover:text-white px-1 py-0.5 rounded font-sans text-[11px]"
+              >
+                <span>Price</span>
+                <ChevronDown size={10} />
+              </button>
             </div>
 
-            {/* Sell / Short Button */}
-            <button
-              type="button"
-              className="flex flex-col items-center justify-center bg-[#F6465D] hover:bg-[#F6465D]/90 text-white px-2.5 py-1 rounded text-left transition-colors font-mono"
-            >
-              <span className="text-[10px] font-sans font-bold leading-tight">Sell/Short</span>
-              <span className="text-[11px] font-bold leading-tight">
-                {currentPrice.toFixed(2)}
-              </span>
-            </button>
+            {/* Right: Original / Trading View / Depth switch */}
+            <div className="flex items-center gap-1 bg-[#181A20] p-0.5 rounded border border-[#23272E]">
+              {(["Original", "Trading View", "Depth"] as const).map((style) => (
+                <button
+                  key={style}
+                  type="button"
+                  onClick={() => setViewStyle(style)}
+                  className={`px-2 py-0.5 rounded text-[10px] font-sans transition-colors ${
+                    viewStyle === style
+                      ? "bg-[#2B313A] text-white font-semibold shadow-sm"
+                      : "text-[#848E9C] hover:text-white"
+                  }`}
+                >
+                  {style}
+                </button>
+              ))}
+            </div>
+          </div>
 
-            {/* Close button */}
+          {/* 3. OHLC & Moving Averages Legend Bar */}
+          {viewStyle !== "Depth" && (
+            <div className="px-3 py-1 bg-[#12161A] flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] font-mono text-[#848E9C] border-b border-[#1E2329] shrink-0">
+              {activeCandle && (
+                <>
+                  <span className="text-white font-semibold font-sans">BTCUSDT Perp</span>
+                  <span>
+                    O:{" "}
+                    <strong className="text-white">
+                      {activeCandle.open.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </strong>
+                  </span>
+                  <span>
+                    H:{" "}
+                    <strong className="text-white">
+                      {activeCandle.high.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </strong>
+                  </span>
+                  <span>
+                    L:{" "}
+                    <strong className="text-white">
+                      {activeCandle.low.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </strong>
+                  </span>
+                  <span>
+                    C:{" "}
+                    <strong
+                      className={
+                        activeCandle.close >= activeCandle.open ? "text-[#0ECB81]" : "text-[#F6465D]"
+                      }
+                    >
+                      {activeCandle.close.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </strong>
+                  </span>
+                  <span>
+                    CHANGE:{" "}
+                    <span
+                      className={
+                        activeCandle.close >= activeCandle.open ? "text-[#0ECB81]" : "text-[#F6465D]"
+                      }
+                    >
+                      {(
+                        ((activeCandle.close - activeCandle.open) / activeCandle.open) *
+                        100
+                      ).toFixed(2)}
+                      %
+                    </span>
+                  </span>
+
+                  {/* MA Legend indicators */}
+                  {showMAs && timeframe !== "Time" && (
+                    <>
+                      {activeMa7 !== undefined && (
+                        <span className="text-[#F0B90B] font-semibold">
+                          MA(7):{" "}
+                          {activeMa7.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </span>
+                      )}
+                      {activeMa25 !== undefined && (
+                        <span className="text-[#E040FB] font-semibold">
+                          MA(25):{" "}
+                          {activeMa25.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </span>
+                      )}
+                      {activeMa99 !== undefined && (
+                        <span className="text-[#7C4DFF] font-semibold">
+                          MA(99):{" "}
+                          {activeMa99.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </span>
+                      )}
+                    </>
+                  )}
+
+                  {/* Volume */}
+                  {showVolume && (
+                    <span>
+                      Vol(BTC):{" "}
+                      <strong
+                        className={
+                          activeCandle.close >= activeCandle.open ? "text-[#0ECB81]" : "text-[#F6465D]"
+                        }
+                      >
+                        {activeCandle.volume.toLocaleString()}
+                      </strong>
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
+          {/* 4. Canvas Chart Body / TradingView Rail / Depth View */}
+          <div className="flex-1 w-full relative min-h-[350px] flex overflow-hidden">
+            {/* Left Drawing Toolbar for TradingView Mode */}
+            {viewStyle === "Trading View" && (
+              <div className="w-10 bg-[#181A20] border-r border-[#23272E] flex flex-col items-center py-2 gap-2 text-[#848E9C] shrink-0 z-10">
+                {[
+                  { id: "crosshair", icon: Crosshair, label: "Crosshair" },
+                  { id: "trendline", icon: TrendingUp, label: "Trendline" },
+                  { id: "brush", icon: Pencil, label: "Brush" },
+                  { id: "text", icon: Type, label: "Text Note" },
+                  { id: "position", icon: ArrowUpDown, label: "Long/Short Position" },
+                  { id: "measure", icon: Ruler, label: "Measure Ruler" },
+                  { id: "trash", icon: Trash2, label: "Clear Drawings" },
+                ].map((tool) => {
+                  const Icon = tool.icon;
+                  const isActive = activeTvTool === tool.id;
+                  return (
+                    <button
+                      key={tool.id}
+                      type="button"
+                      onClick={() => setActiveTvTool(tool.id)}
+                      className={`p-1.5 rounded transition-colors ${
+                        isActive
+                          ? "bg-[#2B313A] text-[#F0B90B]"
+                          : "hover:text-white hover:bg-[#2B313A]/60"
+                      }`}
+                      title={tool.label}
+                    >
+                      <Icon size={14} />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Center Area */}
+            <div className="flex-1 relative w-full h-full min-h-0">
+              {/* Floating Quick Order Pill */}
+              {showOrderPill && viewStyle !== "Depth" && (
+                <div className="absolute top-3 left-3 z-20 flex items-center bg-[#1E2329]/95 border border-[#2B313A] rounded shadow-2xl p-1 gap-1.5 backdrop-blur-md select-none transition-all">
+                  {/* Buy / Long Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleQuickOrder("buy")}
+                    className="flex flex-col items-center justify-center bg-[#0ECB81] hover:bg-[#0ECB81]/90 active:scale-[0.98] text-white px-2.5 py-1 rounded text-left transition-all font-mono shadow-sm"
+                  >
+                    <span className="text-[10px] font-sans font-bold leading-tight uppercase tracking-wider">
+                      Buy/Long
+                    </span>
+                    <span className="text-[11px] font-bold leading-tight">
+                      {(currentPrice + 0.1).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </span>
+                  </button>
+
+                  {/* Size Input */}
+                  <div className="flex flex-col justify-center px-2 py-0.5 bg-[#14171A] border border-[#2B313A] rounded font-mono">
+                    <span className="text-[9px] text-[#848E9C] font-sans font-semibold uppercase leading-none mb-0.5">
+                      Size (USDT)
+                    </span>
+                    <input
+                      type="text"
+                      value={pillSize}
+                      onChange={(e) => setPillSize(e.target.value)}
+                      placeholder="100.00"
+                      className="bg-transparent text-[11px] text-white placeholder-[#5E6673] focus:outline-none w-20 leading-tight font-mono"
+                    />
+                  </div>
+
+                  {/* Sell / Short Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleQuickOrder("sell")}
+                    className="flex flex-col items-center justify-center bg-[#F6465D] hover:bg-[#F6465D]/90 active:scale-[0.98] text-white px-2.5 py-1 rounded text-left transition-all font-mono shadow-sm"
+                  >
+                    <span className="text-[10px] font-sans font-bold leading-tight uppercase tracking-wider">
+                      Sell/Short
+                    </span>
+                    <span className="text-[11px] font-bold leading-tight">
+                      {currentPrice.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </span>
+                  </button>
+
+                  {/* Close button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowOrderPill(false)}
+                    className="p-1 text-[#848E9C] hover:text-white rounded hover:bg-[#2B313A] transition-colors"
+                    title="Close Quick Trade Pill"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              )}
+
+              {/* Order Feedback Toast */}
+              {orderToast && (
+                <div className="absolute top-16 left-3 z-30 flex items-center gap-2 bg-[#1E2329] border border-[#0ECB81] text-white text-xs font-mono px-3 py-1.5 rounded shadow-2xl animate-fade-in backdrop-blur-md">
+                  <Check size={14} className="text-[#0ECB81]" />
+                  <span>{orderToast}</span>
+                </div>
+              )}
+
+              {/* ViewStyle === "Depth": Dedicated Market Depth Chart */}
+              {viewStyle === "Depth" ? (
+                <DepthChartPane currentPrice={currentPrice} depthZoom={depthZoom} onZoomChange={setDepthZoom} />
+              ) : null}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Contract Specifications Panel when "Info" tab is active */}
+      {activeTab === "Info" && <ContractInfoPane symbol={symbol} currentPrice={currentPrice} />}
+
+      {/* Market Data Analytics Panel when "Data" tab is active */}
+      {activeTab === "Data" && <MarketDataPane symbol={symbol} currentPrice={currentPrice} />}
+    </div>
+  );
+}
+
+// --------------------------------------------------------------------------
+// Sub-component: Dedicated Market Depth Chart
+// --------------------------------------------------------------------------
+interface DepthChartPaneProps {
+  currentPrice: number;
+  depthZoom: number;
+  onZoomChange: (zoom: number) => void;
+}
+
+function DepthChartPane({ currentPrice, depthZoom, onZoomChange }: DepthChartPaneProps) {
+  const [hoverData, setHoverData] = useState<{
+    side: "Bid" | "Ask";
+    price: number;
+    amount: number;
+    total: number;
+  } | null>(null);
+
+  // Generate synthetic depth curve
+  const { bids, asks } = useMemo(() => {
+    const steps = 30;
+    const bidStep = (currentPrice * depthZoom) / steps;
+    const askStep = (currentPrice * depthZoom) / steps;
+
+    const generatedBids: { price: number; amount: number; total: number }[] = [];
+    let bidSum = 0;
+    for (let i = 0; i < steps; i++) {
+      const price = currentPrice - (steps - i) * bidStep;
+      const amount = Math.round((Math.sin(i * 0.2) + 1.2) * 45 + Math.random() * 20);
+      bidSum += amount;
+      generatedBids.push({ price, amount, total: bidSum });
+    }
+
+    const generatedAsks: { price: number; amount: number; total: number }[] = [];
+    let askSum = 0;
+    for (let i = 0; i < steps; i++) {
+      const price = currentPrice + (i + 1) * askStep;
+      const amount = Math.round((Math.cos(i * 0.2) + 1.2) * 45 + Math.random() * 20);
+      askSum += amount;
+      generatedAsks.push({ price, amount, total: askSum });
+    }
+
+    return { bids: generatedBids, asks: generatedAsks };
+  }, [currentPrice, depthZoom]);
+
+  const maxTotal = Math.max(
+    bids[bids.length - 1]?.total || 1000,
+    asks[asks.length - 1]?.total || 1000
+  );
+
+  return (
+    <div className="w-full h-full flex flex-col bg-[#12161A] p-4 text-xs font-mono select-none">
+      {/* Top Depth Header Controls */}
+      <div className="flex items-center justify-between pb-3 border-b border-[#23272E]">
+        <div className="flex items-center gap-3">
+          <span className="text-white font-semibold font-sans">Market Depth Curve</span>
+          <span className="text-[#848E9C]">Mid Price:</span>
+          <span className="text-white font-bold">
+            {currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT
+          </span>
+        </div>
+
+        {/* Zoom selector */}
+        <div className="flex items-center gap-1 bg-[#181A20] p-0.5 rounded border border-[#23272E]">
+          <span className="text-[10px] text-[#848E9C] px-1 font-sans">Zoom:</span>
+          {[0.01, 0.02, 0.05, 0.1].map((z) => (
             <button
+              key={z}
               type="button"
-              onClick={() => setShowOrderPill(false)}
-              className="p-1 text-[#848E9C] hover:text-white rounded hover:bg-[#2B313A] transition-colors"
-              title="Close Quick Trade Pill"
+              onClick={() => onZoomChange(z)}
+              className={`px-1.5 py-0.5 rounded text-[10px] ${
+                depthZoom === z
+                  ? "bg-[#2B313A] text-[#F0B90B] font-bold"
+                  : "text-[#848E9C] hover:text-white"
+              }`}
             >
-              <X size={12} />
+              {(z * 100).toFixed(0)}%
             </button>
+          ))}
+        </div>
+      </div>
+
+      {/* SVG Depth Graphic */}
+      <div className="flex-1 relative w-full pt-4">
+        {hoverData && (
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-[#1E2329]/95 border border-[#2B313A] px-3 py-1.5 rounded shadow-xl flex items-center gap-3 text-xs z-20">
+            <span
+              className={`font-bold ${
+                hoverData.side === "Bid" ? "text-[#0ECB81]" : "text-[#F6465D]"
+              }`}
+            >
+              {hoverData.side}
+            </span>
+            <span>Price: {hoverData.price.toFixed(1)}</span>
+            <span>Cumulative: {hoverData.total.toLocaleString()} BTC</span>
           </div>
         )}
 
-        {/* Chart Canvas Container */}
-        <div ref={containerRef} className="w-full h-full" />
+        <svg className="w-full h-full" viewBox="0 0 1000 300" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="bidGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#0ECB81" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#0ECB81" stopOpacity="0.02" />
+            </linearGradient>
+            <linearGradient id="askGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#F6465D" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#F6465D" stopOpacity="0.02" />
+            </linearGradient>
+          </defs>
+
+          {/* Grid lines */}
+          <line x1="500" y1="0" x2="500" y2="280" stroke="#23272E" strokeDasharray="4,4" />
+          <line x1="0" y1="70" x2="1000" y2="70" stroke="#1E2329" />
+          <line x1="0" y1="140" x2="1000" y2="140" stroke="#1E2329" />
+          <line x1="0" y1="210" x2="1000" y2="210" stroke="#1E2329" />
+
+          {/* Bid Area (Left side: 0 to 500) */}
+          <path
+            d={`M 0 280 ${bids
+              .map((b, i) => {
+                const x = (i / (bids.length - 1)) * 500;
+                const y = 280 - (b.total / maxTotal) * 250;
+                return `L ${x} ${y}`;
+              })
+              .join(" ")} L 500 280 Z`}
+            fill="url(#bidGrad)"
+            stroke="#0ECB81"
+            strokeWidth="1.5"
+          />
+
+          {/* Ask Area (Right side: 500 to 1000) */}
+          <path
+            d={`M 500 280 ${asks
+              .map((a, i) => {
+                const x = 500 + (i / (asks.length - 1)) * 500;
+                const y = 280 - (a.total / maxTotal) * 250;
+                return `L ${x} ${y}`;
+              })
+              .join(" ")} L 1000 280 Z`}
+            fill="url(#askGrad)"
+            stroke="#F6465D"
+            strokeWidth="1.5"
+          />
+        </svg>
+
+        {/* X Axis Labels */}
+        <div className="flex justify-between text-[10px] text-[#848E9C] pt-2 border-t border-[#23272E]">
+          <span>{(currentPrice * (1 - depthZoom)).toFixed(1)}</span>
+          <span className="text-[#0ECB81] font-bold">BIDS</span>
+          <span className="text-white font-bold">{currentPrice.toFixed(1)}</span>
+          <span className="text-[#F6465D] font-bold">ASKS</span>
+          <span>{(currentPrice * (1 + depthZoom)).toFixed(1)}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --------------------------------------------------------------------------
+// Sub-component: Contract Specifications (Info Tab)
+// --------------------------------------------------------------------------
+function ContractInfoPane({ symbol, currentPrice }: { symbol: string; currentPrice: number }) {
+  const specs = [
+    { label: "Contract Type", value: "Perpetual Futures (USD-M)" },
+    { label: "Settlement Asset", value: "USDT" },
+    { label: "Underlying Index", value: "BTCUSDT Index" },
+    { label: "Tick Size", value: "0.10 USDT" },
+    { label: "Lot Size", value: "0.001 BTC" },
+    { label: "Max Leverage", value: "125x" },
+    { label: "Maintenance Margin Rate", value: "0.40%" },
+    { label: "Funding Interval", value: "Every 8 hours" },
+    { label: "Delivery Date", value: "Perpetual" },
+    { label: "Max Market Order Size", value: "100.00 BTC" },
+    { label: "Index Price", value: `${(currentPrice - 6.4).toFixed(1)} USDT` },
+    { label: "Mark Price", value: `${(currentPrice - 12.6).toFixed(1)} USDT` },
+  ];
+
+  return (
+    <div className="flex-1 w-full bg-[#12161A] p-6 overflow-y-auto no-scrollbar font-sans text-xs">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div>
+          <h3 className="text-sm font-bold text-white mb-1">
+            {symbol} Perpetual Contract Specifications
+          </h3>
+          <p className="text-[#848E9C]">
+            Detailed parameters and trading rules governing the {symbol} USD-M Perpetual Market.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {specs.map((spec) => (
+            <div
+              key={spec.label}
+              className="bg-[#181A20] border border-[#23272E] p-3 rounded flex flex-col justify-between"
+            >
+              <span className="text-[#848E9C] text-[11px] uppercase tracking-wider mb-1">
+                {spec.label}
+              </span>
+              <span className="text-white font-mono font-semibold text-xs">{spec.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --------------------------------------------------------------------------
+// Sub-component: Market Data Analytics (Data Tab)
+// --------------------------------------------------------------------------
+function MarketDataPane({ symbol, currentPrice }: { symbol: string; currentPrice: number }) {
+  return (
+    <div className="flex-1 w-full bg-[#12161A] p-6 overflow-y-auto no-scrollbar font-sans text-xs">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div>
+          <h3 className="text-sm font-bold text-white mb-1">
+            {symbol} Futures Market Intelligence
+          </h3>
+          <p className="text-[#848E9C]">
+            Macro positioning, open interest distribution, and liquidity flow indicators.
+          </p>
+        </div>
+
+        {/* 1. Long / Short Ratio */}
+        <div className="bg-[#181A20] border border-[#23272E] p-4 rounded space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-white">Top Trader Long / Short Ratio (Accounts)</span>
+            <span className="text-[#848E9C] font-mono">1.66</span>
+          </div>
+          <div className="h-3 w-full bg-[#23272E] rounded flex overflow-hidden">
+            <div className="bg-[#0ECB81] h-full" style={{ width: "62.4%" }} />
+            <div className="bg-[#F6465D] h-full" style={{ width: "37.6%" }} />
+          </div>
+          <div className="flex items-center justify-between font-mono text-[11px]">
+            <span className="text-[#0ECB81]">Long: 62.4%</span>
+            <span className="text-[#F6465D]">Short: 37.6%</span>
+          </div>
+        </div>
+
+        {/* 2. Key Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="bg-[#181A20] border border-[#23272E] p-4 rounded">
+            <div className="text-[#848E9C] text-[11px] uppercase mb-1">24h Open Interest</div>
+            <div className="text-white font-mono text-base font-bold">$8,239,420,736</div>
+            <div className="text-[#0ECB81] font-mono text-[11px] mt-1">+3.42% 24h</div>
+          </div>
+          <div className="bg-[#181A20] border border-[#23272E] p-4 rounded">
+            <div className="text-[#848E9C] text-[11px] uppercase mb-1">Taker Buy / Sell Volume</div>
+            <div className="text-white font-mono text-base font-bold">1.18 Ratio</div>
+            <div className="text-[#848E9C] font-mono text-[11px] mt-1">$6.16B / $5.21B</div>
+          </div>
+          <div className="bg-[#181A20] border border-[#23272E] p-4 rounded">
+            <div className="text-[#848E9C] text-[11px] uppercase mb-1">24h Liquidations</div>
+            <div className="text-white font-mono text-base font-bold">$38,421,900</div>
+            <div className="text-[#F6465D] font-mono text-[11px] mt-1">$24.2M Shorts wiped</div>
+          </div>
+        </div>
       </div>
     </div>
   );

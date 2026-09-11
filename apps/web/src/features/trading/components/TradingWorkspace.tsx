@@ -5,7 +5,9 @@ import { MarketChart } from "./MarketChart";
 import { TradePanel } from "./TradePanel";
 import { useSearchParams } from "next/navigation";
 import { useTradingPlan } from "../hooks/useTradingPlan";
-import { mockMarketDetails } from "@/lib/mockMarketData";
+import { mockMarketDetails, CandleData } from "@/lib/mockMarketData";
+
+const EMPTY_CANDLES: CandleData[] = [];
 
 export function TradingWorkspace() {
   const searchParams = useSearchParams();
@@ -28,7 +30,7 @@ export function TradingWorkspace() {
 
   const candles = useMemo(() => {
     const market = mockMarketDetails[normalizedKey] || mockMarketDetails["BTC-USDT"];
-    return market?.timeframes?.[timeframe] || market?.timeframes?.["1h"] || [];
+    return market?.timeframes?.[timeframe] || market?.timeframes?.["1h"] || EMPTY_CANDLES;
   }, [normalizedKey, timeframe]);
 
   return (

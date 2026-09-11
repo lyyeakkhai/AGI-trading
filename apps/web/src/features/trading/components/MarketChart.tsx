@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import {
   createChart,
   IChartApi,
@@ -31,14 +31,17 @@ export interface MarketChartProps {
   className?: string;
 }
 
+const DEFAULT_AI_MARKERS: AIMarketMarker[] = [];
+const DEFAULT_AVAILABLE_TIMEFRAMES: string[] = ["1m", "5m", "15m", "1h", "4h", "1D"];
+
 export const MarketChart = React.memo(function MarketChart({
   candles,
-  aiMarkers = [],
+  aiMarkers = DEFAULT_AI_MARKERS,
   position,
   plan,
   timeframe,
   onTimeframeChange,
-  availableTimeframes = ["1m", "5m", "15m", "1h", "4h", "1D"],
+  availableTimeframes = DEFAULT_AVAILABLE_TIMEFRAMES,
   symbol = "BTC/USDT",
   height = 480,
   className = "",
@@ -59,19 +62,21 @@ export const MarketChart = React.memo(function MarketChart({
   const [candleSeriesApi, setCandleSeriesApi] = useState<ISeriesApi<"Candlestick"> | null>(null);
 
   // Sync AI drawings from backend
-  const { drawings, annotations } = useChartDrawings(symbol, timeframe, {
-    enabled: showDrawings,
-    pollIntervalMs: 3000,
-  });
+  const chartDrawingsOptions = useMemo(
+    () => ({
+      enabled: showDrawings,
+      pollIntervalMs: 3000,
+    }),
+    [showDrawings]
+  );
+  const { drawings, annotations } = useChartDrawings(symbol, timeframe, chartDrawingsOptions);
 
   // Active hover crosshair bar stats
   const [hoveredBar, setHoveredBar] = useState<CandleData | null>(null);
 
   // Keep candles ref updated for crosshair without chart recreation
   const candlesRef = useRef(candles);
-  useEffect(() => {
-    candlesRef.current = candles;
-  }, [candles]);
+  candlesRef.current = candles;
 
   // Default to the last bar if not hovering
   const latestBar = candles.length > 0 ? candles[candles.length - 1] : null;
@@ -155,23 +160,38 @@ export const MarketChart = React.memo(function MarketChart({
     // Subscribe to crosshair move for legend data
     chart.subscribeCrosshairMove((param) => {
       if (!param || !param.time || !param.seriesData) {
-        setHoveredBar(null);
+        setHoveredBar((prev) => (prev !== null ? null : prev));
         return;
       }
+      const paramTime = param.time;
       const data = param.seriesData.get(candleSeries) as any;
       if (data && data.open !== undefined) {
         // Find matching candle with volume from ref
-        const match = candlesRef.current.find((c) => c.time === param.time);
-        setHoveredBar({
-          time: param.time,
-          open: data.open,
-          high: data.high,
-          low: data.low,
-          close: data.close,
-          volume: match ? match.volume : 0,
+        const match = candlesRef.current.find((c) => c.time === paramTime);
+        const nextVolume = match ? match.volume : 0;
+        setHoveredBar((prev) => {
+          if (
+            prev &&
+            prev.time === paramTime &&
+            prev.open === data.open &&
+            prev.high === data.high &&
+            prev.low === data.low &&
+            prev.close === data.close &&
+            prev.volume === nextVolume
+          ) {
+            return prev;
+          }
+          return {
+            time: paramTime,
+            open: data.open,
+            high: data.high,
+            low: data.low,
+            close: data.close,
+            volume: nextVolume,
+          };
         });
       } else {
-        setHoveredBar(null);
+        setHoveredBar((prev) => (prev !== null ? null : prev));
       }
     });
 
@@ -195,6 +215,8 @@ export const MarketChart = React.memo(function MarketChart({
       setCandleSeriesApi(null);
       volumeSeriesRef.current = null;
       priceLinesRef.current = [];
+      lastCandlesLength.current = 0;
+      lastCandleTime.current = null;
     };
   }, [height]);
 
@@ -202,11 +224,11 @@ export const MarketChart = React.memo(function MarketChart({
   const lastCandlesLength = useRef(0);
   const lastCandleTime = useRef<any>(null);
 
-  // Update Data & Options when candles change
+  // 1. Update Candle & Volume Data when candles or candleSeriesApi changes
   useEffect(() => {
-    if (!candleSeriesRef.current || !volumeSeriesRef.current || candles.length === 0) return;
+    if (!candleSeriesApi || !volumeSeriesRef.current || candles.length === 0) return;
 
-    const series = candleSeriesRef.current;
+    const series = candleSeriesApi;
     const vSeries = volumeSeriesRef.current;
     const currentLast = candles[candles.length - 1];
 
@@ -216,57 +238,59 @@ export const MarketChart = React.memo(function MarketChart({
       lastCandleTime.current !== null && 
       currentLast.time >= lastCandleTime.current;
 
-    // 1 & 2. Set Candle & Volume Data
     if (isUpdate) {
-       series.update(currentLast as any);
-       if (showVolume) {
-         vSeries.update({
-           time: currentLast.time,
-           value: currentLast.volume,
-           color: currentLast.close >= currentLast.open ? "rgba(0, 230, 118, 0.38)" : "rgba(255, 59, 48, 0.38)",
-         } as any);
-       }
+      series.update(currentLast as any);
+      vSeries.update({
+        time: currentLast.time,
+        value: currentLast.volume,
+        color: currentLast.close >= currentLast.open ? "rgba(0, 230, 118, 0.38)" : "rgba(255, 59, 48, 0.38)",
+      } as any);
     } else {
-       series.setData(candles as any);
-       if (showVolume) {
-         const volumeData = candles.map((c) => ({
-           time: c.time,
-           value: c.volume,
-           color:
-             c.close >= c.open
-               ? "rgba(0, 230, 118, 0.38)"
-               : "rgba(255, 59, 48, 0.38)",
-         }));
-         vSeries.setData(volumeData as any);
-       }
-    }
-    
-    if (showVolume) {
-       vSeries.applyOptions({ visible: true });
-    } else {
-       vSeries.applyOptions({ visible: false });
+      series.setData(candles as any);
+      const volumeData = candles.map((c) => ({
+        time: c.time,
+        value: c.volume,
+        color:
+          c.close >= c.open
+            ? "rgba(0, 230, 118, 0.38)"
+            : "rgba(255, 59, 48, 0.38)",
+      }));
+      vSeries.setData(volumeData as any);
     }
 
     lastCandlesLength.current = candles.length;
     lastCandleTime.current = currentLast.time;
+  }, [candles, candleSeriesApi]);
 
-    // 3. Set AI Markers
+  // 2. Toggle Volume Series Visibility
+  useEffect(() => {
+    if (!volumeSeriesRef.current) return;
+    volumeSeriesRef.current.applyOptions({ visible: showVolume });
+  }, [showVolume, candleSeriesApi]);
+
+  // 3. Set AI Markers
+  useEffect(() => {
+    if (!candleSeriesApi) return;
     if (showAIMarkers && aiMarkers.length > 0) {
-      candleSeriesRef.current.setMarkers(aiMarkers as any);
+      candleSeriesApi.setMarkers(aiMarkers as any);
     } else {
-      candleSeriesRef.current.setMarkers([]);
+      candleSeriesApi.setMarkers([]);
     }
+  }, [aiMarkers, showAIMarkers, candleSeriesApi]);
 
-    // 4. Set Position Lines if active
+  // 4. Set Position & Plan Price Lines
+  useEffect(() => {
+    if (!candleSeriesApi) return;
+
     // Clear old lines
     priceLinesRef.current.forEach((line) => {
-      candleSeriesRef.current?.removePriceLine(line);
+      candleSeriesApi.removePriceLine(line);
     });
     priceLinesRef.current = [];
 
-    let currentLines: IPriceLine[] = [];
+    const currentLines: IPriceLine[] = [];
     if (position && position.entryPrice) {
-      const entryLine = candleSeriesRef.current!.createPriceLine({
+      const entryLine = candleSeriesApi.createPriceLine({
         price: position.entryPrice,
         color: "#22DFFF",
         lineWidth: 1,
@@ -275,7 +299,7 @@ export const MarketChart = React.memo(function MarketChart({
         title: `ENTRY ${position.entryPrice.toLocaleString()}`,
       });
 
-      const stopLine = candleSeriesRef.current!.createPriceLine({
+      const stopLine = candleSeriesApi.createPriceLine({
         price: position.stopPrice,
         color: "#FF3B30",
         lineWidth: 1,
@@ -284,7 +308,7 @@ export const MarketChart = React.memo(function MarketChart({
         title: `STOP ${position.stopPrice.toLocaleString()}`,
       });
 
-      const targetLine = candleSeriesRef.current!.createPriceLine({
+      const targetLine = candleSeriesApi.createPriceLine({
         price: position.targetPrice,
         color: "#00E676",
         lineWidth: 1,
@@ -293,43 +317,49 @@ export const MarketChart = React.memo(function MarketChart({
         title: `TARGET ${position.targetPrice.toLocaleString()}`,
       });
 
-      currentLines = [entryLine, stopLine, targetLine];
+      currentLines.push(entryLine, stopLine, targetLine);
     } else if (plan) {
       if (plan.entry) {
-        currentLines.push(candleSeriesRef.current!.createPriceLine({
-          price: plan.entry,
-          color: "#00E5FF",
-          lineWidth: 1,
-          lineStyle: LineStyle.Dashed,
-          axisLabelVisible: true,
-          title: `ENTRY ${plan.entry.toLocaleString()}`,
-        }));
-      }
-      if (plan.stopLoss) {
-        currentLines.push(candleSeriesRef.current!.createPriceLine({
-          price: plan.stopLoss,
-          color: "#FF3B30",
-          lineWidth: 1,
-          lineStyle: LineStyle.Dashed,
-          axisLabelVisible: true,
-          title: `STOP ${plan.stopLoss.toLocaleString()}`,
-        }));
-      }
-      plan.takeProfits.forEach((tp, i) => {
-        if (tp) {
-          currentLines.push(candleSeriesRef.current!.createPriceLine({
-            price: tp,
-            color: "#00E676",
+        currentLines.push(
+          candleSeriesApi.createPriceLine({
+            price: plan.entry,
+            color: "#00E5FF",
             lineWidth: 1,
             lineStyle: LineStyle.Dashed,
             axisLabelVisible: true,
-            title: `TP${plan.takeProfits.length > 1 ? i + 1 : ''} ${tp.toLocaleString()}`,
-          }));
+            title: `ENTRY ${plan.entry.toLocaleString()}`,
+          })
+        );
+      }
+      if (plan.stopLoss) {
+        currentLines.push(
+          candleSeriesApi.createPriceLine({
+            price: plan.stopLoss,
+            color: "#FF3B30",
+            lineWidth: 1,
+            lineStyle: LineStyle.Dashed,
+            axisLabelVisible: true,
+            title: `STOP ${plan.stopLoss.toLocaleString()}`,
+          })
+        );
+      }
+      plan.takeProfits.forEach((tp, i) => {
+        if (tp) {
+          currentLines.push(
+            candleSeriesApi.createPriceLine({
+              price: tp,
+              color: "#00E676",
+              lineWidth: 1,
+              lineStyle: LineStyle.Dashed,
+              axisLabelVisible: true,
+              title: `TP${plan.takeProfits.length > 1 ? i + 1 : ""} ${tp.toLocaleString()}`,
+            })
+          );
         }
       });
     }
     priceLinesRef.current = currentLines;
-  }, [candles, aiMarkers, position, plan, showVolume, showAIMarkers]);
+  }, [position, plan, candleSeriesApi]);
 
   // Fit content helper
   const handleFitContent = useCallback(() => {

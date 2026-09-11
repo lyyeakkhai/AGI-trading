@@ -12,11 +12,14 @@ export interface ChartOverlayProps {
   visible?: boolean;
 }
 
+const DEFAULT_DRAWINGS: ChartDrawing[] = [];
+const DEFAULT_ANNOTATIONS: ChartAnnotation[] = [];
+
 export const ChartOverlay = React.memo(function ChartOverlay({
   chart,
   series,
-  drawings = [],
-  annotations = [],
+  drawings = DEFAULT_DRAWINGS,
+  annotations = DEFAULT_ANNOTATIONS,
   visible = true,
 }: ChartOverlayProps) {
   const [, setTick] = useState(0);
