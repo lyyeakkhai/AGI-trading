@@ -955,6 +955,7 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
               {/* Dedicated Lightweight Charts Canvas Mount Point */}
               <div
                 ref={chartContainerRef}
+                suppressHydrationWarning
                 className={`w-full h-full ${viewStyle === "Depth" ? "hidden" : "block"}`}
               />
 
