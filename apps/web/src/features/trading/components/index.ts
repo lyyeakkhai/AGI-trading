@@ -21,3 +21,8 @@ export * from "./PositionsOrdersTable";
 export * from "./BottomTickerStrip";
 export * from "./BinanceFuturesDesk";
 export * from "./AgiMarketPanel";
+export * from "./AgiSpotHeader";
+export * from "./SpotStatsTickerBar";
+export * from "./SpotDualOrderPanel";
+export * from "./SpotMarketsTradesColumn";
+export * from "./AgiSpotDesk";
