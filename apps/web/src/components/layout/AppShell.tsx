@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { TopNav } from "./TopNav";
 
 interface AppShellProps {
@@ -8,6 +9,17 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
+  const pathname = usePathname();
+  const isImmersiveTrade = pathname === "/trade" || pathname?.startsWith("/trade");
+
+  if (isImmersiveTrade) {
+    return (
+      <div className="h-screen w-screen overflow-hidden bg-[#12161A] text-[#EAECEF] antialiased selection:bg-[#F0B90B]/30">
+        {children}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-screen w-full bg-bg-950 overflow-hidden text-gray-300 antialiased selection:bg-cyan-500/30">
       <TopNav />

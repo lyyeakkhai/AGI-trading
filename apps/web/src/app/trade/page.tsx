@@ -1,15 +1,21 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { TradingWorkspace } from "@/features/trading/components/TradingWorkspace";
+import { BinanceFuturesDesk } from "@/features/trading/components/BinanceFuturesDesk";
 
 export const metadata: Metadata = {
-  title: "Trading Workspace | AGI Trading",
+  title: "BTCUSDT Perp | USDⓈ-M Futures | Binance Futures",
 };
 
 export default function TradePage() {
   return (
-    <div className="flex flex-col h-full -m-4 sm:-m-6">
-      <Suspense fallback={<div>Loading workspace...</div>}><TradingWorkspace /></Suspense>
-    </div>
+    <Suspense
+      fallback={
+        <div className="h-screen w-screen flex items-center justify-center bg-[#12161A] text-[#848E9C] font-mono text-xs">
+          Loading Binance Futures USD-M desk...
+        </div>
+      }
+    >
+      <BinanceFuturesDesk />
+    </Suspense>
   );
 }
