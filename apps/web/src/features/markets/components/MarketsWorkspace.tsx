@@ -7,6 +7,7 @@ import {
   watchlistSymbols,
   MarketDetail,
   CandleData,
+  AIMarketMarker,
 } from "@/lib/mockMarketData";
 import { marketApi, MarketTicker } from "@/features/markets/api/marketApi";
 import { MarketHeader } from "./MarketHeader";
@@ -14,6 +15,9 @@ import { Watchlist } from "./Watchlist";
 import { MarketChart } from "@/features/trading/components/MarketChart";
 import { MarketDetailsPanel } from "./MarketDetailsPanel";
 import { Time } from "lightweight-charts";
+
+const EMPTY_CANDLES: CandleData[] = [];
+const EMPTY_AI_MARKERS: AIMarketMarker[] = [];
 
 interface MarketsWorkspaceProps {
   initialSymbolKey?: string;
@@ -135,12 +139,12 @@ export function MarketsWorkspace({
     return (
       currentMarket.timeframes[selectedTimeframe] ||
       currentMarket.timeframes["1h"] ||
-      []
+      EMPTY_CANDLES
     );
   }, [liveCandles, currentMarket, selectedTimeframe]);
 
   const activeAIMarkers = useMemo(() => {
-    return currentMarket.aiMarkers[selectedTimeframe] || [];
+    return currentMarket.aiMarkers[selectedTimeframe] || EMPTY_AI_MARKERS;
   }, [currentMarket, selectedTimeframe]);
 
   const handleSelectSymbol = (newKey: string) => {

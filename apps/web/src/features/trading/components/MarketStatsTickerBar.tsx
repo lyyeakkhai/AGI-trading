@@ -1,28 +1,32 @@
 "use client";
 
 import React, { useState } from "react";
-import { Star, ChevronDown, MoreHorizontal, LayoutGrid } from "lucide-react";
+import { Star, ChevronDown, MoreHorizontal, LayoutGrid, Layers } from "lucide-react";
 import { FuturesTickerStats } from "../types/binanceFutures";
 import { CryptoIcon } from "@/components/ui/CryptoIcon";
-import { AgiMarketPanel } from "./AgiMarketPanel";
 
 interface MarketStatsTickerBarProps {
   ticker: FuturesTickerStats;
   onSelectSymbol?: (symbol: string) => void;
+  onToggleMarketPanel?: () => void;
+  isMarketPanelOpen?: boolean;
 }
 
-export function MarketStatsTickerBar({ ticker, onSelectSymbol }: MarketStatsTickerBarProps) {
+export function MarketStatsTickerBar({
+  ticker,
+  onToggleMarketPanel,
+  isMarketPanelOpen = true,
+}: MarketStatsTickerBarProps) {
   const [isFavorited, setIsFavorited] = useState(true);
-  const [isMarketPanelOpen, setIsMarketPanelOpen] = useState(false);
 
   const isPositive = ticker.priceChange >= 0;
 
   return (
     <div className="h-11 bg-[#0E0E0E] border-b border-[#242D35] px-3 flex items-center justify-between text-xs select-none overflow-x-auto no-scrollbar shrink-0 relative z-30">
-      {/* Left: Symbol & Current Price */}
+      {/* Left: Symbol & Current Price & Markets Toggle */}
       <div className="flex items-center gap-4 shrink-0">
         {/* Star & Coin Badge & Symbol */}
-        <div className="flex items-center gap-1.5 relative">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => setIsFavorited(!isFavorited)}
@@ -41,38 +45,30 @@ export function MarketStatsTickerBar({ ticker, onSelectSymbol }: MarketStatsTick
           </div>
 
           {/* Symbol & Market Type with Interactive Market Panel Toggle */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setIsMarketPanelOpen((prev) => !prev)}
-              className="flex items-center gap-1.5 px-2 py-1 rounded bg-[#141414] hover:bg-[#1C1C1C] border border-[#242D35] hover:border-[#00E5FF]/50 transition-all cursor-pointer group"
-              title="Click to open AGI Market Panel & Sector Dominance"
-            >
-              <span className="font-bold text-[#EDEDED] text-[13px] font-mono tracking-tight group-hover:text-[#00E5FF] transition-colors">
-                {ticker.symbol}
-              </span>
-              <span className="px-1.5 py-0.2 rounded bg-[#0A5965]/40 text-[#00E5FF] text-[10px] font-mono font-medium border border-[#00E5FF]/30">
-                Perp
-              </span>
-              <ChevronDown
-                size={13}
-                className={`text-[#8A8A8A] group-hover:text-[#00E5FF] transition-transform duration-150 ${
-                  isMarketPanelOpen ? "rotate-180 text-[#00E5FF]" : ""
-                }`}
-              />
-            </button>
-
-            {/* AGI Market Panel Popover */}
-            <AgiMarketPanel
-              isOpen={isMarketPanelOpen}
-              onClose={() => setIsMarketPanelOpen(false)}
-              currentSymbol={ticker.symbol}
-              onSelectSymbol={(sym) => {
-                onSelectSymbol?.(sym);
-                setIsMarketPanelOpen(false);
-              }}
+          <button
+            type="button"
+            onClick={() => onToggleMarketPanel?.()}
+            className={`flex items-center gap-1.5 px-2 py-1 rounded bg-[#141414] hover:bg-[#1C1C1C] border transition-all cursor-pointer group ${
+              isMarketPanelOpen
+                ? "border-[#00E5FF] shadow-[0_0_8px_rgba(0,229,255,0.2)]"
+                : "border-[#242D35] hover:border-[#00E5FF]/50"
+            }`}
+            title="Toggle AGI Market Panel & Sector Dominance"
+          >
+            <Layers size={13} className="text-[#00E5FF]" />
+            <span className="font-bold text-[#EDEDED] text-[13px] font-mono tracking-tight group-hover:text-[#00E5FF] transition-colors">
+              {ticker.symbol}
+            </span>
+            <span className="px-1.5 py-0.2 rounded bg-[#0A5965]/40 text-[#00E5FF] text-[10px] font-mono font-medium border border-[#00E5FF]/30">
+              Perp
+            </span>
+            <ChevronDown
+              size={13}
+              className={`text-[#8A8A8A] group-hover:text-[#00E5FF] transition-transform duration-150 ${
+                isMarketPanelOpen ? "rotate-180 text-[#00E5FF]" : ""
+              }`}
             />
-          </div>
+          </button>
         </div>
 
         {/* Large Current Price & 24h Change */}
