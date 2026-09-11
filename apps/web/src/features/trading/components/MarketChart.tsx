@@ -114,17 +114,39 @@ export const MarketChart = React.memo(function MarketChart({
           labelBackgroundColor: "#131C23",
         },
       },
+      handleScroll: {
+        mouseWheel: true,
+        pressedMouseMove: true,
+        horzTouchDrag: true,
+        vertTouchDrag: true,
+      },
+      handleScale: {
+        axisPressedMouseMove: {
+          time: true,
+          price: true,
+        },
+        axisDoubleClickReset: {
+          time: true,
+          price: true,
+        },
+        mouseWheel: true,
+        pinch: true,
+      },
       rightPriceScale: {
         borderColor: "#1B2A32",
         scaleMargins: {
           top: 0.1,
           bottom: 0.22, // Space reserved for volume histogram
         },
+        autoScale: true,
       },
       timeScale: {
         borderColor: "#1B2A32",
         timeVisible: true,
         secondsVisible: false,
+        barSpacing: 10,
+        minBarSpacing: 1,
+        rightOffset: 12,
       },
     });
 

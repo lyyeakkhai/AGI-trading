@@ -27,6 +27,9 @@ import {
   Crosshair,
   ArrowUpDown,
   Trash2,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
 } from "lucide-react";
 import { CandleData } from "@/lib/mockMarketData";
 
@@ -45,186 +48,81 @@ function createPRNG(seed: number) {
   };
 }
 
-// Generate realistic chart history tailored to timeframe
+// Generate realistic chart history proportionally scaled to baseLastPrice for any asset/timeframe
 function generateCandlesForTimeframe(timeframe: string, baseLastPrice: number): CandleData[] {
   const result: CandleData[] = [];
   const now = Math.floor(new Date("2026-09-11T14:15:00Z").getTime() / 1000);
   const random = createPRNG(12345 + (timeframe.charCodeAt(0) || 42) * 100);
 
-  if (timeframe === "1D") {
-    // 140 daily bars spanning May 1, 2026 to Sept 11, 2026
-    // Reference pattern: drop to 57,758 around June/July, then rally breakout to 77,841.90
-    const days = 140;
-    const startTime = Math.floor(new Date("2026-04-24T00:00:00Z").getTime() / 1000);
-    const oneDay = 86400;
-    let price = 63500;
+  // Timeframe-specific parameters
+  let bars = 140;
+  let interval = 86400; // 1D
+  let volatility = 0.015; // 1.5% daily volatility
 
-    for (let i = 0; i < days; i++) {
-      const time = (startTime + i * oneDay) as Time;
-      let dailyTrend = 0;
-      if (i < 40) {
-        dailyTrend = (Math.sin(i * 0.15) * 400) + (random() - 0.52) * 600;
-      } else if (i < 65) {
-        // Dip to exactly 57,758
-        dailyTrend = i === 60 ? -1500 : (random() - 0.58) * 800;
-        if (price < 58000 && i >= 60) dailyTrend = Math.abs(dailyTrend) + 400;
-      } else if (i < 100) {
-        dailyTrend = (random() - 0.44) * 650;
-      } else if (i < 125) {
-        dailyTrend = (random() - 0.35) * 1100; // Breakout rally
-      } else {
-        dailyTrend = (random() - 0.47) * 550;
-      }
-
-      const open = Math.round(price);
-      price = Math.max(57758, price + dailyTrend);
-      if (i === days - 1) {
-        price = baseLastPrice;
-      }
-
-      const high = Math.round(Math.max(open, price) + random() * 850 + 150);
-      const low = Math.round(Math.min(open, price) - random() * 750 - 50);
-      const close = Math.round(price);
-      const volume = Math.round((random() * 75000 + 25000) * (i > 115 ? 1.7 : 1));
-
-      result.push({ time, open, high, low, close, volume });
-    }
-  } else if (timeframe === "1W") {
-    // 104 weekly bars (~2 years)
-    const weeks = 104;
-    const oneWeek = 86400 * 7;
-    const startTime = now - weeks * oneWeek;
-    let price = 28500;
-
-    for (let i = 0; i < weeks; i++) {
-      const time = (startTime + i * oneWeek) as Time;
-      let weeklyTrend = 0;
-      if (i < 35) {
-        weeklyTrend = 450 + (random() - 0.45) * 1200;
-      } else if (i < 55) {
-        weeklyTrend = 900 + (random() - 0.4) * 1800;
-      } else if (i < 75) {
-        weeklyTrend = -400 + (random() - 0.55) * 1600;
-      } else {
-        weeklyTrend = 650 + (random() - 0.42) * 1500;
-      }
-
-      const open = Math.round(price);
-      price = Math.max(25000, price + weeklyTrend);
-      if (i === weeks - 1) price = baseLastPrice;
-
-      const high = Math.round(Math.max(open, price) + random() * 1800 + 300);
-      const low = Math.round(Math.min(open, price) - random() * 1500 - 100);
-      const close = Math.round(price);
-      const volume = Math.round((random() * 250000 + 100000) * 1.5);
-
-      result.push({ time, open, high, low, close, volume });
-    }
+  if (timeframe === "1W") {
+    bars = 104;
+    interval = 86400 * 7;
+    volatility = 0.035;
   } else if (timeframe === "4h") {
-    // 150 4-hour bars (~25 days)
-    const bars = 150;
-    const interval = 14400;
-    const startTime = now - bars * interval;
-    let price = 68400;
-
-    for (let i = 0; i < bars; i++) {
-      const time = (startTime + i * interval) as Time;
-      const trend = (i / bars) * 60 + (random() - 0.48) * 350;
-      const open = Math.round(price * 10) / 10;
-      price = open + trend;
-      if (i === bars - 1) price = baseLastPrice;
-
-      const high = Math.round((Math.max(open, price) + random() * 400 + 80) * 10) / 10;
-      const low = Math.round((Math.min(open, price) - random() * 380 - 40) * 10) / 10;
-      const close = Math.round(price * 10) / 10;
-      const volume = Math.round(random() * 22000 + 6000);
-
-      result.push({ time, open, high, low, close, volume });
-    }
+    bars = 150;
+    interval = 14400;
+    volatility = 0.008;
   } else if (timeframe === "1h") {
-    // 168 1-hour bars (7 days)
-    const bars = 168;
-    const interval = 3600;
-    const startTime = now - bars * interval;
-    let price = 74600;
-
-    for (let i = 0; i < bars; i++) {
-      const time = (startTime + i * interval) as Time;
-      const trend = (i / bars) * 20 + (random() - 0.49) * 220;
-      const open = Math.round(price * 10) / 10;
-      price = open + trend;
-      if (i === bars - 1) price = baseLastPrice;
-
-      const high = Math.round((Math.max(open, price) + random() * 240 + 50) * 10) / 10;
-      const low = Math.round((Math.min(open, price) - random() * 220 - 30) * 10) / 10;
-      const close = Math.round(price * 10) / 10;
-      const volume = Math.round(random() * 9500 + 2500);
-
-      result.push({ time, open, high, low, close, volume });
-    }
+    bars = 168;
+    interval = 3600;
+    volatility = 0.004;
   } else if (timeframe === "15m") {
-    // 160 15-minute bars (40 hours)
-    const bars = 160;
-    const interval = 900;
-    const startTime = now - bars * interval;
-    let price = 76950;
-
-    for (let i = 0; i < bars; i++) {
-      const time = (startTime + i * interval) as Time;
-      const trend = (random() - 0.49) * 110;
-      const open = Math.round(price * 10) / 10;
-      price = open + trend;
-      if (i === bars - 1) price = baseLastPrice;
-
-      const high = Math.round((Math.max(open, price) + random() * 120 + 25) * 10) / 10;
-      const low = Math.round((Math.min(open, price) - random() * 110 - 15) * 10) / 10;
-      const close = Math.round(price * 10) / 10;
-      const volume = Math.round(random() * 3200 + 800);
-
-      result.push({ time, open, high, low, close, volume });
-    }
+    bars = 160;
+    interval = 900;
+    volatility = 0.002;
   } else if (timeframe === "1s") {
-    // 180 1-second bars (3 minutes)
-    const bars = 180;
-    const interval = 1;
-    const startTime = now - bars * interval;
-    let price = baseLastPrice - 1.2;
+    bars = 180;
+    interval = 1;
+    volatility = 0.0002;
+  } else if (timeframe === "Time") {
+    bars = 180;
+    interval = 1;
+    volatility = 0.00015;
+  }
 
-    for (let i = 0; i < bars; i++) {
-      const time = (startTime + i * interval) as Time;
-      const delta = (random() - 0.49) * 0.8;
-      const open = Number(price.toFixed(1));
-      price = Math.max(baseLastPrice - 15, Math.min(baseLastPrice + 15, open + delta));
-      if (i === bars - 1) price = baseLastPrice;
+  const startTime = now - bars * interval;
+  const targetLast = baseLastPrice > 0 ? baseLastPrice : 77841.9;
 
-      const high = Number((Math.max(open, price) + random() * 0.6).toFixed(1));
-      const low = Number((Math.min(open, price) - random() * 0.6).toFixed(1));
-      const close = Number(price.toFixed(1));
-      const volume = Math.round(random() * 85 + 12);
+  // Generate normalized random walk backwards from 1.0 (so final bar is exactly 1.0 * targetLast)
+  const normPath = new Array<number>(bars);
+  normPath[bars - 1] = 1.0;
 
-      result.push({ time, open, high, low, close, volume });
-    }
-  } else {
-    // "Time" tick view: 180 high-frequency price points
-    const bars = 180;
-    const interval = 1;
-    const startTime = now - bars * interval;
-    let price = baseLastPrice - 2.5;
+  for (let i = bars - 2; i >= 0; i--) {
+    // Gentle sine oscillation + random noise creates realistic market cycles
+    const cycle = Math.sin((i / bars) * Math.PI * 3) * (volatility * 0.3);
+    const shock = (random() - 0.49) * volatility + cycle;
+    normPath[i] = Math.max(0.3, normPath[i + 1] * (1 - shock));
+  }
 
-    for (let i = 0; i < bars; i++) {
-      const time = (startTime + i * interval) as Time;
-      const delta = (random() - 0.48) * 0.6;
-      const open = Number(price.toFixed(1));
-      price = open + delta;
-      if (i === bars - 1) price = baseLastPrice;
+  const precision = targetLast < 1 ? 4 : targetLast < 10 ? 3 : 2;
 
-      const high = Number((Math.max(open, price) + random() * 0.4).toFixed(1));
-      const low = Number((Math.min(open, price) - random() * 0.4).toFixed(1));
-      const close = Number(price.toFixed(1));
-      const volume = Math.round(random() * 60 + 10);
+  // Build OHLC bars from normalized path
+  for (let i = 0; i < bars; i++) {
+    const time = (startTime + i * interval) as Time;
+    const currentNorm = normPath[i];
+    const prevNorm = i > 0 ? normPath[i - 1] : currentNorm * (1 - (random() - 0.5) * volatility);
 
-      result.push({ time, open, high, low, close, volume });
-    }
+    const openVal = prevNorm * targetLast;
+    const closeVal = i === bars - 1 ? targetLast : currentNorm * targetLast;
+
+    const wiggle = Math.abs(closeVal - openVal) + targetLast * (volatility * 0.5);
+    const highVal = Math.max(openVal, closeVal) + random() * wiggle;
+    const lowVal = Math.max(targetLast * 0.1, Math.min(openVal, closeVal) - random() * wiggle);
+
+    const open = Number(openVal.toFixed(precision));
+    const close = Number(closeVal.toFixed(precision));
+    const high = Number(Math.max(open, close, highVal).toFixed(precision));
+    const low = Number(Math.min(open, close, lowVal).toFixed(precision));
+
+    const baseVol = targetLast > 10000 ? 8000 : 80000;
+    const volume = Math.round((random() * 0.8 + 0.2) * baseVol * (i > bars - 20 ? 1.3 : 1.0));
+
+    result.push({ time, open, high, low, close, volume });
   }
 
   return result;
@@ -338,6 +236,48 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
     }
   };
 
+  // Zoom and Scale Controls
+  const handleZoomIn = () => {
+    if (!chartRef.current) return;
+    const timeScale = chartRef.current.timeScale();
+    const logicalRange = timeScale.getVisibleLogicalRange();
+    if (logicalRange) {
+      const barsCount = logicalRange.to - logicalRange.from;
+      const reduction = Math.max(2, Math.round(barsCount * 0.25));
+      timeScale.setVisibleLogicalRange({
+        from: logicalRange.from + reduction / 2,
+        to: logicalRange.to - reduction / 2,
+      });
+    } else {
+      const current = (timeScale as any).options?.()?.barSpacing || 10;
+      timeScale.applyOptions({ barSpacing: Math.min(current * 1.35, 60) });
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (!chartRef.current) return;
+    const timeScale = chartRef.current.timeScale();
+    const logicalRange = timeScale.getVisibleLogicalRange();
+    if (logicalRange) {
+      const barsCount = logicalRange.to - logicalRange.from;
+      const expansion = Math.max(2, Math.round(barsCount * 0.3));
+      timeScale.setVisibleLogicalRange({
+        from: logicalRange.from - expansion / 2,
+        to: logicalRange.to + expansion / 2,
+      });
+    } else {
+      const current = (timeScale as any).options?.()?.barSpacing || 10;
+      timeScale.applyOptions({ barSpacing: Math.max(current / 1.35, 2) });
+    }
+  };
+
+  const handleResetZoom = () => {
+    if (!chartRef.current) return;
+    chartRef.current.timeScale().applyOptions({ barSpacing: 10, rightOffset: 12 });
+    chartRef.current.timeScale().fitContent();
+    chartRef.current.priceScale("right").applyOptions({ autoScale: true });
+  };
+
   // Initialize and maintain Lightweight Chart
   useEffect(() => {
     if (!chartContainerRef.current || viewStyle === "Depth" || activeTab !== "Chart") return;
@@ -373,18 +313,40 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
           labelBackgroundColor: "#2B313A",
         },
       },
+      handleScroll: {
+        mouseWheel: true,
+        pressedMouseMove: true,
+        horzTouchDrag: true,
+        vertTouchDrag: true,
+      },
+      handleScale: {
+        axisPressedMouseMove: {
+          time: true,
+          price: true,
+        },
+        axisDoubleClickReset: {
+          time: true,
+          price: true,
+        },
+        mouseWheel: true,
+        pinch: true,
+      },
       rightPriceScale: {
         borderColor: "#23272E",
         scaleMargins: {
-          top: 0.08,
+          top: 0.1,
           bottom: 0.22,
         },
         alignLabels: true,
+        autoScale: true,
       },
       timeScale: {
         borderColor: "#23272E",
         timeVisible: timeframe !== "1D" && timeframe !== "1W",
         secondsVisible: timeframe === "Time" || timeframe === "1s",
+        barSpacing: 10,
+        minBarSpacing: 1,
+        rightOffset: 12,
       },
     });
 
@@ -654,6 +616,36 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
               </div>
             )}
           </div>
+
+          {/* Zoom and Scale Controls */}
+          {activeTab === "Chart" && viewStyle !== "Depth" && (
+            <div className="flex items-center gap-0.5 border-r border-[#242D35] pr-1 mr-0.5">
+              <button
+                type="button"
+                onClick={handleZoomOut}
+                className="p-1 hover:text-white rounded hover:bg-[#1C1C1C] transition-colors"
+                title="Zoom Out (-)"
+              >
+                <ZoomOut size={14} />
+              </button>
+              <button
+                type="button"
+                onClick={handleZoomIn}
+                className="p-1 hover:text-white rounded hover:bg-[#1C1C1C] transition-colors"
+                title="Zoom In (+)"
+              >
+                <ZoomIn size={14} />
+              </button>
+              <button
+                type="button"
+                onClick={handleResetZoom}
+                className="p-1 hover:text-[#00E5FF] rounded hover:bg-[#1C1C1C] transition-colors"
+                title="Reset Zoom / Auto Fit"
+              >
+                <RotateCcw size={13} />
+              </button>
+            </div>
+          )}
 
           {/* Screenshot */}
           <button
@@ -1027,6 +1019,36 @@ export function FuturesChartPane({ symbol = "BTCUSDT", currentPrice }: FuturesCh
                 <div className="absolute top-16 left-3 z-30 flex items-center gap-2 bg-[#0E0E0E] border border-[#00E676] text-white text-xs font-mono px-3 py-1.5 rounded shadow-2xl animate-fade-in backdrop-blur-md">
                   <Check size={14} className="text-[#00E676]" />
                   <span>{orderToast}</span>
+                </div>
+              )}
+
+              {/* Floating Mini Chart Zoom HUD (TradingView Style, bottom-right) */}
+              {viewStyle !== "Depth" && (
+                <div className="absolute bottom-8 right-16 z-20 flex items-center bg-[#0E0E0E]/90 border border-[#242D35] rounded px-1 py-0.5 text-xs text-[#8A8A8A] gap-0.5 shadow-lg backdrop-blur select-none">
+                  <button
+                    type="button"
+                    onClick={handleZoomOut}
+                    className="p-1 hover:text-white hover:bg-[#1C1C1C] rounded transition-colors"
+                    title="Zoom Out (-)"
+                  >
+                    <ZoomOut size={12} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResetZoom}
+                    className="px-1.5 py-0.5 text-[10px] font-mono text-[#8A8A8A] hover:text-[#00E5FF] hover:bg-[#1C1C1C] rounded transition-colors"
+                    title="Auto Fit Chart"
+                  >
+                    Auto
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleZoomIn}
+                    className="p-1 hover:text-white hover:bg-[#1C1C1C] rounded transition-colors"
+                    title="Zoom In (+)"
+                  >
+                    <ZoomIn size={12} />
+                  </button>
                 </div>
               )}
 
